@@ -1,4 +1,4 @@
-# Obserwator
+# Panel vZTM Warszawa
 
 🇵🇱
 
