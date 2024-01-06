@@ -82,11 +82,10 @@
 
     foreach ($testClasses as $class) {
         eval("require(\"$class.php\");");
-        eval("\$classMethods = $class::getTestMethods();");
         echo "<h2>$class</h2>";
         echo "\r\n\t<ul>";
 
-        foreach ($classMethods as $method) {
+        foreach (get_class_methods($class) as $method) {
             eval("\$result = $class::$method();");
             echo "\r\n\t\t<li><span class=\"method\">$method()</span> &rarr; ";
             

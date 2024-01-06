@@ -1,25 +1,9 @@
 <?php
 
-require("TestClass.php");
 require("../Source/Models/Classes/SystemDateTime.php");
 require("../Source/Models/Enums/SystemDateTimeFormat.php");
 
-class SystemDateTimeTests extends TestClass {
-    public static function getTestMethods(): array {
-        return [
-            "createSystemDateTimeWithCurrentTime",
-            "createSystemDateTimeWithSpecifiedTime",
-            "checkDatabaseStringPattern",
-            "checkTimeZoneDayShiftInLocalizedString",
-            "checkLocalizedStringFullFormatPattern",
-            "add14DaysToDateTime",
-            "subtract4Hours30MinutesFromDateTime",
-            "checkDateIsBeforeNow",
-            "checkSystemDateTimesAreEqual",
-            "checkNowIsAfterDate"
-        ];
-    }
-
+final class SystemDateTimeTests {
     public static function createSystemDateTimeWithCurrentTime(): bool|string {
         $now = new SystemDateTime();
 
