@@ -15,6 +15,19 @@ class SystemDateTime {
         }
     }
 
+    private static function prepareDateIntervalForCalculation(int $days, int $hours, int $minutes): DateInterval {
+        $days = max(0, $days);
+        $hours = max(0, $hours);
+        $minutes = max(0, $minutes);
+        return new DateInterval("P{$days}DT{$hours}H{$minutes}M");
+    }
+
+    private static function createFromDateTimeImmutable(DateTimeImmutable $dateTime): SystemDateTime {
+        $systemDateTime = new SystemDateTime();
+        $systemDateTime->dateTime = $dateTime;
+        return $systemDateTime;
+    }
+
     public function toDatabaseString(): string {
         return $this->dateTime->format(self::$mysqlDateFormat);
     }
@@ -43,19 +56,6 @@ class SystemDateTime {
 
     public function isAfter(SystemDateTime $other): bool {
         return $this->dateTime > $other->dateTime;
-    }
-
-    private static function prepareDateIntervalForCalculation(int $days, int $hours, int $minutes): DateInterval {
-        $days = max(0, $days);
-        $hours = max(0, $hours);
-        $minutes = max(0, $minutes);
-        return new DateInterval("P{$days}DT{$hours}H{$minutes}M");
-    }
-
-    private static function createFromDateTimeImmutable(DateTimeImmutable $dateTime): SystemDateTime {
-        $systemDateTime = new SystemDateTime();
-        $systemDateTime->dateTime = $dateTime;
-        return $systemDateTime;
     }
 
     private function getLocalizedDateTime(): DateTimeImmutable {

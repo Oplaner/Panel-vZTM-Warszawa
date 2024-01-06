@@ -64,47 +64,58 @@
 </head>
 <body>
     <h1>Panel vZTM Warszawa Tests</h1>
-    <?php
+<?php
 
-    const EXCLUDED_DIRECTORY_ELEMENTS = [".", "..", "index.php", "TestClass.php"];
-    const TEST_FILE_PATTERN = "/^\S+Tests\.php$/";
+const EXCLUDED_DIRECTORY_ELEMENTS = [".", "..", "index.php", "TestClass.php"];
+const TEST_FILE_PATTERN = "/^\S+Tests\.php$/";
 
-    $testClasses = array_map(
-        fn ($file) => preg_replace("/^(\S+)\.php$/", "$1", $file),
-        array_filter(
-            array_diff(
-                scandir(__DIR__),
-                EXCLUDED_DIRECTORY_ELEMENTS
-            ),
-            fn ($file) => preg_match(TEST_FILE_PATTERN, $file)
-        )
-    );
+$testClasses = array_map(
+    fn ($file) => preg_replace("/^(\S+)\.php$/", "$1", $file),
+    array_filter(
+        array_diff(
+            scandir(__DIR__),
+            EXCLUDED_DIRECTORY_ELEMENTS
+        ),
+        fn ($file) => preg_match(TEST_FILE_PATTERN, $file)
+    )
+);
 
-    foreach ($testClasses as $class) {
-        eval("require(\"$class.php\");");
-        echo "<h2>$class</h2>";
-        echo "\r\n\t<ul>";
+foreach ($testClasses as $class):
+    eval("require(\"$class.php\");");
 
-        foreach (get_class_methods($class) as $method) {
-            eval("\$result = $class::$method();");
-            echo "\r\n\t\t<li><span class=\"method\">$method()</span> &rarr; ";
-            
-            if ($result === true) {
-                echo "<span class=\"passed\">PASSED</span>";
-            } else {
-                echo "<span class=\"failed\">FAILED</span>";
-                echo "\r\n\t\t\t<ul>";
-                echo "\r\n\t\t\t\t<li>$result</li>";
-                echo "\r\n\t\t\t</ul>";
-                echo "\r\n\t\t";
-            }
+?>
+    <h2><?php echo $class ?></h2>
+    <ul>
+<?php
 
-            echo "</li>";
-        }
+    foreach (get_class_methods($class) as $method):
+        eval("\$result = $class::$method();");
 
-        echo "\r\n\t</ul>\r\n";
-    }
+        if ($result === true):
 
-    ?>
+?>
+        <li><span class="method"><?php echo $method ?>()</span> &rarr; <span class="passed">PASSED</span></li>
+<?php
+
+        else:
+
+?>
+        <li><span class="method"><?php echo $method ?>()</span> &rarr; <span class="failed">FAILED</span>
+            <ul>
+                <li><?php echo $result ?></li>
+            </ul>
+        </li>
+<?php
+
+        endif;
+    endforeach;
+
+?>
+    </ul>
+<?php
+
+endforeach;
+
+?>
 </body>
 </html>
