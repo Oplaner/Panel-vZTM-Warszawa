@@ -1,21 +1,10 @@
 <?php
 
 abstract class DatabaseEntity {
-    protected string $id;
-    protected bool $isNew;
+    protected ?string $id = null;
+    protected ?bool $isNew = null;
+    protected bool $wasModified = false;
 
-    final protected function __construct(?string $id = null) {
-        if ($id === null) {
-            $this->id = self::generateUUIDv4();
-            $this->isNew = true;
-        } else {
-            $this->id = $id;
-            $this->isNew = false;
-        }
-    }
-
-    abstract public static function createNew(): DatabaseEntity;
-    abstract public static function withID(string $id): ?DatabaseEntity;
     abstract public function save(): bool;
 
     private static function generateUUIDv4(): string {
@@ -28,6 +17,16 @@ abstract class DatabaseEntity {
 
     final public function getID(): string {
         return $this->id;
+    }
+
+    final protected function setID(?string $id): void {
+        if ($id === null) {
+            $this->id = self::generateUUIDv4();
+            $this->isNew = true;
+        } else {
+            $this->id = $id;
+            $this->isNew = false;
+        }
     }
 }
 

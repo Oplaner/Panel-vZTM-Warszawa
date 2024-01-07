@@ -81,7 +81,7 @@ $testClasses = array_map(
 );
 
 foreach ($testClasses as $class):
-    eval("require(\"$class.php\");");
+    eval("require_once \"$class.php\";");
 
 ?>
     <h2><?php echo $class ?></h2>

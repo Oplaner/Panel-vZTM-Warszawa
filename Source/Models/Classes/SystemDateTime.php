@@ -1,8 +1,8 @@
 <?php
 
 class SystemDateTime {
-    private static $mysqlDateFormat = "Y-m-d H:i:s";
-    private static $localTimeZone = "Europe/Warsaw";
+    private static string $mysqlDateFormat = "Y-m-d H:i:s";
+    private static string $localTimeZone = "Europe/Warsaw";
     private DateTimeImmutable $dateTime; // Always stored in UTC.
 
     public function __construct(?string $dateTime = null) {
@@ -13,6 +13,10 @@ class SystemDateTime {
         } else {
             $this->dateTime = DateTimeImmutable::createFromFormat(self::$mysqlDateFormat, $dateTime, $timeZone);
         }
+    }
+
+    public static function now(): SystemDateTime {
+        return new SystemDateTime();
     }
 
     private static function prepareDateIntervalForCalculation(int $days, int $hours, int $minutes): DateInterval {

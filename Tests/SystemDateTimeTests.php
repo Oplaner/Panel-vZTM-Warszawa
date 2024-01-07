@@ -1,11 +1,21 @@
 <?php
 
-require("../Source/Models/Classes/SystemDateTime.php");
-require("../Source/Models/Enums/SystemDateTimeFormat.php");
+require_once "../Source/Models/Classes/SystemDateTime.php";
+require_once "../Source/Models/Enums/SystemDateTimeFormat.php";
 
 final class SystemDateTimeTests {
-    public static function createSystemDateTimeWithCurrentTime(): bool|string {
+    public static function createSystemDateTimeWithCurrentTimeUsingConstructor(): bool|string {
         $now = new SystemDateTime();
+
+        if (!is_a($now, SystemDateTime::class)) {
+            return "Expected a ".SystemDateTime::class." object. Found: ".gettype($now).".";
+        } else {
+            return true;
+        }
+    }
+
+    public static function createSystemDateTimeWithCurrentTimeUsingNowFunction(): bool|string {
+        $now = SystemDateTime::now();
 
         if (!is_a($now, SystemDateTime::class)) {
             return "Expected a ".SystemDateTime::class." object. Found: ".gettype($now).".";
