@@ -1,9 +1,9 @@
 <?php
 
-require_once "DatabaseEntity.php";
-require_once "SystemDateTime.php";
+require_once __DIR__."/DatabaseEntity.php";
+require_once __DIR__."/SystemDateTime.php";
 
-class User extends DatabaseEntity {
+final class User extends DatabaseEntity {
     private int $login;
     private string $username;
     private bool $shouldChangePassword;

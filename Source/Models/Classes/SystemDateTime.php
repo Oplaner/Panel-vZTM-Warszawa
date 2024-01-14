@@ -1,8 +1,8 @@
 <?php
 
-class SystemDateTime {
-    private static string $mysqlDateFormat = "Y-m-d H:i:s";
-    private static string $localTimeZone = "Europe/Warsaw";
+final class SystemDateTime {
+    private const MYSQL_DATE_FORMAT = "Y-m-d H:i:s";
+    private const LOCAL_TIME_ZONE = "Europe/Warsaw";
     private DateTimeImmutable $dateTime; // Always stored in UTC.
 
     public function __construct(?string $dateTime = null) {
@@ -11,7 +11,7 @@ class SystemDateTime {
         if ($dateTime === null) {
             $this->dateTime = new DateTimeImmutable("now", $timeZone);
         } else {
-            $this->dateTime = DateTimeImmutable::createFromFormat(self::$mysqlDateFormat, $dateTime, $timeZone);
+            $this->dateTime = DateTimeImmutable::createFromFormat(self::MYSQL_DATE_FORMAT, $dateTime, $timeZone);
         }
     }
 
@@ -33,7 +33,7 @@ class SystemDateTime {
     }
 
     public function toDatabaseString(): string {
-        return $this->dateTime->format(self::$mysqlDateFormat);
+        return $this->dateTime->format(self::MYSQL_DATE_FORMAT);
     }
 
     public function toLocalizedString(SystemDateTimeFormat $format): string {
@@ -63,7 +63,7 @@ class SystemDateTime {
     }
 
     private function getLocalizedDateTime(): DateTimeImmutable {
-        $timeZone = new DateTimeZone(self::$localTimeZone);
+        $timeZone = new DateTimeZone(self::LOCAL_TIME_ZONE);
         return $this->dateTime->setTimezone($timeZone);
     }
 }

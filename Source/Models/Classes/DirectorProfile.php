@@ -1,10 +1,10 @@
 <?php
 
-require_once "Profile.php";
-require_once "SystemDateTime.php";
-require_once "User.php";
+require_once __DIR__."/Profile.php";
+require_once __DIR__."/SystemDateTime.php";
+require_once __DIR__."/User.php";
 
-class DirectorProfile extends Profile {
+final class DirectorProfile extends Profile {
     private bool $isProtected;
 
     private function __construct(?string $id, SystemDateTime $activatedAt, User $activatedBy, ?SystemDateTime $deactivatedAt, ?User $deactivatedBy, bool $isProtected) {
