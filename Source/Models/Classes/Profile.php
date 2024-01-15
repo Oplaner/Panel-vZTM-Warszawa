@@ -27,7 +27,7 @@ abstract class Profile extends DatabaseEntity {
     }
 
     public function isActive(): bool {
-        return $this->deactivatedAt === null;
+        return is_null($this->deactivatedAt);
     }
 
     public function deactivate(User $deactivator): void {

@@ -43,7 +43,7 @@ final class User extends DatabaseEntity {
     }
 
     public function getProfiles(): array {
-        if ($this->profiles === null) {
+        if (is_null($this->profiles)) {
             // TODO: Download profiles.
             $this->profiles = [];
         }

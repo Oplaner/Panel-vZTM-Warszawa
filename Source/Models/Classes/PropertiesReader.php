@@ -2,7 +2,7 @@
 
 final class PropertiesReader {
     private const PROPERTIES_DIRECTORY = __DIR__."/../../Properties/";
-    private const PROPERTY_LINE_PATTERN = "/^(\S+)\s*=\s*(.+)$/";
+    private const PROPERTY_LINE_PATTERN = "/^(?<key>\S+)\s*=\s*(?:\"(?<stringValue>.*)\"|(?<nonStringValue>.+))$/";
 
     /*
         Only property groups listed below will be accepted during get request.
@@ -17,7 +17,7 @@ final class PropertiesReader {
             throw new Exception("Requested properties group \"$group\" does not exist.");
         }
 
-        if (self::$$propertiesVariableName === null) {
+        if (is_null(self::$$propertiesVariableName)) {
             self::$$propertiesVariableName = self::readProperties($group);
         }
 
@@ -37,8 +37,15 @@ final class PropertiesReader {
         foreach (explode(PHP_EOL, $contents) as $line) {
             $matches = [];
 
-            if (preg_match(self::PROPERTY_LINE_PATTERN, $line, $matches)) {
-                $properties[$matches[1]] = $matches[2];
+            if (preg_match(self::PROPERTY_LINE_PATTERN, $line, $matches, PREG_UNMATCHED_AS_NULL)) {
+                $matches = array_values(
+                    array_filter(
+                        $matches,
+                        fn ($value, $key) => is_string($key) && !is_null($value),
+                        ARRAY_FILTER_USE_BOTH
+                    )
+                );
+                $properties[$matches[0]] = $matches[1];
             }
         }
 

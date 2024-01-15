@@ -34,7 +34,7 @@ final class PropertiesReaderTests {
     public static function checkDatabasePropertiesAreLoadedCorrectly(): bool|string {
         $properties = PropertiesReader::getProperties("database");
 
-        if (!isset($properties["hostname"], $properties["user"], $properties["password"])) {
+        if (!isset($properties["hostname"], $properties["username"], $properties["password"], $properties["database"])) {
             return "Loaded database properties are incorrect. Data found: ".trim(print_r($properties, true)).".";
         } else {
             return true;

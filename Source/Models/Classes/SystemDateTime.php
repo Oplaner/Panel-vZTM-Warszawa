@@ -8,7 +8,7 @@ final class SystemDateTime {
     public function __construct(?string $dateTime = null) {
         $timeZone = new DateTimeZone("UTC");
 
-        if ($dateTime === null) {
+        if (is_null($dateTime)) {
             $this->dateTime = new DateTimeImmutable("now", $timeZone);
         } else {
             $this->dateTime = DateTimeImmutable::createFromFormat(self::MYSQL_DATE_FORMAT, $dateTime, $timeZone);

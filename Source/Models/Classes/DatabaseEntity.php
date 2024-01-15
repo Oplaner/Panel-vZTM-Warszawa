@@ -20,7 +20,7 @@ abstract class DatabaseEntity {
     }
 
     final protected function setID(?string $id): void {
-        if ($id === null) {
+        if (is_null($id)) {
             $this->id = self::generateUUIDv4();
             $this->isNew = true;
         } else {
