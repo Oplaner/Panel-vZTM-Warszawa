@@ -1,7 +1,7 @@
 <?php
 
 final class SystemDateTime {
-    private const MYSQL_DATE_FORMAT = "Y-m-d H:i:s";
+    private const MYSQL_DATE_FORMAT = "Y-m-d H:i:s.u";
     private const LOCAL_TIME_ZONE = "Europe/Warsaw";
     private DateTimeImmutable $dateTime; // Always stored in UTC.
 

@@ -25,7 +25,7 @@ final class SystemDateTimeTests {
     }
 
     public static function createSystemDateTimeWithSpecifiedTime(): bool|string {
-        $myBirthday = "1998-02-10 18:00:00";
+        $myBirthday = "1998-02-10 18:00:00.000000";
         $then = new SystemDateTime($myBirthday);
         $databaseString = $then->toDatabaseString();
 
@@ -41,7 +41,7 @@ final class SystemDateTimeTests {
     public static function checkDatabaseStringPattern(): bool|string {
         $now = new SystemDateTime();
         $databaseString = $now->toDatabaseString();
-        $pattern = "/^\-?\d{4}\-[01]\d\-[0-3]\d [0-2]\d:[0-5]\d:[0-5]\d$/";
+        $pattern = "/^\-?\d{4}\-[01]\d\-[0-3]\d [0-2]\d:[0-5]\d:[0-5]\d\.\d{6}$/";
 
         if (!preg_match($pattern, $databaseString)) {
             return "Database string \"$databaseString\" does not match correct pattern: $pattern.";
@@ -51,7 +51,7 @@ final class SystemDateTimeTests {
     }
 
     public static function checkTimeZoneDayShiftInLocalizedString(): bool|string {
-        $lastDayOfYear = new SystemDateTime("2023-12-31 23:00:00");
+        $lastDayOfYear = new SystemDateTime("2023-12-31 23:00:00.000000");
         $localizedString = $lastDayOfYear->toLocalizedString(SystemDateTimeFormat::DateOnly);
         $expectedString = "01.01.2024";
 
@@ -75,10 +75,10 @@ final class SystemDateTimeTests {
     }
 
     public static function add14DaysToDateTime(): bool|string {
-        $dateTime = new SystemDateTime("2024-01-27 09:41:00");
+        $dateTime = new SystemDateTime("2024-01-27 09:41:00.000000");
         $plus14Days = $dateTime->add(14, 0, 0);
         $databaseString = $plus14Days->toDatabaseString();
-        $expectedString = "2024-02-10 09:41:00";
+        $expectedString = "2024-02-10 09:41:00.000000";
 
         if ($databaseString != $expectedString) {
             return "Expected \"$expectedString\" when adding 14 days to {$dateTime->toDatabaseString()}. Found: \"$databaseString\".";
@@ -88,10 +88,10 @@ final class SystemDateTimeTests {
     }
 
     public static function subtract4Hours30MinutesFromDateTime(): bool|string {
-        $dateTime = new SystemDateTime("2024-01-01 03:15:00");
+        $dateTime = new SystemDateTime("2024-01-01 03:15:00.000000");
         $minus4Hours30Minutes = $dateTime->subtract(0, 4, 30);
         $databaseString = $minus4Hours30Minutes->toDatabaseString();
-        $expectedString = "2023-12-31 22:45:00";
+        $expectedString = "2023-12-31 22:45:00.000000";
 
         if ($databaseString != $expectedString) {
             return "Expected \"$expectedString\" when subtracting 4 hours and 30 minutes from {$dateTime->toDatabaseString()}. Found: \"$databaseString\".";
@@ -101,7 +101,7 @@ final class SystemDateTimeTests {
     }
 
     public static function checkDateIsBeforeNow(): bool|string {
-        $myBirthday = new SystemDateTime("1998-02-10 18:00:00");
+        $myBirthday = new SystemDateTime("1998-02-10 18:00:00.000000");
         $now = new SystemDateTime();
         $comparison = $myBirthday->isBefore($now);
 
@@ -113,8 +113,8 @@ final class SystemDateTimeTests {
     }
 
     public static function checkSystemDateTimesAreEqual(): bool|string {
-        $myBirthday1 = new SystemDateTime("1998-02-10 18:00:00");
-        $myBirthday2 = new SystemDateTime("1998-02-10 18:00:00");
+        $myBirthday1 = new SystemDateTime("1998-02-10 18:00:00.000000");
+        $myBirthday2 = new SystemDateTime("1998-02-10 18:00:00.000000");
         $comparison = $myBirthday1->isEqual($myBirthday2);
 
         if (!$comparison) {
@@ -125,7 +125,7 @@ final class SystemDateTimeTests {
     }
 
     public static function checkNowIsAfterDate(): bool|string {
-        $myBirthday = new SystemDateTime("1998-02-10 18:00:00");
+        $myBirthday = new SystemDateTime("1998-02-10 18:00:00.000000");
         $now = new SystemDateTime();
         $comparison = $now->isAfter($myBirthday);
 

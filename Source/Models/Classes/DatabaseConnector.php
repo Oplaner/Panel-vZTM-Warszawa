@@ -13,23 +13,31 @@ final class DatabaseConnector {
         return self::$sharedInstance;
     }
 
+    public static function closeConnection(): void {
+        if (!is_null(self::$sharedInstance)) {
+            self::$sharedInstance->close();
+            self::$sharedInstance = null;
+        }
+    }
+
     private static function initializeClient(): mysqli {
-        $credentials = PropertiesReader::getProperties("database");
+        $properties = PropertiesReader::getProperties("database");
         $driver = new mysqli_driver();
         $driver->report_mode = MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT;
 
         try {
             $client = @new mysqli(
-                "p:".$credentials["hostname"],
-                $credentials["username"],
-                $credentials["password"],
-                $credentials["database"]
+                "p:".$properties["hostname"],
+                $properties["username"],
+                $properties["password"],
+                $properties["database"]
             );
         } catch (Exception $exception) {
             throw new Exception("Failed to connect to the database.");
         }
 
-        // TODO: Set charset and collation.
+        $client->set_charset($properties["charset"]);
+        $client->query("SET collation_connection = '".$properties["collation"]."'");
 
         return $client;
     }
