@@ -1,18 +1,27 @@
 <?php
 
 final class SystemDateTime {
-    private const MYSQL_DATE_FORMAT = "Y-m-d H:i:s.u";
+    private const MYSQL_DATETIME_FORMAT = "Y-m-d H:i:s.u";
+    private const LOG_DATETIME_FORMAT = "Y-m-d_H-i-s";
     private const LOCAL_TIME_ZONE = "Europe/Warsaw";
     private DateTimeImmutable $dateTime; // Always stored in UTC.
 
     public function __construct(?string $dateTime = null) {
         $timeZone = new DateTimeZone("UTC");
 
-        if (is_null($dateTime)) {
-            $this->dateTime = new DateTimeImmutable("now", $timeZone);
-        } else {
-            $this->dateTime = DateTimeImmutable::createFromFormat(self::MYSQL_DATE_FORMAT, $dateTime, $timeZone);
+        if (!is_null($dateTime)) {
+            if (($dateTimeFromMySQLFormat = DateTimeImmutable::createFromFormat(self::MYSQL_DATETIME_FORMAT, $dateTime, $timeZone)) !== false) {
+                $this->dateTime = $dateTimeFromMySQLFormat;
+                return;
+            }
+
+            if (($dateTimeFromLogFormat = DateTimeImmutable::createFromFormat(self::LOG_DATETIME_FORMAT, $dateTime, $timeZone)) !== false) {
+                $this->dateTime = $dateTimeFromLogFormat;
+                return;
+            }
         }
+
+        $this->dateTime = new DateTimeImmutable("now", $timeZone);
     }
 
     public static function now(): SystemDateTime {
@@ -33,19 +42,23 @@ final class SystemDateTime {
     }
 
     public function toDatabaseString(): string {
-        return $this->dateTime->format(self::MYSQL_DATE_FORMAT);
+        return $this->dateTime->format(self::MYSQL_DATETIME_FORMAT);
+    }
+
+    public function toLogString(): string {
+        return $this->dateTime->format(self::LOG_DATETIME_FORMAT);
     }
 
     public function toLocalizedString(SystemDateTimeFormat $format): string {
         return $this->getLocalizedDateTime()->format($format->value);
     }
 
-    public function add(int $days, int $hours, int $minutes): SystemDateTime {
+    public function adding(int $days, int $hours, int $minutes): SystemDateTime {
         $dateInterval = self::prepareDateIntervalForCalculation($days, $hours, $minutes);
         return self::createFromDateTimeImmutable($this->dateTime->add($dateInterval));
     }
 
-    public function subtract(int $days, int $hours, int $minutes): SystemDateTime {
+    public function subtracting(int $days, int $hours, int $minutes): SystemDateTime {
         $dateInterval = self::prepareDateIntervalForCalculation($days, $hours, $minutes);
         return self::createFromDateTimeImmutable($this->dateTime->sub($dateInterval));
     }

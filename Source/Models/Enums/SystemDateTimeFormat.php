@@ -1,11 +1,11 @@
 <?php
 
 enum SystemDateTimeFormat: string {
-    case DateOnly = "d.m.Y";
-    case TimeOnlyWithoutSeconds = "H:i";
-    case TimeOnlyWithSeconds = "H:i:s";
-    case DateAndTimeWithoutSeconds = self::DateOnly->value.", ".self::TimeOnlyWithoutSeconds->value;
-    case DateAndTimeWithSeconds = self::DateOnly->value.", ".self::TimeOnlyWithSeconds->value;
+    case dateOnly = "d.m.Y";
+    case timeOnlyWithoutSeconds = "H:i";
+    case timeOnlyWithSeconds = "H:i:s";
+    case dateAndTimeWithoutSeconds = self::dateOnly->value.", ".self::timeOnlyWithoutSeconds->value;
+    case dateAndTimeWithSeconds = self::dateOnly->value.", ".self::timeOnlyWithSeconds->value;
 }
 
 ?>

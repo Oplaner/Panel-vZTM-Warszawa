@@ -9,6 +9,7 @@ final class PropertiesReader {
         The class will read a file only once and store the result in dedicated property.
     */
     private static ?array $databaseProperties = null;
+    private static ?array $loggerProperties = null;
 
     public static function getProperties(string $group): array {
         $propertiesVariableName = $group."Properties";
@@ -26,15 +27,21 @@ final class PropertiesReader {
 
     private static function readProperties(string $group): array {
         $path = self::PROPERTIES_DIRECTORY.$group.".properties";
-        $contents = file_get_contents($path);
+        $file = fopen($path, "r");
 
-        if ($contents === false) {
-            throw new Exception("Failed to read \"$group.properties\" file.");
+        if ($file === false) {
+            throw new Exception("Failed to open \"$group.properties\" file.");
+        }
+
+        if (!flock($file, LOCK_SH)) {
+            fclose($file);
+            throw new Exception("Failed to lock \"$group.properties\" file.");
         }
 
         $properties = [];
 
-        foreach (explode(PHP_EOL, $contents) as $line) {
+        while (($line = fgets($file)) !== false) {
+            $line = str_replace(PHP_EOL, "", $line);
             $matches = [];
 
             if (preg_match(self::PROPERTY_LINE_PATTERN, $line, $matches, PREG_UNMATCHED_AS_NULL)) {
@@ -48,6 +55,9 @@ final class PropertiesReader {
                 $properties[$matches[0]] = $matches[1];
             }
         }
+
+        flock($file, LOCK_UN);
+        fclose($file);
 
         return $properties;
     }

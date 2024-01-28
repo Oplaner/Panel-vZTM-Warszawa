@@ -41,7 +41,7 @@ final class SystemDateTimeTests {
     public static function checkDatabaseStringPattern(): bool|string {
         $now = new SystemDateTime();
         $databaseString = $now->toDatabaseString();
-        $pattern = "/^\-?\d{4}\-[01]\d\-[0-3]\d [0-2]\d:[0-5]\d:[0-5]\d\.\d{6}$/";
+        $pattern = "/^\-?\d+\-[01]\d\-[0-3]\d [0-2]\d:[0-5]\d:[0-5]\d\.\d{6}$/";
 
         if (!preg_match($pattern, $databaseString)) {
             return "Database string \"$databaseString\" does not match correct pattern: $pattern.";
@@ -52,7 +52,7 @@ final class SystemDateTimeTests {
 
     public static function checkTimeZoneDayShiftInLocalizedString(): bool|string {
         $lastDayOfYear = new SystemDateTime("2023-12-31 23:00:00.000000");
-        $localizedString = $lastDayOfYear->toLocalizedString(SystemDateTimeFormat::DateOnly);
+        $localizedString = $lastDayOfYear->toLocalizedString(SystemDateTimeFormat::dateOnly);
         $expectedString = "01.01.2024";
 
         if ($localizedString != $expectedString) {
@@ -64,8 +64,8 @@ final class SystemDateTimeTests {
 
     public static function checkLocalizedStringFullFormatPattern(): bool|string {
         $now = new SystemDateTime();
-        $localizedString = $now->toLocalizedString(SystemDateTimeFormat::DateAndTimeWithSeconds);
-        $pattern = "/^[0-3]\d\.[01]\d\.\-?\d{4}, [0-2]\d:[0-5]\d:[0-5]\d$/";
+        $localizedString = $now->toLocalizedString(SystemDateTimeFormat::dateAndTimeWithSeconds);
+        $pattern = "/^[0-3]\d\.[01]\d\.\-?\d+, [0-2]\d:[0-5]\d:[0-5]\d$/";
 
         if (!preg_match($pattern, $localizedString)) {
             return "Localized string \"$localizedString\" does not match correct pattern: $pattern.";
@@ -76,7 +76,7 @@ final class SystemDateTimeTests {
 
     public static function add14DaysToDateTime(): bool|string {
         $dateTime = new SystemDateTime("2024-01-27 09:41:00.000000");
-        $plus14Days = $dateTime->add(14, 0, 0);
+        $plus14Days = $dateTime->adding(14, 0, 0);
         $databaseString = $plus14Days->toDatabaseString();
         $expectedString = "2024-02-10 09:41:00.000000";
 
@@ -89,7 +89,7 @@ final class SystemDateTimeTests {
 
     public static function subtract4Hours30MinutesFromDateTime(): bool|string {
         $dateTime = new SystemDateTime("2024-01-01 03:15:00.000000");
-        $minus4Hours30Minutes = $dateTime->subtract(0, 4, 30);
+        $minus4Hours30Minutes = $dateTime->subtracting(0, 4, 30);
         $databaseString = $minus4Hours30Minutes->toDatabaseString();
         $expectedString = "2023-12-31 22:45:00.000000";
 

@@ -66,7 +66,7 @@
     <h1>Panel vZTM Warszawa Tests</h1>
 <?php
 
-const EXCLUDED_DIRECTORY_ELEMENTS = [".", "..", "index.php", "TestClass.php"];
+const EXCLUDED_TEST_DIRECTORY_ELEMENTS = [".", "..", "index.php"];
 const TEST_FILE_PATTERN = "/^\S+Tests\.php$/";
 
 $testClasses = array_map(
@@ -74,7 +74,7 @@ $testClasses = array_map(
     array_filter(
         array_diff(
             scandir(__DIR__),
-            EXCLUDED_DIRECTORY_ELEMENTS
+            EXCLUDED_TEST_DIRECTORY_ELEMENTS
         ),
         fn ($file) => preg_match(TEST_FILE_PATTERN, $file)
     )
