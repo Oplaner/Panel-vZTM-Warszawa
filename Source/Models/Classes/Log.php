@@ -6,9 +6,9 @@ require_once __DIR__."/../Enums/LogLevel.php";
 final class Log {
     public readonly SystemDateTime $dateTime;
     public readonly LogLevel $level;
-    public readonly String $message;
+    public readonly string $message;
 
-    public function __construct(SystemDateTime $dateTime, LogLevel $level, String $message) {
+    public function __construct(SystemDateTime $dateTime, LogLevel $level, string $message) {
         $this->dateTime = $dateTime;
         $this->level = $level;
         $this->message = $message;

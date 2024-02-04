@@ -9,9 +9,9 @@ final class SystemDateTimeTests {
 
         if (!is_a($now, SystemDateTime::class)) {
             return "Expected a ".SystemDateTime::class." object. Found: ".gettype($now).".";
-        } else {
-            return true;
         }
+
+        return true;
     }
 
     public static function createSystemDateTimeWithCurrentTimeUsingNowFunction(): bool|string {
@@ -19,12 +19,12 @@ final class SystemDateTimeTests {
 
         if (!is_a($now, SystemDateTime::class)) {
             return "Expected a ".SystemDateTime::class." object. Found: ".gettype($now).".";
-        } else {
-            return true;
         }
+
+        return true;
     }
 
-    public static function createSystemDateTimeWithSpecifiedTime(): bool|string {
+    public static function createSystemDateTimeWithSpecifiedTimeUsingMySQLFormat(): bool|string {
         $myBirthday = "1998-02-10 18:00:00.000000";
         $then = new SystemDateTime($myBirthday);
         $databaseString = $then->toDatabaseString();
@@ -33,9 +33,23 @@ final class SystemDateTimeTests {
             return "Expected a ".SystemDateTime::class." object. Found: ".gettype($then).".";
         } elseif ($databaseString != $myBirthday) {
             return "Expected database string to be \"$myBirthday\". Found: \"$databaseString\".";
-        } else {
-            return true;
         }
+
+        return true;
+    }
+
+    public static function createSystemDateTimeWithSpecifiedTimeUsingLogFormat(): bool|string {
+        $myBirthday = "1998-02-10_18-00-00";
+        $then = new SystemDateTime($myBirthday);
+        $logString = $then->toLogString();
+
+        if (!is_a($then, SystemDateTime::class)) {
+            return "Expected a ".SystemDateTime::class." object. Found: ".gettype($then).".";
+        } elseif ($logString != $myBirthday) {
+            return "Expected log string to be \"$myBirthday\". Found: \"$logString\".";
+        }
+
+        return true;
     }
 
     public static function checkDatabaseStringPattern(): bool|string {
@@ -45,9 +59,21 @@ final class SystemDateTimeTests {
 
         if (!preg_match($pattern, $databaseString)) {
             return "Database string \"$databaseString\" does not match correct pattern: $pattern.";
-        } else {
-            return true;
         }
+
+        return true;
+    }
+
+    public static function checkLogStringPattern(): bool|string {
+        $now = new SystemDateTime();
+        $logString = $now->toLogString();
+        $pattern = "/^\-?\d+\-[01]\d\-[0-3]\d_[0-2]\d\-[0-5]\d\-[0-5]\d$/";
+
+        if (!preg_match($pattern, $logString)) {
+            return "Log string \"$logString\" does not match correct pattern: $pattern.";
+        }
+
+        return true;
     }
 
     public static function checkTimeZoneDayShiftInLocalizedString(): bool|string {
@@ -57,9 +83,9 @@ final class SystemDateTimeTests {
 
         if ($localizedString != $expectedString) {
             return "Expected localized string for {$lastDayOfYear->toDatabaseString()} UTC to be \"$expectedString\". Found: \"$localizedString\".";
-        } else {
-            return true;
         }
+
+        return true;
     }
 
     public static function checkLocalizedStringFullFormatPattern(): bool|string {
@@ -69,9 +95,9 @@ final class SystemDateTimeTests {
 
         if (!preg_match($pattern, $localizedString)) {
             return "Localized string \"$localizedString\" does not match correct pattern: $pattern.";
-        } else {
-            return true;
         }
+
+        return true;
     }
 
     public static function add14DaysToDateTime(): bool|string {
@@ -82,9 +108,9 @@ final class SystemDateTimeTests {
 
         if ($databaseString != $expectedString) {
             return "Expected \"$expectedString\" when adding 14 days to {$dateTime->toDatabaseString()}. Found: \"$databaseString\".";
-        } else {
-            return true;
         }
+
+        return true;
     }
 
     public static function subtract4Hours30MinutesFromDateTime(): bool|string {
@@ -95,9 +121,9 @@ final class SystemDateTimeTests {
 
         if ($databaseString != $expectedString) {
             return "Expected \"$expectedString\" when subtracting 4 hours and 30 minutes from {$dateTime->toDatabaseString()}. Found: \"$databaseString\".";
-        } else {
-            return true;
         }
+
+        return true;
     }
 
     public static function checkDateIsBeforeNow(): bool|string {
@@ -107,9 +133,9 @@ final class SystemDateTimeTests {
 
         if (!$comparison) {
             return "Checking if \"{$myBirthday->toDatabaseString()}\" is before \"{$now->toDatabaseString()}\" should return true. Found: \"$comparison\".";
-        } else {
-            return true;
         }
+
+        return true;
     }
 
     public static function checkSystemDateTimesAreEqual(): bool|string {
@@ -119,9 +145,9 @@ final class SystemDateTimeTests {
 
         if (!$comparison) {
             return "Checking if \"{$myBirthday1->toDatabaseString()}\" is equal \"{$myBirthday2->toDatabaseString()}\" should return true. Found: \"$comparison\".";
-        } else {
-            return true;
         }
+
+        return true;
     }
 
     public static function checkNowIsAfterDate(): bool|string {
@@ -131,9 +157,9 @@ final class SystemDateTimeTests {
 
         if (!$comparison) {
             return "Checking if \"{$now->toDatabaseString()}\" is after \"{$myBirthday->toDatabaseString()}\" should return true. Found: \"$comparison\".";
-        } else {
-            return true;
         }
+
+        return true;
     }
 }
 

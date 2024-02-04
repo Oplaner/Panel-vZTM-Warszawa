@@ -66,17 +66,14 @@
     <h1>Panel vZTM Warszawa Tests</h1>
 <?php
 
-const EXCLUDED_TEST_DIRECTORY_ELEMENTS = [".", "..", "index.php"];
-const TEST_FILE_PATTERN = "/^\S+Tests\.php$/";
-
 $testClasses = array_map(
     fn ($file) => preg_replace("/^(\S+)\.php$/", "$1", $file),
     array_filter(
         array_diff(
             scandir(__DIR__),
-            EXCLUDED_TEST_DIRECTORY_ELEMENTS
+            [".", "..", "index.php"]
         ),
-        fn ($file) => preg_match(TEST_FILE_PATTERN, $file)
+        fn ($file) => preg_match("/^\S+Tests\.php$/", $file)
     )
 );
 

@@ -6,7 +6,6 @@ require_once __DIR__."/SystemDateTime.php";
 require_once __DIR__."/../Enums/LogLevel.php";
 
 final class Logger {
-    private const EXCLUDED_LOG_DIRECTORY_ELEMENTS = [".", ".."];
     private const LOG_FILE_PATTERN = "/^\-?\d+\-[01]\d\-[0-3]\d_[0-2]\d\-[0-5]\d\-[0-5]\d\.log$/";
     private static ?Logger $sharedInstance = null;
     private array $logs = [];
@@ -15,7 +14,7 @@ final class Logger {
         $this->logs[] = $initialLog;
     }
 
-    public static function log(LogLevel $level, String $message): void {
+    public static function log(LogLevel $level, string $message): void {
         $log = new Log(SystemDateTime::now(), $level, $message);
 
         if (is_null(self::$sharedInstance)) {
@@ -56,7 +55,7 @@ final class Logger {
             array_filter(
                 array_diff(
                     scandir(__DIR__.$properties["directory"]),
-                    self::EXCLUDED_LOG_DIRECTORY_ELEMENTS
+                    [".", ".."]
                 ),
                 fn ($file) => preg_match(self::LOG_FILE_PATTERN, $file)
             )
@@ -69,7 +68,7 @@ final class Logger {
         return count($logFileNames) == 0 ? null : $logFileNames[0];
     }
 
-    private static function removeExpiredLogFiles(): void {
+    private static function deleteExpiredLogFiles(): void {
         $properties = PropertiesReader::getProperties("logger");
         $logFileNames = self::findAllLogFileNames();
         usort($logFileNames, fn ($a, $b) => self::compareLogFileNames($a, $b));
@@ -113,7 +112,7 @@ final class Logger {
     }
 
     private function write(): void {
-        self::removeExpiredLogFiles();
+        self::deleteExpiredLogFiles();
 
         if (count($this->logs) == 0) {
             return;

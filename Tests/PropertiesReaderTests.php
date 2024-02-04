@@ -6,7 +6,7 @@ final class PropertiesReaderTests {
     public static function throwExceptionWhenRequestingInvalidPropertiesGroup(): bool|string {
         try {
             $group = "invalidGroup";
-            $properties = PropertiesReader::getProperties($group);
+            PropertiesReader::getProperties($group);
         } catch (Exception $exception) {
             return true;
         }
@@ -26,18 +26,19 @@ final class PropertiesReaderTests {
 
         if ($firstFetchResult != $secondFetchResult) {
             return "Properties of the same group have not been cached.";
-        } else {
-            return true;
         }
+
+        return true;
     }
 
-    public static function checkDatabasePropertiesAreLoadedCorrectly(): bool|string {
-        $properties = PropertiesReader::getProperties("database");
+    public static function checkPropertiesGroupIsLoadedCorrectly(): bool|string {
+        $group = "database";
+        $properties = PropertiesReader::getProperties($group);
 
-        if (!isset($properties["hostname"], $properties["username"], $properties["password"], $properties["database"])) {
-            return "Loaded database properties are incorrect. Data found: ".trim(print_r($properties, true)).".";
-        } else {
-            return true;
+        if (!isset($properties["hostname"], $properties["username"], $properties["password"], $properties["database"], $properties["charset"], $properties["collation"])) {
+            return "Loaded sample group (database) properties are incorrect. Data found: ".trim(print_r($properties, true)).".";
         }
+
+        return true;
     }
 }

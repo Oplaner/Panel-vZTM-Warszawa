@@ -4,30 +4,35 @@ require_once "../Source/Models/Classes/DatabaseConnector.php";
 require_once "../Source/Models/Classes/User.php";
 
 final class UserTests {
-    private const TEST_USER_LOGIN = 1387;
+    private const EXISTING_TEST_USER_LOGIN = 1387;
+    private const EXISTING_TEST_USER_USERNAME = "Oplaner";
+    private const NOT_EXISTING_TEST_USER_LOGIN = 100;
 
-    public static function createNewUser(): bool|string {
+    public static function createNewExistingUser(): bool|string {
         self::deleteTestUser();
-        $user = User::createNew(self::TEST_USER_LOGIN);
+        $user = User::createNew(self::EXISTING_TEST_USER_LOGIN);
 
         if (!is_a($user, User::class)) {
             return "Expected a ".User::class." object. Found: ".gettype($user).".";
-        } else {
-            return true;
+        } elseif ($user->getLogin() != self::EXISTING_TEST_USER_LOGIN) {
+            return "User's login is incorrect. Expected: \"".self::EXISTING_TEST_USER_LOGIN."\", found: \"{$user->getLogin()}\".";
+        } elseif ($user->getUsername() != self::EXISTING_TEST_USER_USERNAME) {
+            return "User's username is incorrect. Expected: \"".self::EXISTING_TEST_USER_USERNAME."\", found: \"{$user->getUsername()}\".";
+        } elseif (!$user->shouldChangePassword()) {
+            return "New user is expected to change their password.";
         }
+
+        return true;
     }
 
-    public static function checkNewUserIDPattern(): bool|string {
-        self::deleteTestUser();
-        $user = User::createNew(self::TEST_USER_LOGIN);
-        $id = $user->getID();
-        $pattern = "/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/";
+    public static function createNewNotExistingUser(): bool|string {
+        $user = User::createNew(self::NOT_EXISTING_TEST_USER_LOGIN);
 
-        if (!preg_match($pattern, $id)) {
-            return "New user's ID \"$id\" does not match correct pattern: $pattern.";
-        } else {
-            return true;
+        if (!is_null($user)) {
+            return "Expected null value. Found: ".gettype($user).".";
         }
+
+        return true;
     }
 
     private static function deleteTestUser() {
@@ -36,7 +41,7 @@ final class UserTests {
             "DELETE FROM users
             WHERE login = ?",
             [
-                self::TEST_USER_LOGIN
+                self::EXISTING_TEST_USER_LOGIN
             ]
         );
     }

@@ -1,6 +1,8 @@
 <?php
 
+require_once __DIR__."/Logger.php";
 require_once __DIR__."/PropertiesReader.php";
+require_once __DIR__."/../Enums/LogLevel.php";
 
 final class DatabaseConnector {
     private static ?mysqli $sharedInstance = null;
@@ -33,6 +35,7 @@ final class DatabaseConnector {
                 $properties["database"]
             );
         } catch (Exception $exception) {
+            Logger::log(LogLevel::error, "Failed to connect to the database: \"".$exception->getMessage()."\".");
             throw new Exception("Failed to connect to the database.");
         }
 
