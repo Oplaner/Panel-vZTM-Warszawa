@@ -7,10 +7,13 @@ require_once __DIR__."/../Enums/LogLevel.php";
 
 final class Logger {
     private const LOG_FILE_PATTERN = "/^\-?\d+\-[01]\d\-[0-3]\d_[0-2]\d\-[0-5]\d\-[0-5]\d\.log$/";
+    private const PROCESS_NAME_PREFIXES = ["alpha", "bravo", "charlie", "delta", "echo", "foxtrot", "golf", "hotel", "india", "juliett", "kilo", "lima", "mike", "november", "oscar", "papa", "quebec", "romeo", "sierra", "tango", "uniform", "victor", "whiskey", "x-ray", "yankee", "zulu"];
     private static ?Logger $sharedInstance = null;
+    private string $processName;
     private array $logs = [];
 
     private function __construct(Log $initialLog) {
+        $this->processName = $this->generateProcessName();
         $this->logs[] = $initialLog;
     }
 
@@ -99,8 +102,14 @@ final class Logger {
         );
     }
 
+    private function generateProcessName(): string {
+        $prefix = self::PROCESS_NAME_PREFIXES[rand(0, count(self::PROCESS_NAME_PREFIXES) - 1)];
+        $number = rand(1, 100);
+        return strtoupper("$prefix-$number");
+    }
+
     private function flushLog(&$file, int $index): void {
-        fwrite($file, $this->logs[$index]);
+        fwrite($file, $this->logs[$index]->toFormattedString($this->processName));
         unset($this->logs[$index]);
     }
 

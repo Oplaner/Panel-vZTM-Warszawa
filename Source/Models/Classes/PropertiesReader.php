@@ -10,6 +10,7 @@ final class PropertiesReader {
     */
     private static ?array $databaseProperties = null;
     private static ?array $loggerProperties = null;
+    private static ?array $authenticatorProperties = null;
 
     public static function getProperties(string $group): array {
         $propertiesVariableName = $group."Properties";

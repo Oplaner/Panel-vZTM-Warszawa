@@ -14,8 +14,8 @@ final class Log {
         $this->message = $message;
     }
 
-    public function __toString(): string {
-        return "[".$this->dateTime->toDatabaseString()."][".strtoupper($this->level->name)."]: ".$this->message.PHP_EOL;
+    public function toFormattedString($processName): string {
+        return "[".$this->dateTime->toDatabaseString()."][$processName][".strtoupper($this->level->name)."]: ".$this->message.PHP_EOL;
     }
 }
 

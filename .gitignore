@@ -2,4 +2,4 @@
 Source/Properties/*.properties
 
 # Ignore logs
-Logs/
+Logs/*.log

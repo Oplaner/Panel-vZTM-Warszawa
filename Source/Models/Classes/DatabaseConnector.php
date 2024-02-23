@@ -19,10 +19,12 @@ final class DatabaseConnector {
         if (!is_null(self::$sharedInstance)) {
             self::$sharedInstance->close();
             self::$sharedInstance = null;
+            Logger::log(LogLevel::info, "Closed database connection.");
         }
     }
 
     private static function initializeClient(): mysqli {
+        Logger::log(LogLevel::info, "Initializing database connection.");
         $properties = PropertiesReader::getProperties("database");
         $driver = new mysqli_driver();
         $driver->report_mode = MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT;
@@ -41,7 +43,7 @@ final class DatabaseConnector {
 
         $client->set_charset($properties["charset"]);
         $client->query("SET collation_connection = '".$properties["collation"]."'");
-
+        Logger::log(LogLevel::info, "Initialized database connection.");
         return $client;
     }
 }

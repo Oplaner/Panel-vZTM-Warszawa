@@ -1,12 +1,17 @@
 <?php
 
+require_once __DIR__."/Authenticator.php";
 require_once __DIR__."/DatabaseConnector.php";
 require_once __DIR__."/DatabaseEntity.php";
+require_once __DIR__."/Logger.php";
 require_once __DIR__."/SystemDateTime.php";
+require_once __DIR__."/../Enums/LogLevel.php";
 
 final class User extends DatabaseEntity {
     private int $login;
     private string $username;
+    private ?string $temporaryPassword = null;
+    private ?SystemDateTime $temporaryPasswordValidTo = null;
     private bool $shouldChangePassword;
     private ?array $profiles = null;
     private SystemDateTime $createdAt;
@@ -20,6 +25,7 @@ final class User extends DatabaseEntity {
     }
 
     public static function createNew(int $myBBUserID): ?User {
+        Logger::log(LogLevel::info, "Creating new user with myBB ID $myBBUserID.");
         $db = DatabaseConnector::shared();
         $result = $db->execute_query(
             "SELECT m.username
@@ -33,16 +39,19 @@ final class User extends DatabaseEntity {
         );
         
         if ($result->num_rows == 0) {
+            Logger::log(LogLevel::info, "Could not find new myBB user with ID $myBBUserID.");
             return null;
         }
 
         $data = $result->fetch_assoc();
         $result->free();
-
-        return new User(null, $myBBUserID, $data["username"], true, SystemDateTime::now());
+        $user = new User(null, $myBBUserID, $data["username"], true, SystemDateTime::now());
+        Logger::log(LogLevel::info, "Created new user from myBB: $user.");
+        return $user;
     }
 
     public static function withID(string $id): ?User {
+        Logger::log(LogLevel::info, "Fetching existing user with ID \"$id\".");
         $db = DatabaseConnector::shared();
         $result = $db->execute_query(
             "SELECT login, username, shouldChangePassword, createdAt
@@ -54,13 +63,15 @@ final class User extends DatabaseEntity {
         );
 
         if ($result->num_rows == 0) {
+            Logger::log(LogLevel::info, "Could not find existing user with ID \"$id\".");
             return null;
         }
 
         $data = $result->fetch_assoc();
         $result->free();
-
-        return new User($id, $data["login"], $data["username"], $data["shouldChangePassword"], new SystemDateTime($data["createdAt"]));
+        $user = new User($id, $data["login"], $data["username"], $data["shouldChangePassword"], new SystemDateTime($data["createdAt"]));
+        Logger::log(LogLevel::info, "Fetched existing user: $user.");
+        return $user;
     }
 
     public function getLogin(): int {
@@ -97,6 +108,14 @@ final class User extends DatabaseEntity {
         }
     }
 
+    public function getTemporaryPassword(): ?string {
+        return $this->temporaryPassword;
+    }
+
+    public function getTemporaryPasswordValidTo(): ?SystemDateTime {
+        return $this->temporaryPasswordValidTo;
+    }
+
     public function shouldChangePassword(): bool {
         return $this->shouldChangePassword;
     }
@@ -127,19 +146,28 @@ final class User extends DatabaseEntity {
     }
 
     public function save(): bool {
+        Logger::log(LogLevel::info, "Saving ".($this->isNew ? "new" : "existing")." user: $this.");
         $db = DatabaseConnector::shared();
 
         if ($this->isNew) {
+            $properties = PropertiesReader::getProperties("authenticator");
+            $this->temporaryPassword = Authenticator::generateTemporaryPassword();
+            $this->temporaryPasswordValidTo = SystemDateTime::now()->adding(
+                $properties["temporaryPasswordValidityDays"],
+                $properties["temporaryPasswordValidityHours"],
+                $properties["temporaryPasswordValidityMinutes"]
+            );
+
             return $db->execute_query(
                 "INSERT INTO users
-                (id, login, username, password, shouldChangePassword, createdAt)
-                VALUES (?, ?, ?, ?, ?, ?)",
+                (id, login, username, password, passwordValidTo, shouldChangePassword, createdAt)
+                VALUES (?, ?, ?, ?, ?, ?, ?)",
                 [
                     $this->id,
                     $this->login,
                     $this->username,
-                    // TODO: Generate random temporary password. Consider its expiration date.
-                    password_hash("password", PASSWORD_DEFAULT),
+                    password_hash($this->temporaryPassword, PASSWORD_DEFAULT),
+                    $this->temporaryPasswordValidTo->toDatabaseString(),
                     $this->shouldChangePassword,
                     $this->createdAt->toDatabaseString()
                 ]
@@ -158,6 +186,21 @@ final class User extends DatabaseEntity {
         }
 
         return true;
+    }
+
+    public function __toString() {
+        return sprintf(
+            __CLASS__."(id: \"%s\", login: %d, temporaryPassword: %s, temporaryPasswordValidTo: %s, shouldChangePassword: %s, profiles: (%d), createdAt: %s, isNew: %s, wasModified: %s)",
+            $this->id,
+            $this->login,
+            is_null($this->temporaryPassword) ? "null" : "\"".$this->temporaryPassword."\"",
+            is_null($this->temporaryPasswordValidTo) ? "null" : $this->getTemporaryPasswordValidTo()->toDatabaseString(),
+            $this->shouldChangePassword() ? "true" : "false",
+            is_null($this->profiles) ? 0 : count($this->profiles),
+            $this->createdAt->toDatabaseString(),
+            $this->isNew ? "true" : "false",
+            $this->wasModified ? "true" : "false"
+        );
     }
 }
 
