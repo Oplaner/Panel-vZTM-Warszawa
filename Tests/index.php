@@ -78,7 +78,7 @@ $testClasses = array_map(
 );
 
 foreach ($testClasses as $class):
-    eval("require_once \"$class.php\";");
+    require_once $class.".php";
 
 ?>
     <h2><?php echo $class ?></h2>
@@ -86,7 +86,7 @@ foreach ($testClasses as $class):
 <?php
 
     foreach (get_class_methods($class) as $method):
-        eval("\$result = $class::$method();");
+        $result = $class::$method();
 
         if ($result === true):
 
