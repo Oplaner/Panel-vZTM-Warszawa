@@ -1,0 +1,12 @@
+<?php
+
+abstract class Controller {
+    private const VIEWS_DIRECTORY = __DIR__."/../Views/";
+
+    public function renderView(string $name, array $parameters = []): void {
+        extract($parameters);
+        include self::VIEWS_DIRECTORY.$name.".php";
+    }
+}
+
+?>
