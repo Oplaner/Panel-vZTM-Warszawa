@@ -5,9 +5,9 @@ abstract class DatabaseEntity {
     protected ?bool $isNew = null;
     protected bool $wasModified = false;
 
-    abstract public function save(): bool;
+    abstract public function save(): void;
 
-    private static function generateUUIDv4(): string {
+    final public static function generateUUIDv4(): string {
         $randomData = random_bytes(16);
         $randomData[6] = chr(ord($randomData[6]) & 0x0F | 0x40);
         $randomData[8] = chr(ord($randomData[8]) & 0x3F | 0x80);

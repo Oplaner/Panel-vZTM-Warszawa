@@ -16,6 +16,8 @@ final class Router {
     }
 
     public function dispatchRequest(string $path, RequestMethod $method): void {
+        Logger::log(LogLevel::info, "Handling ".strtoupper($method->name)." request for path: \"$path\".");
+
         foreach (array_keys($this->routes) as $routePattern) {
             $matches = [];
 

@@ -130,7 +130,7 @@ final class Logger {
         $currentLogFileName = self::findLatestLogFileName();
         $currentLogFileEndDateTime = null;
 
-        if (!is_null($currentLogFileName)) {
+        if (isset($currentLogFileName)) {
             $currentLogFileStartDateTime = new SystemDateTime($currentLogFileName);
             $currentLogFileEndDateTime = self::calculateLogFileEndDateTime($currentLogFileStartDateTime);
         }

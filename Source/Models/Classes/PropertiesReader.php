@@ -8,9 +8,10 @@ final class PropertiesReader {
         Only property groups listed below will be accepted during get request.
         The class will read a file only once and store the result in dedicated property.
     */
+    private static ?array $applicationProperties = null;
+    private static ?array $authenticatorProperties = null;
     private static ?array $databaseProperties = null;
     private static ?array $loggerProperties = null;
-    private static ?array $authenticatorProperties = null;
 
     public static function getProperties(string $group): array {
         $propertiesVariableName = $group."Properties";
@@ -49,11 +50,23 @@ final class PropertiesReader {
                 $matches = array_values(
                     array_filter(
                         $matches,
-                        fn ($value, $key) => is_string($key) && !is_null($value),
+                        fn ($value, $key) => is_string($key) && isset($value),
                         ARRAY_FILTER_USE_BOTH
                     )
                 );
-                $properties[$matches[0]] = $matches[1];
+
+                $key = $matches[0];
+                $value = $matches[1];
+
+                if (is_numeric($value)) {
+                    $value += 0; // Cast value to a concrete numeric type (int|float).
+                } elseif ($value == "false") {
+                    $value = false;
+                } elseif ($value == "true") {
+                    $value = true;
+                }
+
+                $properties[$key] = $value;
             }
         }
 

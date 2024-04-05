@@ -29,9 +29,8 @@ final class DirectorProfile extends Profile {
         return $this->isProtected;
     }
 
-    public function save(): bool {
+    public function save(): void {
         // Try to save this entity to database.
-        return true;
     }
 }
 

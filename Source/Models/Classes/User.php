@@ -40,12 +40,12 @@ final class User extends DatabaseEntity {
         
         if ($result->num_rows == 0) {
             Logger::log(LogLevel::info, "Could not find new myBB user with ID $myBBUserID.");
+            $result->free();
             return null;
         }
 
-        $data = $result->fetch_assoc();
+        $user = new User(null, $myBBUserID, $result->fetch_column(), true, SystemDateTime::now());
         $result->free();
-        $user = new User(null, $myBBUserID, $data["username"], true, SystemDateTime::now());
         Logger::log(LogLevel::info, "Created new user from myBB: $user.");
         return $user;
     }
@@ -54,7 +54,7 @@ final class User extends DatabaseEntity {
         Logger::log(LogLevel::info, "Fetching existing user with ID \"$id\".");
         $db = DatabaseConnector::shared();
         $result = $db->execute_query(
-            "SELECT login, username, shouldChangePassword, createdAt
+            "SELECT login, username, should_change_password, created_at
             FROM users
             WHERE id = ?",
             [
@@ -69,7 +69,7 @@ final class User extends DatabaseEntity {
 
         $data = $result->fetch_assoc();
         $result->free();
-        $user = new User($id, $data["login"], $data["username"], $data["shouldChangePassword"], new SystemDateTime($data["createdAt"]));
+        $user = new User($id, $data["login"], $data["username"], $data["should_change_password"], new SystemDateTime($data["created_at"]));
         Logger::log(LogLevel::info, "Fetched existing user: $user.");
         return $user;
     }
@@ -99,11 +99,11 @@ final class User extends DatabaseEntity {
             ]
         );
 
-        $data = $result->fetch_assoc();
+        $username = $result->fetch_column();
         $result->free();
 
-        if ($data["username"] != $this->username) {
-            $this->username = $data["username"];
+        if ($username != $this->username) {
+            $this->username = $username;
             $this->wasModified = true;
         }
     }
@@ -145,7 +145,7 @@ final class User extends DatabaseEntity {
         }
     }
 
-    public function save(): bool {
+    public function save(): void {
         Logger::log(LogLevel::info, "Saving ".($this->isNew ? "new" : "existing")." user: $this.");
         $db = DatabaseConnector::shared();
 
@@ -158,9 +158,9 @@ final class User extends DatabaseEntity {
                 $properties["temporaryPasswordValidityMinutes"]
             );
 
-            return $db->execute_query(
+            $db->execute_query(
                 "INSERT INTO users
-                (id, login, username, password, passwordValidTo, shouldChangePassword, createdAt)
+                (id, login, username, password, password_valid_to, should_change_password, created_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?)",
                 [
                     $this->id,
@@ -173,9 +173,9 @@ final class User extends DatabaseEntity {
                 ]
             );
         } elseif ($this->wasModified) {
-            return $db->execute_query(
+            $db->execute_query(
                 "UPDATE users
-                SET username = ?, shouldChangePassword = ?
+                SET username = ?, should_change_password = ?
                 WHERE id = ?",
                 [
                     $this->username,
@@ -184,8 +184,6 @@ final class User extends DatabaseEntity {
                 ]
             );
         }
-
-        return true;
     }
 
     public function __toString() {

@@ -9,7 +9,7 @@ final class SystemDateTime {
     public function __construct(?string $dateTime = null) {
         $timeZone = new DateTimeZone("UTC");
 
-        if (!is_null($dateTime)) {
+        if (isset($dateTime)) {
             if (($dateTimeFromMySQLFormat = DateTimeImmutable::createFromFormat(self::MYSQL_DATETIME_FORMAT, $dateTime, $timeZone)) !== false) {
                 $this->dateTime = $dateTimeFromMySQLFormat;
                 return;
@@ -28,11 +28,12 @@ final class SystemDateTime {
         return new SystemDateTime();
     }
 
-    private static function prepareDateIntervalForCalculation(int $days, int $hours, int $minutes): DateInterval {
+    private static function prepareDateIntervalForCalculation(int $days, int $hours, int $minutes, int $seconds): DateInterval {
         $days = max(0, $days);
         $hours = max(0, $hours);
         $minutes = max(0, $minutes);
-        return new DateInterval("P{$days}DT{$hours}H{$minutes}M");
+        $seconds = max(0, $seconds);
+        return new DateInterval("P{$days}DT{$hours}H{$minutes}M{$seconds}S");
     }
 
     private static function createFromDateTimeImmutable(DateTimeImmutable $dateTime): SystemDateTime {
@@ -53,13 +54,13 @@ final class SystemDateTime {
         return $this->getLocalizedDateTime()->format($format->value);
     }
 
-    public function adding(int $days, int $hours, int $minutes): SystemDateTime {
-        $dateInterval = self::prepareDateIntervalForCalculation($days, $hours, $minutes);
+    public function adding(int $days, int $hours, int $minutes, int $seconds = 0): SystemDateTime {
+        $dateInterval = self::prepareDateIntervalForCalculation($days, $hours, $minutes, $seconds);
         return self::createFromDateTimeImmutable($this->dateTime->add($dateInterval));
     }
 
-    public function subtracting(int $days, int $hours, int $minutes): SystemDateTime {
-        $dateInterval = self::prepareDateIntervalForCalculation($days, $hours, $minutes);
+    public function subtracting(int $days, int $hours, int $minutes, int $seconds = 0): SystemDateTime {
+        $dateInterval = self::prepareDateIntervalForCalculation($days, $hours, $minutes, $seconds);
         return self::createFromDateTimeImmutable($this->dateTime->sub($dateInterval));
     }
 

@@ -100,14 +100,14 @@ final class SystemDateTimeTests {
         return true;
     }
 
-    public static function add14DaysToDateTime(): bool|string {
+    public static function add14Days15SecondsToDateTime(): bool|string {
         $dateTime = new SystemDateTime("2024-01-27 09:41:00.000000");
-        $plus14Days = $dateTime->adding(14, 0, 0);
+        $plus14Days = $dateTime->adding(14, 0, 0, 15);
         $databaseString = $plus14Days->toDatabaseString();
-        $expectedString = "2024-02-10 09:41:00.000000";
+        $expectedString = "2024-02-10 09:41:15.000000";
 
         if ($databaseString != $expectedString) {
-            return "Expected \"$expectedString\" when adding 14 days to {$dateTime->toDatabaseString()}. Found: \"$databaseString\".";
+            return "Expected \"$expectedString\" when adding 14 days and 15 seconds to {$dateTime->toDatabaseString()}. Found: \"$databaseString\".";
         }
 
         return true;

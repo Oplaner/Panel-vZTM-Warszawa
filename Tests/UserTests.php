@@ -28,7 +28,7 @@ final class UserTests {
     public static function createNewNotExistingUser(): bool|string {
         $user = User::createNew(self::NOT_EXISTING_TEST_USER_LOGIN);
 
-        if (!is_null($user)) {
+        if (isset($user)) {
             return "Expected null value. Found: ".gettype($user).".";
         }
 
