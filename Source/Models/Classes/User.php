@@ -82,7 +82,7 @@ final class User extends DatabaseEntity {
         return $this->username;
     }
 
-    public function updateUsername() {
+    public function updateUsername(): void {
         if ($this->isNew) {
             return;
         }
