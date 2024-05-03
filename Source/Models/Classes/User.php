@@ -64,6 +64,7 @@ final class User extends DatabaseEntity {
 
         if ($result->num_rows == 0) {
             Logger::log(LogLevel::info, "Could not find existing user with ID \"$id\".");
+            $result->free();
             return null;
         }
 

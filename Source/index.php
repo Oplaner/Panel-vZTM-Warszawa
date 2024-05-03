@@ -16,7 +16,7 @@ try {
     $_USER = Authenticator::getUserFromSessionData();
     $router = new Router(basename(__DIR__));
     $path = $_SERVER["REQUEST_URI"];
-    $method = RequestMethod::fromString($_SERVER["REQUEST_METHOD"]);
+    $method = RequestMethod::from($_SERVER["REQUEST_METHOD"]);
     $router->dispatchRequest($path, $method);
 } catch (Exception $exception) {
     Logger::log(LogLevel::error, $exception->getMessage()."\n----- STACK TRACE -----\n".$exception->getTraceAsString());
