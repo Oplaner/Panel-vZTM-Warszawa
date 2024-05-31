@@ -24,7 +24,7 @@ final class Privilege extends DatabaseEntity {
         Logger::log(LogLevel::info, "Fetching privilege with ID \"$id\".");
         $db = DatabaseConnector::shared();
         $result = $db->execute_query(
-            "SELECT scope, associatedEntityID
+            "SELECT scope, associated_entity_id
             FROM privileges
             WHERE id = ?",
             [
@@ -40,7 +40,7 @@ final class Privilege extends DatabaseEntity {
 
         $data = $result->fetch_assoc();
         $result->free();
-        $privilege = new Privilege($id, PrivilegeScope::from($data["scope"]), $data["associatedEntityID"]);
+        $privilege = new Privilege($id, PrivilegeScope::from($data["scope"]), $data["associated_entity_id"]);
         Logger::log(LogLevel::info, "Fetched privilege: $privilege.");
         return $privilege;
     }
@@ -58,7 +58,7 @@ final class Privilege extends DatabaseEntity {
             Logger::log(LogLevel::info, "Saving new privilege: $this.");
             DatabaseConnector::shared()->execute_query(
                 "INSERT INTO privileges
-                (id, scope, associatedEntityID)
+                (id, scope, associated_entity_id)
                 VALUES (?, ?, ?)",
                 [
                     $this->id,
