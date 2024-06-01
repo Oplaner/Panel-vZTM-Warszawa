@@ -22,6 +22,10 @@ final class PrivilegeSet extends DatabaseEntity {
     }
 
     public static function createNew(string $profileID, array $privileges): PrivilegeSet {
+        if (count($privileges) == 0) {
+            throw new Exception("Creating a privilege set with 0 privileges is not allowed.");
+        }
+
         return new PrivilegeSet(null, $profileID, $privileges);
     }
 
@@ -100,6 +104,10 @@ final class PrivilegeSet extends DatabaseEntity {
 
         if ($this->isNew) {
             foreach ($this->privileges as $privilege) {
+                /*
+                    Privileges themselves are expected to have been created before they are being used
+                    in this context, so for this reason there is no additional save() call on each.
+                */
                 $db->execute_query(
                     "INSERT INTO privilege_set_privileges
                     (privilege_set_id, privilege_id)
