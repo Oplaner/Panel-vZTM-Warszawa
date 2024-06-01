@@ -11,7 +11,7 @@ final class PrivilegeSet extends DatabaseEntity {
     private string $profileID;
     private array $privileges;
     private SystemDateTime $validFrom;
-    private ?SystemDateTime $validTo = null;
+    private ?SystemDateTime $validTo;
 
     private function __construct(?string $id, string $profileID, array $privileges, ?SystemDateTime $validFrom = null, ?SystemDateTime $validTo = null) {
         $this->setID($id);

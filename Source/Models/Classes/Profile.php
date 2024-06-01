@@ -7,8 +7,8 @@ require_once __DIR__."/User.php";
 abstract class Profile extends DatabaseEntity {
     protected SystemDateTime $activatedAt;
     protected User $activatedBy;
-    protected ?SystemDateTime $deactivatedAt = null;
-    protected ?User $deactivatedBy = null;
+    protected ?SystemDateTime $deactivatedAt;
+    protected ?User $deactivatedBy;
 
     public function getActivatedAt(): SystemDateTime {
         return $this->activatedAt;

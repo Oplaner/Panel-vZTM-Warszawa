@@ -1,8 +1,8 @@
 <?php
 
 abstract class DatabaseEntity {
-    protected ?string $id = null;
-    protected ?bool $isNew = null;
+    protected string $id;
+    protected bool $isNew;
     protected bool $wasModified = false;
 
     abstract public function save(): void;
