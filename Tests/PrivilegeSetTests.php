@@ -25,8 +25,6 @@ final class PrivilegeSetTests {
 
         if (!is_a($privilegeSet, PrivilegeSet::class)) {
             return "Expected a ".PrivilegeSet::class." object. Found: ".gettype($privilegeSet).".";
-        } elseif ($privilegeSet->getProfileID() != $profileID) {
-            return "Privilege set profileID is incorrect. Expected: \"$profileID\", found: \"{$privilegeSet->getProfileID()}\".";
         } elseif ($privilegeSet->getPrivileges() !== [$privilege1, $privilege2]) {
             return "Privilege set privileges array is incorrect. Expected: [$privilege1, $privilege2], found: [".implode(", ", array_map(fn ($privilege) => (string) $privilege, $privilegeSet->getPrivileges()))."].";
         } elseif (is_null($privilegeSet->getValidFrom())) {
@@ -74,8 +72,6 @@ final class PrivilegeSetTests {
 
         if (!is_a($privilegeSet, PrivilegeSet::class)) {
             return "Expected a ".PrivilegeSet::class." object. Found: ".gettype($privilegeSet).".";
-        } elseif ($privilegeSet->getProfileID() != $profileID) {
-            return "Privilege set profileID is incorrect. Expected: \"$profileID\", found: \"{$privilegeSet->getProfileID()}\".";
         } elseif (count($privilegeSet->getPrivileges()) != 1) {
             return "Privilege set privileges count is incorrect. Expected: 1, found: ".count($privilegeSet->getPrivileges()).".";
         } elseif ($privilegeSet->getPrivileges()[0]->getID() != $privilegeID) {

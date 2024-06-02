@@ -22,6 +22,8 @@ final class PrivilegeSet extends DatabaseEntity {
     }
 
     public static function createNew(string $profileID, array $privileges): PrivilegeSet {
+        Logger::log(LogLevel::info, "Creating new privilege set for profile with ID \"$profileID\" and ".count($privileges)." privilege(s).");
+
         if (count($privileges) == 0) {
             throw new Exception("Creating a privilege set with 0 privileges is not allowed.");
         }
@@ -75,10 +77,6 @@ final class PrivilegeSet extends DatabaseEntity {
         $privilegeSet = new PrivilegeSet($id, $profileID, $privileges, $validFrom, $validTo);
         Logger::log(LogLevel::info, "Fetched privilege set: $privilegeSet.");
         return $privilegeSet;
-    }
-
-    public function getProfileID(): string {
-        return $this->profileID;
     }
 
     public function getPrivileges(): array {

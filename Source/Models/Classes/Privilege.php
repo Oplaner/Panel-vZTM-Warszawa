@@ -17,6 +17,7 @@ final class Privilege extends DatabaseEntity {
     }
 
     public static function createNew(PrivilegeScope $scope, ?string $associatedEntityID = null): Privilege {
+        Logger::log(LogLevel::info, "Creating new privilege with scope \"{$scope->value}\" and associated entity ID ".(is_null($associatedEntityID) ? "null" : "\"$associatedEntityID\"").".");
         return new Privilege(null, $scope, $associatedEntityID);
     }
 
