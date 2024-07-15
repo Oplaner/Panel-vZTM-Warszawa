@@ -1,13 +1,5 @@
 <?php
 
-require_once __DIR__."/DatabaseEntity.php";
-require_once __DIR__."/PropertiesReader.php";
-require_once __DIR__."/Logger.php";
-require_once __DIR__."/SystemDateTime.php";
-require_once __DIR__."/User.php";
-require_once __DIR__."/../Enums/AuthenticationResult.php";
-require_once __DIR__."/../Enums/LogLevel.php";
-
 final class Authenticator {
     private const SESSION_COOKIE_HTTPONLY = true;
     private const SESSION_COOKIE_SAMESITE = "Lax";
@@ -17,6 +9,8 @@ final class Authenticator {
         "digits" => "346789",
         "specialCharacters" => "!@#$%&?"
     ];
+
+    public function __construct() {}
 
     public static function getUserFromSessionData(): ?User {
         $_USER = null;

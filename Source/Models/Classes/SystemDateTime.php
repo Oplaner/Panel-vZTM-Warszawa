@@ -4,6 +4,7 @@ final class SystemDateTime {
     private const MYSQL_DATETIME_FORMAT = "Y-m-d H:i:s.u";
     private const LOG_DATETIME_FORMAT = "Y-m-d_H-i-s";
     private const LOCAL_TIME_ZONE = "Europe/Warsaw";
+
     private DateTimeImmutable $dateTime; // Always stored in UTC.
 
     public function __construct(?string $dateTime = null) {

@@ -1,8 +1,5 @@
 <?php
 
-require_once __DIR__."/SystemDateTime.php";
-require_once __DIR__."/../Enums/LogLevel.php";
-
 final class Log {
     public readonly SystemDateTime $dateTime;
     public readonly LogLevel $level;

@@ -1,9 +1,5 @@
 <?php
 
-require_once "../Source/Models/Classes/Logger.php";
-require_once "../Source/Models/Classes/PropertiesReader.php";
-require_once "../Source/Models/Enums/LogLevel.php";
-
 final class LoggerTests {
     private const LOG_FILES_DIRECTORY = "../Logs/";
     private const LOG_FILE_PATTERN = "/^\-?\d+\-[01]\d\-[0-3]\d_[0-2]\d\-[0-5]\d\-[0-5]\d\.log$/";

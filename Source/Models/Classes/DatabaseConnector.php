@@ -1,11 +1,9 @@
 <?php
 
-require_once __DIR__."/Logger.php";
-require_once __DIR__."/PropertiesReader.php";
-require_once __DIR__."/../Enums/LogLevel.php";
-
 final class DatabaseConnector {
     private static ?mysqli $sharedInstance = null;
+
+    public function __construct() {}
 
     public static function shared(): mysqli {
         if (is_null(self::$sharedInstance)) {

@@ -1,9 +1,5 @@
 <?php
 
-require_once __DIR__."/DatabaseEntity.php";
-require_once __DIR__."/SystemDateTime.php";
-require_once __DIR__."/User.php";
-
 abstract class Profile extends DatabaseEntity {
     protected string $userID;
     protected SystemDateTime $activatedAt;

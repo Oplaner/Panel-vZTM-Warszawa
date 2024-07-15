@@ -1,13 +1,8 @@
 <?php
 
-require_once __DIR__."/Models/Classes/Authenticator.php";
-require_once __DIR__."/Models/Classes/DatabaseConnector.php";
-require_once __DIR__."/Models/Classes/Logger.php";
-require_once __DIR__."/Models/Classes/PropertiesReader.php";
-require_once __DIR__."/Models/Classes/Router.php";
-require_once __DIR__."/Models/Enums/LogLevel.php";
-require_once __DIR__."/Models/Enums/RequestMethod.php";
+require_once __DIR__."/Models/Classes/Autoloader.php";
 
+Autoloader::scanSourceDirectory(basename(__DIR__));
 Logger::log(LogLevel::info, "===== APPLICATION START =====");
 $properties = PropertiesReader::getProperties("application");
 error_reporting($properties["errorReportingEnabled"] ? E_ALL : 0);

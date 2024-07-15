@@ -1,3 +1,10 @@
+<?php
+
+require_once __DIR__."/../Source/Models/Classes/Autoloader.php";
+
+Autoloader::scanSourceDirectory(basename(__DIR__));
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -71,7 +78,7 @@ $testClasses = array_map(
     array_filter(
         array_diff(
             scandir(__DIR__),
-            [".", "..", "index.php"]
+            [".", "..", basename(__DIR__)]
         ),
         fn ($file) => preg_match("/^\S+Tests\.php$/", $file)
     )

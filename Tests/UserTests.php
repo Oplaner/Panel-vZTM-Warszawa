@@ -1,8 +1,5 @@
 <?php
 
-require_once "../Source/Models/Classes/DatabaseConnector.php";
-require_once "../Source/Models/Classes/User.php";
-
 final class UserTests {
     private const EXISTING_TEST_USER_LOGIN = 1387;
     private const EXISTING_TEST_USER_USERNAME = "Oplaner";

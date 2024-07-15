@@ -1,7 +1,5 @@
 <?php
 
-require_once "../Source/Models/Classes/PropertiesReader.php";
-
 final class PropertiesReaderTests {
     public static function throwExceptionWhenRequestingInvalidPropertiesGroup(): bool|string {
         try {

@@ -1,7 +1,5 @@
 <?php
 
-require_once __DIR__."/../Enums/RequestMethod.php";
-
 define("DEFAULT_ROUTE", true);
 
 #[Attribute(Attribute::TARGET_METHOD)]

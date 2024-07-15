@@ -1,8 +1,5 @@
 <?php
 
-require_once "../Source/Models/Classes/Authenticator.php";
-require_once "../Source/Models/Classes/PropertiesReader.php";
-
 final class AuthenticatorTests {
     public static function checkTooShortPasswordIsIncorrect(): bool|string {
         $properties = PropertiesReader::getProperties("authenticator");

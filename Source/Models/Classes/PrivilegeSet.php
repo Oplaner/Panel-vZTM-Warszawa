@@ -1,12 +1,5 @@
 <?php
 
-require_once __DIR__."/DatabaseConnector.php";
-require_once __DIR__."/DatabaseEntity.php";
-require_once __DIR__."/Logger.php";
-require_once __DIR__."/Privilege.php";
-require_once __DIR__."/SystemDateTime.php";
-require_once __DIR__."/../Enums/LogLevel.php";
-
 final class PrivilegeSet extends DatabaseEntity {
     private string $profileID;
     private array $privileges;
@@ -102,10 +95,6 @@ final class PrivilegeSet extends DatabaseEntity {
 
         if ($this->isNew) {
             foreach ($this->privileges as $privilege) {
-                /*
-                    Privileges themselves are expected to have been created before they are being used
-                    in this context, so for this reason there is no additional save() call on each.
-                */
                 $db->execute_query(
                     "INSERT INTO privilege_set_privileges
                     (privilege_set_id, privilege_id)

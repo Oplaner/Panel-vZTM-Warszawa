@@ -1,11 +1,5 @@
 <?php
 
-require_once __DIR__."/DatabaseConnector.php";
-require_once __DIR__."/DatabaseEntity.php";
-require_once __DIR__."/Logger.php";
-require_once __DIR__."/../Enums/LogLevel.php";
-require_once __DIR__."/../Enums/PrivilegeScope.php";
-
 final class Privilege extends DatabaseEntity {
     private PrivilegeScope $scope;
     private ?string $associatedEntityID;

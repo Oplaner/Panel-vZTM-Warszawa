@@ -1,11 +1,5 @@
 <?php
 
-require_once "../Source/Models/Classes/DatabaseConnector.php";
-require_once "../Source/Models/Classes/DatabaseEntity.php";
-require_once "../Source/Models/Classes/Privilege.php";
-require_once "../Source/Models/Classes/PrivilegeSet.php";
-require_once "../Source/Models/Enums/PrivilegeScope.php";
-
 final class PrivilegeSetTests {
     public static function throwExceptionWhenCreatingPrivilegeSetWithoutPrivileges(): bool|string {
         try {

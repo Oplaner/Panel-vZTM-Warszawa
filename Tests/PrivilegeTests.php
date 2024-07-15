@@ -1,9 +1,5 @@
 <?php
 
-require_once "../Source/Models/Classes/DatabaseEntity.php";
-require_once "../Source/Models/Classes/Privilege.php";
-require_once "../Source/Models/Enums/PrivilegeScope.php";
-
 final class PrivilegeTests {
     public static function createPrivilegeWithoutAssociatedEntityID(): bool|string {
         $scope = PrivilegeScope::canViewAllTimetables;

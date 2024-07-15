@@ -1,12 +1,5 @@
 <?php
 
-require_once __DIR__."/Authenticator.php";
-require_once __DIR__."/DatabaseConnector.php";
-require_once __DIR__."/DatabaseEntity.php";
-require_once __DIR__."/Logger.php";
-require_once __DIR__."/SystemDateTime.php";
-require_once __DIR__."/../Enums/LogLevel.php";
-
 final class User extends DatabaseEntity {
     private int $login;
     private string $username;

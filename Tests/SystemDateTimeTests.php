@@ -1,8 +1,5 @@
 <?php
 
-require_once "../Source/Models/Classes/SystemDateTime.php";
-require_once "../Source/Models/Enums/SystemDateTimeFormat.php";
-
 final class SystemDateTimeTests {
     public static function createSystemDateTimeWithCurrentTimeUsingConstructor(): bool|string {
         $now = new SystemDateTime();

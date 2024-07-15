@@ -1,14 +1,8 @@
 <?php
 
-require_once __DIR__."/DatabaseConnector.php";
-require_once __DIR__."/Logger.php";
-require_once __DIR__."/Profile.php";
-require_once __DIR__."/SystemDateTime.php";
-require_once __DIR__."/User.php";
-require_once __DIR__."/../Enums/LogLevel.php";
-
 final class DirectorProfile extends Profile {
     private const DATABASE_PROFILE_TYPE = "DIRECTOR";
+
     private bool $isProtected;
 
     private function __construct(?string $id, string $userID, SystemDateTime $activatedAt, User $activatedBy, ?SystemDateTime $deactivatedAt, ?User $deactivatedBy) {

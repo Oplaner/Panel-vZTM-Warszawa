@@ -1,10 +1,8 @@
 <?php
 
-require_once __DIR__."/Route.php";
-require_once __DIR__."/../Enums/RequestMethod.php";
-
 final class Router {
     private const CONTROLLERS_DIRECTORY = __DIR__."/../../Controllers/";
+
     private string $base;
     private array $routes;
     private string $defaultController;
