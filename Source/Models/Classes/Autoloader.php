@@ -1,7 +1,7 @@
 <?php
 
 final class Autoloader {
-    public const SOURCE_DIRECTORY = __DIR__."/../../";
+    private const SOURCE_DIRECTORY = __DIR__."/../../";
 
     private static ?Autoloader $sharedInstance = null;
 

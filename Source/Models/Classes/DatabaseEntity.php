@@ -5,7 +5,9 @@ abstract class DatabaseEntity {
     protected bool $isNew;
     protected bool $wasModified = false;
 
-    abstract public function save(): void;
+    protected function __construct(?string $id) {
+        $this->setID($id);
+    }
 
     final public static function generateUUIDv4(): string {
         $randomData = random_bytes(16);
@@ -19,7 +21,9 @@ abstract class DatabaseEntity {
         return $this->id;
     }
 
-    final protected function setID(?string $id): void {
+    abstract public function save(): void;
+
+    private function setID(?string $id): void {
         if (is_null($id)) {
             $this->id = self::generateUUIDv4();
             $this->isNew = true;

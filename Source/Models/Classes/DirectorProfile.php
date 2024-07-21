@@ -5,19 +5,14 @@ final class DirectorProfile extends Profile {
 
     private bool $isProtected;
 
-    private function __construct(?string $id, string $userID, SystemDateTime $activatedAt, User $activatedBy, ?SystemDateTime $deactivatedAt, ?User $deactivatedBy) {
-        $this->setID($id);
-        $this->userID = $userID;
-        $this->activatedAt = $activatedAt;
-        $this->activatedBy = $activatedBy;
-        $this->deactivatedAt = $deactivatedAt;
-        $this->deactivatedBy = $deactivatedBy;
-        $this->isProtected = false;
+    private function __construct(?string $id, string $userID, SystemDateTime $activatedAt, User $activatedBy, ?SystemDateTime $deactivatedAt, ?User $deactivatedBy, bool $isProtected) {
+        parent::__construct($id, $userID, $activatedAt, $activatedBy, $deactivatedAt, $deactivatedBy);
+        $this->isProtected = $isProtected;
     }
 
     public static function createNew(User $owner, User $activator): DirectorProfile {
         Logger::log(LogLevel::info, "User with ID \"{$activator->getID()}\" is creating new director profile for user with ID \"{$owner->getID()}\".");
-        return new DirectorProfile(null, $owner->getID(), SystemDateTime::now(), $activator, null, null);
+        return new DirectorProfile(null, $owner->getID(), SystemDateTime::now(), $activator, null, null, false);
     }
 
     public static function withID(string $id): ?DirectorProfile {
@@ -71,30 +66,9 @@ final class DirectorProfile extends Profile {
                     $this->isProtected
                 ]
             );
-            $db->execute_query(
-                "INSERT INTO profiles
-                (id, user_id, type, activated_at, activated_by_user_id, deactivated_at, deactivated_by_user_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?)",
-                [
-                    $this->id,
-                    $this->userID,
-                    self::DATABASE_PROFILE_TYPE,
-                    $this->activatedAt->toDatabaseString(),
-                    $this->activatedBy->getID(),
-                    null,
-                    null
-                ]
-            );
+            $this->saveNewProfileToDatabase(self::DATABASE_PROFILE_TYPE);
         } elseif ($this->wasModified) {
-            $db->execute_query(
-                "UPDATE profiles
-                SET deactivated_at = ?, deactivated_by_user_id = ?
-                WHERE id = ?",
-                [
-                    $this->deactivatedAt->toDatabaseString(),
-                    $this->deactivatedBy->getID()
-                ]
-            );
+            $this->saveExistingProfileToDatabase();
         }
     }
 

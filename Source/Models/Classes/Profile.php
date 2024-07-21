@@ -7,6 +7,17 @@ abstract class Profile extends DatabaseEntity {
     protected ?SystemDateTime $deactivatedAt;
     protected ?User $deactivatedBy;
 
+    protected function __construct(?string $id, string $userID, SystemDateTime $activatedAt, User $activatedBy, ?SystemDateTime $deactivatedAt, ?User $deactivatedBy) {
+        parent::__construct($id);
+        $this->userID = $userID;
+        $this->activatedAt = $activatedAt;
+        $this->activatedBy = $activatedBy;
+        $this->deactivatedAt = $deactivatedAt;
+        $this->deactivatedBy = $deactivatedBy;
+    }
+
+    // TODO: Get profiles for a user (different types, active).
+
     public function getActivatedAt(): SystemDateTime {
         return $this->activatedAt;
     }
@@ -31,6 +42,36 @@ abstract class Profile extends DatabaseEntity {
         $this->deactivatedAt = SystemDateTime::now();
         $this->deactivatedBy = $deactivator;
         $this->wasModified = true;
+    }
+
+    protected function saveNewProfileToDatabase(string $profileType): void {
+        DatabaseConnector::shared()->execute_query(
+            "INSERT INTO profiles
+            (id, user_id, type, activated_at, activated_by_user_id, deactivated_at, deactivated_by_user_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?)",
+            [
+                $this->id,
+                $this->userID,
+                $profileType,
+                $this->activatedAt->toDatabaseString(),
+                $this->activatedBy->getID(),
+                null,
+                null
+            ]
+        );
+    }
+
+    protected function saveExistingProfileToDatabase(): void {
+        DatabaseConnector::shared()->execute_query(
+            "UPDATE profiles
+            SET deactivated_at = ?, deactivated_by_user_id = ?
+            WHERE id = ?",
+            [
+                $this->deactivatedAt->toDatabaseString(),
+                $this->deactivatedBy->getID(),
+                $this->id
+            ]
+        );
     }
 }
 

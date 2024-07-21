@@ -75,18 +75,16 @@ final class DirectorProfileTests {
     }
 
     public static function deactivateDirectorProfile(): bool|string {
-        $owner = User::createNew(self::EXISTING_TEST_USER_LOGIN);
-        $activator = User::createNew(self::EXISTING_TEST_USER_LOGIN);
-        $deactivator = User::createNew(self::EXISTING_TEST_USER_LOGIN);
-        $profile = DirectorProfile::createNew($owner, $activator);
-        $profile->deactivate($deactivator);
+        $user = User::createNew(self::EXISTING_TEST_USER_LOGIN);
+        $profile = DirectorProfile::createNew($user, $user);
+        $profile->deactivate($user);
 
         if (is_null($profile->getDeactivatedAt())) {
             return "Deactivated director profile deactivatedAt value should not be null.";
         } elseif (is_null($profile->getDeactivatedBy())) {
             return "Deactivated director profile deactivatedBy value should not be null.";
-        } elseif ($profile->getDeactivatedBy()->getID() != $deactivator->getID()) {
-            return "Deactivated director profile deactivatedBy value is incorrect. Expected (userID): \"{$deactivator->getID()}\", found (userID): \"{$profile->getDeactivatedBy()->getID()}\".";
+        } elseif ($profile->getDeactivatedBy()->getID() != $user->getID()) {
+            return "Deactivated director profile deactivatedBy value is incorrect. Expected (userID): \"{$user->getID()}\", found (userID): \"{$profile->getDeactivatedBy()->getID()}\".";
         }
 
         return true;

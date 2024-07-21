@@ -55,7 +55,6 @@ final class Router {
         );
 
         foreach ($controllerNames as $controller) {
-            require_once self::CONTROLLERS_DIRECTORY.$controller.".php";
             $reflection = new ReflectionClass($controller);
 
             foreach ($reflection->getMethods() as $method) {

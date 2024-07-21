@@ -5,7 +5,7 @@ final class Privilege extends DatabaseEntity {
     private ?string $associatedEntityID;
 
     private function __construct(?string $id, PrivilegeScope $scope, ?string $associatedEntityID) {
-        $this->setID($id);
+        parent::__construct($id);
         $this->scope = $scope;
         $this->associatedEntityID = $associatedEntityID;
     }

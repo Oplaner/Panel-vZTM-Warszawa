@@ -10,7 +10,7 @@ final class User extends DatabaseEntity {
     private SystemDateTime $createdAt;
 
     private function __construct(?string $id, int $login, string $username, bool $shouldChangePassword, SystemDateTime $createdAt) {
-        $this->setID($id);
+        parent::__construct($id);
         $this->login = $login;
         $this->username = $username;
         $this->shouldChangePassword = $shouldChangePassword;
@@ -81,8 +81,7 @@ final class User extends DatabaseEntity {
             return;
         }
 
-        $db = DatabaseConnector::shared();
-        $result = $db->execute_query(
+        $result = DatabaseConnector::shared()->execute_query(
             "SELECT m.username
             FROM mybb18_users AS m
             INNER JOIN users AS u
@@ -123,20 +122,20 @@ final class User extends DatabaseEntity {
         return $this->profiles;
     }
 
-    public function isActive(): bool {
-        $activeProfiles = array_filter($this->getProfiles(), fn ($profile) => $profile->isActive());
-        return count($activeProfiles) > 0;
+    public function addProfile(Profile $profile): void {
+        if (!in_array($profile, $this->getProfiles())) {
+            $this->profiles[] = $profile;
+            $this->wasModified = true;
+        }
     }
 
     public function getCreatedAt(): SystemDateTime {
         return $this->createdAt;
     }
 
-    public function addProfile(Profile $profile): void {
-        if (!in_array($profile, $this->getProfiles())) {
-            $this->profiles[] = $profile;
-            $this->wasModified = true;
-        }
+    public function isActive(): bool {
+        $activeProfiles = array_filter($this->getProfiles(), fn ($profile) => $profile->isActive());
+        return count($activeProfiles) > 0;
     }
 
     public function save(): void {
