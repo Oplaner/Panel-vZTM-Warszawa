@@ -19,8 +19,7 @@ final class User extends DatabaseEntity {
 
     public static function createNew(int $myBBUserID): ?User {
         Logger::log(LogLevel::info, "Creating new user with myBB ID $myBBUserID.");
-        $db = DatabaseConnector::shared();
-        $result = $db->execute_query(
+        $result = DatabaseConnector::shared()->execute_query(
             "SELECT m.username
             FROM mybb18_users AS m
             LEFT JOIN users AS u
@@ -45,8 +44,7 @@ final class User extends DatabaseEntity {
 
     public static function withID(string $id): ?User {
         Logger::log(LogLevel::info, "Fetching existing user with ID \"$id\".");
-        $db = DatabaseConnector::shared();
-        $result = $db->execute_query(
+        $result = DatabaseConnector::shared()->execute_query(
             "SELECT login, username, should_change_password, created_at
             FROM users
             WHERE id = ?",

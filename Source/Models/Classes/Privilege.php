@@ -17,8 +17,7 @@ final class Privilege extends DatabaseEntity {
 
     public static function withID(string $id): ?Privilege {
         Logger::log(LogLevel::info, "Fetching privilege with ID \"$id\".");
-        $db = DatabaseConnector::shared();
-        $result = $db->execute_query(
+        $result = DatabaseConnector::shared()->execute_query(
             "SELECT scope, associated_entity_id
             FROM privileges
             WHERE id = ?",

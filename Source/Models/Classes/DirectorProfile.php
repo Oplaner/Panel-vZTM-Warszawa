@@ -17,8 +17,7 @@ final class DirectorProfile extends Profile {
 
     public static function withID(string $id): ?DirectorProfile {
         Logger::log(LogLevel::info, "Fetching director profile with ID \"$id\".");
-        $db = DatabaseConnector::shared();
-        $result = $db->execute_query(
+        $result = DatabaseConnector::shared()->execute_query(
             "SELECT p.user_id, p.activated_at, p.activated_by_user_id, p.deactivated_at, p.deactivated_by_user_id, pd.protected
             FROM profiles AS p
             INNER JOIN profiles_director AS pd
@@ -54,10 +53,9 @@ final class DirectorProfile extends Profile {
 
     public function save(): void {
         Logger::log(LogLevel::info, "Saving ".($this->isNew ? "new" : "existing")." director profile: $this.");
-        $db = DatabaseConnector::shared();
 
         if ($this->isNew) {
-            $db->execute_query(
+            DatabaseConnector::shared()->execute_query(
                 "INSERT INTO profiles_director
                 (profile_id, protected)
                 VALUES (?, ?)",

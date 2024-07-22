@@ -26,8 +26,7 @@ final class Authenticator {
                 $agentHash = self::makeAgentHash();
                 Logger::log(LogLevel::info, "Found session token. Trying to get user ID for session with ID: \"$sessionID\", token: \"$token\", agent hash: \"$agentHash\".");
 
-                $db = DatabaseConnector::shared();
-                $result = $db->execute_query(
+                $result = DatabaseConnector::shared()->execute_query(
                     "SELECT user_id, session_id_refreshed_at
                     FROM session_tokens
                     WHERE token = ? AND session_id = ? AND agent_hash = ? AND valid_to > ?",
@@ -76,8 +75,7 @@ final class Authenticator {
     public static function authenticateUser(string $login, string $password): AuthenticationResult {
         global $_USER;
 
-        $db = DatabaseConnector::shared();
-        $result = $db->execute_query(
+        $result = DatabaseConnector::shared()->execute_query(
             "SELECT id, password, password_valid_to
             FROM users
             WHERE login = ?",

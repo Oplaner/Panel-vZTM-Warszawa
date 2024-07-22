@@ -24,8 +24,7 @@ final class PersonnelProfile extends Profile {
 
     public static function withID(string $id): ?PersonnelProfile {
         Logger::log(LogLevel::info, "Fetching personnel profile with ID \"$id\".");
-        $db = DatabaseConnector::shared();
-        $result = $db->execute_query(
+        $result = DatabaseConnector::shared()->execute_query(
             "SELECT p.user_id, p.activated_at, p.activated_by_user_id, p.deactivated_at, p.deactivated_by_user_id, pp.description, ppp.privilege_id
             FROM profiles AS p
             INNER JOIN profiles_personnel AS pp
@@ -71,7 +70,30 @@ final class PersonnelProfile extends Profile {
         return $personnelProfile;
     }
 
-    // TODO: Get all personnel profiles for a user (history).
+    public static function historyForUser(User $user): array {
+        Logger::log(LogLevel::info, "Fetching personnel profile history for user with ID \"{$user->getID()}\".");
+        $result = DatabaseConnector::shared()->execute_query(
+            "SELECT id
+            FROM profiles
+            WHERE user_id = ? AND type = ?
+            ORDER BY activated_at ASC",
+            [
+                $user->getID(),
+                self::DATABASE_PROFILE_TYPE
+            ]
+        );
+
+        $personnelProfiles = [];
+
+        while ($data = $result->fetch_assoc()) {
+            $profileID = $data["id"];
+            $personnelProfiles[] = self::withID($profileID);
+        }
+
+        $result->free();
+        Logger::log(LogLevel::info, "Found ".count($personnelProfiles)." personnel profile(s) in history for user with ID \"{$user->getID()}\".");
+        return $personnelProfiles;
+    }
 
     public function getDescription(): string {
         return $this->description;
