@@ -17,6 +17,13 @@ final class Privilege extends DatabaseEntity {
 
     public static function withID(string $id): ?Privilege {
         Logger::log(LogLevel::info, "Fetching privilege with ID \"$id\".");
+        $cachedObject = self::findCached($id);
+
+        if (is_a($cachedObject, Privilege::class)) {
+            Logger::log(LogLevel::info, "Found cached privilege: $cachedObject.");
+            return $cachedObject;
+        }
+
         $result = DatabaseConnector::shared()->execute_query(
             "SELECT scope, associated_entity_id
             FROM privileges

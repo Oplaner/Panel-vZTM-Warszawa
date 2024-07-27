@@ -24,6 +24,13 @@ final class PersonnelProfile extends Profile {
 
     public static function withID(string $id): ?PersonnelProfile {
         Logger::log(LogLevel::info, "Fetching personnel profile with ID \"$id\".");
+        $cachedObject = self::findCached($id);
+
+        if (is_a($cachedObject, PersonnelProfile::class)) {
+            Logger::log(LogLevel::info, "Found cached personnel profile: $cachedObject.");
+            return $cachedObject;
+        }
+
         $result = DatabaseConnector::shared()->execute_query(
             "SELECT p.user_id, p.activated_at, p.activated_by_user_id, p.deactivated_at, p.deactivated_by_user_id, pp.description, ppp.privilege_id
             FROM profiles AS p

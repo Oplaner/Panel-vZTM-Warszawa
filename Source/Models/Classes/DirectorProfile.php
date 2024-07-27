@@ -17,6 +17,13 @@ final class DirectorProfile extends Profile {
 
     public static function withID(string $id): ?DirectorProfile {
         Logger::log(LogLevel::info, "Fetching director profile with ID \"$id\".");
+        $cachedObject = self::findCached($id);
+
+        if (is_a($cachedObject, DirectorProfile::class)) {
+            Logger::log(LogLevel::info, "Found cached director profile: $cachedObject.");
+            return $cachedObject;
+        }
+
         $result = DatabaseConnector::shared()->execute_query(
             "SELECT p.user_id, p.activated_at, p.activated_by_user_id, p.deactivated_at, p.deactivated_by_user_id, pd.protected
             FROM profiles AS p

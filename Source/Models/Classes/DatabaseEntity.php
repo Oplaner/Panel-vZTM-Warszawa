@@ -1,15 +1,18 @@
 <?php
 
 abstract class DatabaseEntity {
+    private static array $cachedEntities = [];
+
     protected string $id;
     protected bool $isNew;
     protected bool $wasModified = false;
 
     protected function __construct(?string $id) {
         $this->setID($id);
+        self::$cachedEntities[] = $this;
     }
 
-    final public static function generateUUIDv4(): string {
+    public static function generateUUIDv4(): string {
         $randomData = random_bytes(16);
         $randomData[6] = chr(ord($randomData[6]) & 0x0F | 0x40);
         $randomData[8] = chr(ord($randomData[8]) & 0x3F | 0x80);
@@ -17,7 +20,26 @@ abstract class DatabaseEntity {
         return vsprintf("%s%s-%s-%s-%s-%s%s%s", str_split($randomData, 4));
     }
 
-    final public function getID(): string {
+    public static function removeFromCache(string $entityID): void {
+        for ($i = 0; $i < count(self::$cachedEntities); $i++) {
+            if (self::$cachedEntities[$i]->id == $entityID) {
+                array_splice(self::$cachedEntities, $i, 1);
+                return;
+            }
+        }
+    }
+
+    protected static function findCached(string $entityID): ?object {
+        foreach (self::$cachedEntities as $entity) {
+            if ($entity->id == $entityID) {
+                return $entity;
+            }
+        }
+
+        return null;
+    }
+
+    public function getID(): string {
         return $this->id;
     }
 

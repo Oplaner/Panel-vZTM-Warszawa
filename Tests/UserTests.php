@@ -69,6 +69,7 @@ final class UserTests {
         $user->save();
         $userID = $user->getID();
         unset($user);
+        DatabaseEntity::removeFromCache($userID);
         $user = User::withID($userID);
         $username1 = $user->getUsername();
 

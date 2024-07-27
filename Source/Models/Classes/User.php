@@ -44,6 +44,13 @@ final class User extends DatabaseEntity {
 
     public static function withID(string $id): ?User {
         Logger::log(LogLevel::info, "Fetching existing user with ID \"$id\".");
+        $cachedObject = self::findCached($id);
+
+        if (is_a($cachedObject, User::class)) {
+            Logger::log(LogLevel::info, "Found cached user: $cachedObject.");
+            return $cachedObject;
+        }
+
         $result = DatabaseConnector::shared()->execute_query(
             "SELECT login, username, should_change_password, created_at
             FROM users
@@ -78,6 +85,8 @@ final class User extends DatabaseEntity {
         if ($this->isNew) {
             return;
         }
+
+        Logger::log(LogLevel::info, "Updating username of user with ID \"{$this->id}\".");
 
         $result = DatabaseConnector::shared()->execute_query(
             "SELECT m.username
