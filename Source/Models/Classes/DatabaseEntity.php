@@ -20,16 +20,16 @@ abstract class DatabaseEntity {
         return vsprintf("%s%s-%s-%s-%s-%s%s%s", str_split($randomData, 4));
     }
 
-    public static function removeFromCache(string $entityID): void {
+    public static function removeFromCache(DatabaseEntity $entity): void {
         for ($i = 0; $i < count(self::$cachedEntities); $i++) {
-            if (self::$cachedEntities[$i]->id == $entityID) {
+            if (self::$cachedEntities[$i]->id == $entity->id) {
                 array_splice(self::$cachedEntities, $i, 1);
                 return;
             }
         }
     }
 
-    protected static function findCached(string $entityID): ?object {
+    protected static function findCached(string $entityID): ?DatabaseEntity {
         foreach (self::$cachedEntities as $entity) {
             if ($entity->id == $entityID) {
                 return $entity;

@@ -1,8 +1,6 @@
 <?php
 
 final class PersonnelProfile extends Profile {
-    private const DATABASE_PROFILE_TYPE = "PERSONNEL";
-
     private string $description;
     private array $privileges;
 
@@ -38,7 +36,7 @@ final class PersonnelProfile extends Profile {
             ON p.id = pp.profile_id
             INNER JOIN personnel_profile_privileges AS ppp
             ON pp.profile_id = ppp.personnel_profile_id
-            WHERE p.id = ? AND p.type = \"".self::DATABASE_PROFILE_TYPE."\"",
+            WHERE p.id = ? AND p.type = \"".self::DATABASE_PROFILE_TYPE_PERSONNEL."\"",
             [
                 $id
             ]
@@ -86,7 +84,7 @@ final class PersonnelProfile extends Profile {
             ORDER BY activated_at ASC",
             [
                 $user->getID(),
-                self::DATABASE_PROFILE_TYPE
+                self::DATABASE_PROFILE_TYPE_PERSONNEL
             ]
         );
 
@@ -136,7 +134,7 @@ final class PersonnelProfile extends Profile {
                     $this->description
                 ]
             );
-            $this->saveNewProfileToDatabase(self::DATABASE_PROFILE_TYPE);
+            $this->saveNewProfileToDatabase(self::DATABASE_PROFILE_TYPE_PERSONNEL);
         } elseif ($this->wasModified) {
             $this->saveExistingProfileToDatabase();
         }

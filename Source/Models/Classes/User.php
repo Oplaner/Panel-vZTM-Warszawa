@@ -122,8 +122,7 @@ final class User extends DatabaseEntity {
 
     public function getProfiles(): array {
         if (is_null($this->profiles)) {
-            // TODO: Download profiles.
-            $this->profiles = [];
+            $this->profiles = Profile::getActiveProfilesForUser($this);
         }
 
         return $this->profiles;
@@ -132,7 +131,6 @@ final class User extends DatabaseEntity {
     public function addProfile(Profile $profile): void {
         if (!in_array($profile, $this->getProfiles())) {
             $this->profiles[] = $profile;
-            $this->wasModified = true;
         }
     }
 
@@ -141,8 +139,7 @@ final class User extends DatabaseEntity {
     }
 
     public function isActive(): bool {
-        $activeProfiles = array_filter($this->getProfiles(), fn ($profile) => $profile->isActive());
-        return count($activeProfiles) > 0;
+        return count($this->getProfiles()) > 0;
     }
 
     public function save(): void {

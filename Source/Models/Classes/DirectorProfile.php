@@ -1,8 +1,6 @@
 <?php
 
-final class DirectorProfile extends Profile {
-    private const DATABASE_PROFILE_TYPE = "DIRECTOR";
-
+final class DirectorProfile extends Profile {    
     private bool $isProtected;
 
     private function __construct(?string $id, string $userID, SystemDateTime $activatedAt, User $activatedBy, ?SystemDateTime $deactivatedAt, ?User $deactivatedBy, bool $isProtected) {
@@ -29,7 +27,7 @@ final class DirectorProfile extends Profile {
             FROM profiles AS p
             INNER JOIN profiles_director AS pd
             ON p.id = pd.profile_id
-            WHERE p.id = ? AND p.type = \"".self::DATABASE_PROFILE_TYPE."\"",
+            WHERE p.id = ? AND p.type = \"".self::DATABASE_PROFILE_TYPE_DIRECTOR."\"",
             [
                 $id
             ]
@@ -71,7 +69,7 @@ final class DirectorProfile extends Profile {
                     $this->isProtected
                 ]
             );
-            $this->saveNewProfileToDatabase(self::DATABASE_PROFILE_TYPE);
+            $this->saveNewProfileToDatabase(self::DATABASE_PROFILE_TYPE_DIRECTOR);
         } elseif ($this->wasModified) {
             $this->saveExistingProfileToDatabase();
         }

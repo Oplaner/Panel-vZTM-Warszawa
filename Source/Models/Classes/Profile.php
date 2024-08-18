@@ -1,6 +1,9 @@
 <?php
 
 abstract class Profile extends DatabaseEntity {
+    protected const DATABASE_PROFILE_TYPE_DIRECTOR = "DIRECTOR";
+    protected const DATABASE_PROFILE_TYPE_PERSONNEL = "PERSONNEL";
+
     protected string $userID;
     protected SystemDateTime $activatedAt;
     protected User $activatedBy;
@@ -16,7 +19,47 @@ abstract class Profile extends DatabaseEntity {
         $this->deactivatedBy = $deactivatedBy;
     }
 
-    // TODO: Get profiles for a user (different types, active).
+    public static function getActiveProfilesForUser(User $user): array {
+        Logger::log(LogLevel::info, "Fetching active profiles for user with ID \"{$user->getID()}\".");
+
+        $result = DatabaseConnector::shared()->execute_query(
+            "SELECT id, type
+            FROM profiles
+            WHERE user_id = ? AND deactivated_at IS NULL
+            ORDER BY activated_at ASC",
+            [
+                $user->getID()
+            ]
+        );
+
+        $profiles = [];
+
+        while ($data = $result->fetch_assoc()) {
+            $profileID = $data["id"];
+            $profileType = $data["type"];
+            $profile = self::getProfileWithIDAndType($profileID, $profileType);
+
+            if (!is_null($profile)) {
+                $profiles[] = $profile;
+            }
+        }
+
+        $result->free();
+        Logger::log(LogLevel::info, "Found ".count($profiles)." active profile(s) for user with ID \"{$user->getID()}\".");
+        return $profiles;
+    }
+
+    private static function getProfileWithIDAndType(string $profileID, string $profileType): ?Profile {
+        switch ($profileType) {
+            case self::DATABASE_PROFILE_TYPE_DIRECTOR:
+                return DirectorProfile::withID($profileID);
+            case self::DATABASE_PROFILE_TYPE_PERSONNEL:
+                return PersonnelProfile::withID($profileID);
+            default:
+                Logger::log(LogLevel::error, "Unexpected profile type \"$profileType\" for profile with ID \"$profileID\".");
+                return null;
+        }
+    }
 
     public function getActivatedAt(): SystemDateTime {
         return $this->activatedAt;

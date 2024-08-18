@@ -68,8 +68,8 @@ final class UserTests {
         $user = User::createNew(self::EXISTING_TEST_USER_LOGIN);
         $user->save();
         $userID = $user->getID();
+        DatabaseEntity::removeFromCache($user);
         unset($user);
-        DatabaseEntity::removeFromCache($userID);
         $user = User::withID($userID);
         $username1 = $user->getUsername();
 
@@ -100,6 +100,98 @@ final class UserTests {
 
         if ($username1 == $username2) {
             return "Expected the username versions to be different after update. Before: \"$username1\", after: \"$username2\".";
+        }
+
+        return true;
+    }
+
+    public static function getUserActiveProfiles(): bool|string {
+        $user = User::createNew(self::EXISTING_TEST_USER_LOGIN);
+        $user->save();
+        $userID = $user->getID();
+        $directorProfile = DirectorProfile::createNew($user, $user);
+        $directorProfile->save();
+        $directorProfileID = $directorProfile->getID();
+        DatabaseEntity::removeFromCache($directorProfile);
+        unset($directorProfile);
+        $description = DatabaseEntity::generateUUIDv4();
+        $privilege = Privilege::createNew(PrivilegeScope::canViewAllTimetables);
+        $privilege->save();
+        $privilegeIDs = [$privilege->getID()];
+        $personnelProfile = PersonnelProfile::createNew($user, $user, $description, [$privilege]);
+        $personnelProfile->save();
+        $personnelProfileIDs = [$personnelProfile->getID()];
+        DatabaseEntity::removeFromCache($privilege);
+        unset($privilege);
+        DatabaseEntity::removeFromCache($personnelProfile);
+        unset($personnelProfile);
+        $description = DatabaseEntity::generateUUIDv4();
+        $privilege = Privilege::createNew(PrivilegeScope::canViewTimetableOfDepot, DatabaseEntity::generateUUIDv4());
+        $privilege->save();
+        $privilegeIDs[] = $privilege->getID();
+        $personnelProfile = PersonnelProfile::createNew($user, $user, $description, [$privilege]);
+        $personnelProfile->deactivate($user);
+        $personnelProfile->save();
+        $personnelProfileIDs[] = $personnelProfile->getID();
+        DatabaseEntity::removeFromCache($privilege);
+        unset($privilege);
+        DatabaseEntity::removeFromCache($personnelProfile);
+        unset($personnelProfile);
+        $profiles = $user->getProfiles();
+
+        $db = DatabaseConnector::shared();
+        $db->execute_query(
+            "DELETE FROM profiles_director
+            WHERE profile_id = ?",
+            [
+                $directorProfileID
+            ]
+        );
+        $db->execute_query(
+            "DELETE FROM profiles
+            WHERE id = ?",
+            [
+                $directorProfileID
+            ]
+        );
+        $db->execute_query(
+            "DELETE FROM privileges
+            WHERE id = ? OR id = ?",
+            $privilegeIDs
+        );
+        $db->execute_query(
+            "DELETE FROM personnel_profile_privileges
+            WHERE personnel_profile_id = ? OR personnel_profile_id = ?",
+            $personnelProfileIDs
+        );
+        $db->execute_query(
+            "DELETE FROM profiles_personnel
+            WHERE profile_id = ? OR profile_id = ?",
+            $personnelProfileIDs
+        );
+        $db->execute_query(
+            "DELETE FROM profiles
+            WHERE id = ? OR id = ?",
+            $personnelProfileIDs
+        );
+        $db->execute_query(
+            "DELETE FROM users
+            WHERE id = ?",
+            [
+                $userID
+            ]
+        );
+
+        if (count($profiles) != 2) {
+            return "The number of active profiles for user is incorrect. Expected: 2, found: ".count($profiles).".";
+        } elseif (!is_a($profiles[0], DirectorProfile::class)) {
+            return "The first active profile for user is of incorrect type. Expected: ".DirectorProfile::class.", found: ".gettype($profiles[0]).".";
+        } elseif (!is_a($profiles[1], PersonnelProfile::class)) {
+            return "The second active profile for user is of incorrect type. Expected: ".PersonnelProfile::class.", found: ".gettype($profiles[1]).".";
+        } elseif (count($profiles[1]->getPrivileges()) != 1) {
+            return "User's personnel profile has incorrect number of privileges. Expected: 1, found: ".count($profiles[1]->getPrivileges()).".";
+        } elseif ($profiles[1]->getPrivileges()[0]->getScope() != PrivilegeScope::canViewAllTimetables) {
+            return "User's personnel profile privilege scope is incorrect. Expected: ".PrivilegeScope::canViewAllTimetables->name.", found: ".$profiles[1]->getPrivileges()[0]->getScope()->name.".";
         }
 
         return true;
