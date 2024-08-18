@@ -8,6 +8,7 @@ final class PersonnelProfile extends Profile {
         parent::__construct($id, $userID, $activatedAt, $activatedBy, $deactivatedAt, $deactivatedBy);
         $this->description = $description;
         $this->privileges = $privileges;
+        $this->save();
     }
 
     public static function createNew(User $owner, User $activator, string $description, array $privileges): PersonnelProfile {
@@ -108,7 +109,21 @@ final class PersonnelProfile extends Profile {
         return $this->privileges;
     }
 
-    public function save(): void {
+    public function __toString() {
+        return sprintf(
+            __CLASS__."(id: \"%s\", userID: \"%s\", activatedAt: %s, activatedByUserID: \"%s\", deactivatedAt: %s, deactivatedByUserID: %s, description: \"%s\", privileges: (%d))",
+            $this->id,
+            $this->userID,
+            $this->activatedAt->toDatabaseString(),
+            $this->activatedBy->getID(),
+            is_null($this->deactivatedAt) ? "null" : $this->deactivatedAt->toDatabaseString(),
+            is_null($this->deactivatedBy) ? "null" : "\"{$this->deactivatedBy->getID()}\"",
+            $this->description,
+            count($this->privileges)
+        );
+    }
+
+    protected function save(): void {
         Logger::log(LogLevel::info, "Saving ".($this->isNew ? "new" : "existing")." personnel profile: $this.");
         $db = DatabaseConnector::shared();
 
@@ -135,23 +150,11 @@ final class PersonnelProfile extends Profile {
                 ]
             );
             $this->saveNewProfileToDatabase(self::DATABASE_PROFILE_TYPE_PERSONNEL);
+            $this->isNew = false;
         } elseif ($this->wasModified) {
             $this->saveExistingProfileToDatabase();
+            $this->wasModified = false;
         }
-    }
-
-    public function __toString() {
-        return sprintf(
-            __CLASS__."(id: \"%s\", userID: \"%s\", activatedAt: %s, activatedByUserID: \"%s\", deactivatedAt: %s, deactivatedByUserID: %s, description: \"%s\", privileges: (%d))",
-            $this->id,
-            $this->userID,
-            $this->activatedAt->toDatabaseString(),
-            $this->activatedBy->getID(),
-            is_null($this->deactivatedAt) ? "null" : $this->deactivatedAt->toDatabaseString(),
-            is_null($this->deactivatedBy) ? "null" : "\"{$this->deactivatedBy->getID()}\"",
-            $this->description,
-            count($this->privileges)
-        );
     }
 }
 

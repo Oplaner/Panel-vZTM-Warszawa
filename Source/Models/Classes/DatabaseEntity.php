@@ -43,7 +43,7 @@ abstract class DatabaseEntity {
         return $this->id;
     }
 
-    abstract public function save(): void;
+    abstract protected function save(): void;
 
     private function setID(?string $id): void {
         if (is_null($id)) {

@@ -6,6 +6,7 @@ final class DirectorProfile extends Profile {
     private function __construct(?string $id, string $userID, SystemDateTime $activatedAt, User $activatedBy, ?SystemDateTime $deactivatedAt, ?User $deactivatedBy, bool $isProtected) {
         parent::__construct($id, $userID, $activatedAt, $activatedBy, $deactivatedAt, $deactivatedBy);
         $this->isProtected = $isProtected;
+        $this->save();
     }
 
     public static function createNew(User $owner, User $activator): DirectorProfile {
@@ -56,7 +57,20 @@ final class DirectorProfile extends Profile {
         return $this->isProtected;
     }
 
-    public function save(): void {
+    public function __toString() {
+        return sprintf(
+            __CLASS__."(id: \"%s\", userID: \"%s\", activatedAt: %s, activatedByUserID: \"%s\", deactivatedAt: %s, deactivatedByUserID: %s, isProtected: %s)",
+            $this->id,
+            $this->userID,
+            $this->activatedAt->toDatabaseString(),
+            $this->activatedBy->getID(),
+            is_null($this->deactivatedAt) ? "null" : $this->deactivatedAt->toDatabaseString(),
+            is_null($this->deactivatedBy) ? "null" : "\"{$this->deactivatedBy->getID()}\"",
+            $this->isProtected ? "true" : "false"
+        );
+    }
+
+    protected function save(): void {
         Logger::log(LogLevel::info, "Saving ".($this->isNew ? "new" : "existing")." director profile: $this.");
 
         if ($this->isNew) {
@@ -70,22 +84,11 @@ final class DirectorProfile extends Profile {
                 ]
             );
             $this->saveNewProfileToDatabase(self::DATABASE_PROFILE_TYPE_DIRECTOR);
+            $this->isNew = false;
         } elseif ($this->wasModified) {
             $this->saveExistingProfileToDatabase();
+            $this->wasModified = false;
         }
-    }
-
-    public function __toString() {
-        return sprintf(
-            __CLASS__."(id: \"%s\", userID: \"%s\", activatedAt: %s, activatedByUserID: \"%s\", deactivatedAt: %s, deactivatedByUserID: %s, isProtected: %s)",
-            $this->id,
-            $this->userID,
-            $this->activatedAt->toDatabaseString(),
-            $this->activatedBy->getID(),
-            is_null($this->deactivatedAt) ? "null" : $this->deactivatedAt->toDatabaseString(),
-            is_null($this->deactivatedBy) ? "null" : "\"{$this->deactivatedBy->getID()}\"",
-            $this->isProtected ? "true" : "false"
-        );
     }
 }
 

@@ -4,6 +4,15 @@ final class PrivilegeTests {
     public static function createPrivilegeWithoutAssociatedEntityID(): bool|string {
         $scope = PrivilegeScope::canViewAllTimetables;
         $privilege = Privilege::createNew($scope);
+        $privilegeID = $privilege->getID();
+
+        DatabaseConnector::shared()->execute_query(
+            "DELETE FROM privileges
+            WHERE id = ?",
+            [
+                $privilegeID
+            ]
+        );
 
         if (!is_a($privilege, Privilege::class)) {
             return "Expected a ".Privilege::class." object. Found: ".gettype($privilege).".";
@@ -20,6 +29,15 @@ final class PrivilegeTests {
         $scope = PrivilegeScope::canViewTimetableOfDepot;
         $associatedEntityID = DatabaseEntity::generateUUIDv4();
         $privilege = Privilege::createNew($scope, $associatedEntityID);
+        $privilegeID = $privilege->getID();
+
+        DatabaseConnector::shared()->execute_query(
+            "DELETE FROM privileges
+            WHERE id = ?",
+            [
+                $privilegeID
+            ]
+        );
 
         if (!is_a($privilege, Privilege::class)) {
             return "Expected a ".Privilege::class." object. Found: ".gettype($privilege).".";
@@ -36,8 +54,8 @@ final class PrivilegeTests {
         $scope = PrivilegeScope::canViewTimetableOfDepot;
         $associatedEntityID = DatabaseEntity::generateUUIDv4();
         $privilege = Privilege::createNew($scope, $associatedEntityID);
-        $privilege->save();
         $privilegeID = $privilege->getID();
+        DatabaseEntity::removeFromCache($privilege);
         unset($privilege);
         $privilege = Privilege::withID($privilegeID);
 

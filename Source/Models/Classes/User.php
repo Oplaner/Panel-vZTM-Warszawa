@@ -15,6 +15,7 @@ final class User extends DatabaseEntity {
         $this->username = $username;
         $this->shouldChangePassword = $shouldChangePassword;
         $this->createdAt = $createdAt;
+        $this->save();
     }
 
     public static function createNew(int $myBBUserID): ?User {
@@ -105,6 +106,7 @@ final class User extends DatabaseEntity {
         if ($username != $this->username) {
             $this->username = $username;
             $this->wasModified = true;
+            $this->save();
         }
     }
 
@@ -128,12 +130,6 @@ final class User extends DatabaseEntity {
         return $this->profiles;
     }
 
-    public function addProfile(Profile $profile): void {
-        if (!in_array($profile, $this->getProfiles())) {
-            $this->profiles[] = $profile;
-        }
-    }
-
     public function getCreatedAt(): SystemDateTime {
         return $this->createdAt;
     }
@@ -142,7 +138,22 @@ final class User extends DatabaseEntity {
         return count($this->getProfiles()) > 0;
     }
 
-    public function save(): void {
+    public function __toString() {
+        return sprintf(
+            __CLASS__."(id: \"%s\", login: %d, temporaryPassword: %s, temporaryPasswordValidTo: %s, shouldChangePassword: %s, profiles: (%d), createdAt: %s, isNew: %s, wasModified: %s)",
+            $this->id,
+            $this->login,
+            is_null($this->temporaryPassword) ? "null" : "\"".$this->temporaryPassword."\"",
+            is_null($this->temporaryPasswordValidTo) ? "null" : $this->getTemporaryPasswordValidTo()->toDatabaseString(),
+            $this->shouldChangePassword() ? "true" : "false",
+            is_null($this->profiles) ? 0 : count($this->profiles),
+            $this->createdAt->toDatabaseString(),
+            $this->isNew ? "true" : "false",
+            $this->wasModified ? "true" : "false"
+        );
+    }
+
+    protected function save(): void {
         Logger::log(LogLevel::info, "Saving ".($this->isNew ? "new" : "existing")." user: $this.");
         $db = DatabaseConnector::shared();
 
@@ -169,6 +180,7 @@ final class User extends DatabaseEntity {
                     $this->createdAt->toDatabaseString()
                 ]
             );
+            $this->isNew = false;
         } elseif ($this->wasModified) {
             $db->execute_query(
                 "UPDATE users
@@ -180,22 +192,8 @@ final class User extends DatabaseEntity {
                     $this->id
                 ]
             );
+            $this->wasModified = false;
         }
-    }
-
-    public function __toString() {
-        return sprintf(
-            __CLASS__."(id: \"%s\", login: %d, temporaryPassword: %s, temporaryPasswordValidTo: %s, shouldChangePassword: %s, profiles: (%d), createdAt: %s, isNew: %s, wasModified: %s)",
-            $this->id,
-            $this->login,
-            is_null($this->temporaryPassword) ? "null" : "\"".$this->temporaryPassword."\"",
-            is_null($this->temporaryPasswordValidTo) ? "null" : $this->getTemporaryPasswordValidTo()->toDatabaseString(),
-            $this->shouldChangePassword() ? "true" : "false",
-            is_null($this->profiles) ? 0 : count($this->profiles),
-            $this->createdAt->toDatabaseString(),
-            $this->isNew ? "true" : "false",
-            $this->wasModified ? "true" : "false"
-        );
     }
 }
 

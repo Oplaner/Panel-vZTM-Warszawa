@@ -85,6 +85,7 @@ abstract class Profile extends DatabaseEntity {
         $this->deactivatedAt = SystemDateTime::now();
         $this->deactivatedBy = $deactivator;
         $this->wasModified = true;
+        $this->save();
     }
 
     protected function saveNewProfileToDatabase(string $profileType): void {

@@ -8,6 +8,7 @@ final class UserTests {
     public static function createNewExistingUser(): bool|string {
         self::deleteTestUser();
         $user = User::createNew(self::EXISTING_TEST_USER_LOGIN);
+        self::deleteTestUser();
 
         if (!is_a($user, User::class)) {
             return "Expected a ".User::class." object. Found: ".gettype($user).".";
@@ -35,8 +36,8 @@ final class UserTests {
     public static function getExistingUser(): bool|string {
         self::deleteTestUser();
         $user = User::createNew(self::EXISTING_TEST_USER_LOGIN);
-        $user->save();
         $userID = $user->getID();
+        DatabaseEntity::removeFromCache($user);
         unset($user);
         $user = User::withID($userID);
         self::deleteTestUser();
@@ -66,11 +67,6 @@ final class UserTests {
         self::deleteTestUser();
         $db = DatabaseConnector::shared();
         $user = User::createNew(self::EXISTING_TEST_USER_LOGIN);
-        $user->save();
-        $userID = $user->getID();
-        DatabaseEntity::removeFromCache($user);
-        unset($user);
-        $user = User::withID($userID);
         $username1 = $user->getUsername();
 
         $db->execute_query(
@@ -107,19 +103,14 @@ final class UserTests {
 
     public static function getUserActiveProfiles(): bool|string {
         $user = User::createNew(self::EXISTING_TEST_USER_LOGIN);
-        $user->save();
-        $userID = $user->getID();
         $directorProfile = DirectorProfile::createNew($user, $user);
-        $directorProfile->save();
         $directorProfileID = $directorProfile->getID();
         DatabaseEntity::removeFromCache($directorProfile);
         unset($directorProfile);
         $description = DatabaseEntity::generateUUIDv4();
         $privilege = Privilege::createNew(PrivilegeScope::canViewAllTimetables);
-        $privilege->save();
         $privilegeIDs = [$privilege->getID()];
         $personnelProfile = PersonnelProfile::createNew($user, $user, $description, [$privilege]);
-        $personnelProfile->save();
         $personnelProfileIDs = [$personnelProfile->getID()];
         DatabaseEntity::removeFromCache($privilege);
         unset($privilege);
@@ -127,11 +118,9 @@ final class UserTests {
         unset($personnelProfile);
         $description = DatabaseEntity::generateUUIDv4();
         $privilege = Privilege::createNew(PrivilegeScope::canViewTimetableOfDepot, DatabaseEntity::generateUUIDv4());
-        $privilege->save();
         $privilegeIDs[] = $privilege->getID();
         $personnelProfile = PersonnelProfile::createNew($user, $user, $description, [$privilege]);
         $personnelProfile->deactivate($user);
-        $personnelProfile->save();
         $personnelProfileIDs[] = $personnelProfile->getID();
         DatabaseEntity::removeFromCache($privilege);
         unset($privilege);
@@ -174,13 +163,7 @@ final class UserTests {
             WHERE id = ? OR id = ?",
             $personnelProfileIDs
         );
-        $db->execute_query(
-            "DELETE FROM users
-            WHERE id = ?",
-            [
-                $userID
-            ]
-        );
+        self::deleteTestUser();
 
         if (count($profiles) != 2) {
             return "The number of active profiles for user is incorrect. Expected: 2, found: ".count($profiles).".";

@@ -5,7 +5,32 @@ final class DirectorProfileTests {
 
     public static function createNewDirectorProfileAndCheckItIsNotProtected(): bool|string {
         $user = User::createNew(self::EXISTING_TEST_USER_LOGIN);
+        $userID = $user->getID();
         $profile = DirectorProfile::createNew($user, $user);
+        $profileID = $profile->getID();
+
+        $db = DatabaseConnector::shared();
+        $db->execute_query(
+            "DELETE FROM profiles_director
+            WHERE profile_id = ?",
+            [
+                $profileID
+            ]
+        );
+        $db->execute_query(
+            "DELETE FROM profiles
+            WHERE id = ?",
+            [
+                $profileID
+            ]
+        );
+        $db->execute_query(
+            "DELETE FROM users
+            WHERE id = ?",
+            [
+                $userID
+            ]
+        );
 
         if (!is_a($profile, DirectorProfile::class)) {
             return "Expected a ".DirectorProfile::class." object. Found: ".gettype($profile).".";
@@ -26,11 +51,10 @@ final class DirectorProfileTests {
 
     public static function getDirectorProfile(): bool|string {
         $user = User::createNew(self::EXISTING_TEST_USER_LOGIN);
-        $user->save();
         $userID = $user->getID();
         $profile = DirectorProfile::createNew($user, $user);
-        $profile->save();
         $profileID = $profile->getID();
+        DatabaseEntity::removeFromCache($profile);
         unset($profile);
         $profile = DirectorProfile::withID($profileID);
 
@@ -76,8 +100,33 @@ final class DirectorProfileTests {
 
     public static function deactivateDirectorProfile(): bool|string {
         $user = User::createNew(self::EXISTING_TEST_USER_LOGIN);
+        $userID = $user->getID();
         $profile = DirectorProfile::createNew($user, $user);
         $profile->deactivate($user);
+        $profileID = $profile->getID();
+
+        $db = DatabaseConnector::shared();
+        $db->execute_query(
+            "DELETE FROM profiles_director
+            WHERE profile_id = ?",
+            [
+                $profileID
+            ]
+        );
+        $db->execute_query(
+            "DELETE FROM profiles
+            WHERE id = ?",
+            [
+                $profileID
+            ]
+        );
+        $db->execute_query(
+            "DELETE FROM users
+            WHERE id = ?",
+            [
+                $userID
+            ]
+        );
 
         if (is_null($profile->getDeactivatedAt())) {
             return "Deactivated director profile deactivatedAt value should not be null.";

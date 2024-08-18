@@ -8,6 +8,7 @@ final class Privilege extends DatabaseEntity {
         parent::__construct($id);
         $this->scope = $scope;
         $this->associatedEntityID = $associatedEntityID;
+        $this->save();
     }
 
     public static function createNew(PrivilegeScope $scope, ?string $associatedEntityID = null): Privilege {
@@ -54,7 +55,16 @@ final class Privilege extends DatabaseEntity {
         return $this->associatedEntityID;
     }
 
-    public function save(): void {
+    public function __toString() {
+        return sprintf(
+            __CLASS__."(id: \"%s\", scope: \"%s\", associatedEntityID: %s)",
+            $this->id,
+            $this->scope->value,
+            is_null($this->associatedEntityID) ? "null" : "\"".$this->associatedEntityID."\""
+        );
+    }
+
+    protected function save(): void {
         if ($this->isNew) {
             Logger::log(LogLevel::info, "Saving new privilege: $this.");
             DatabaseConnector::shared()->execute_query(
@@ -67,16 +77,8 @@ final class Privilege extends DatabaseEntity {
                     $this->associatedEntityID
                 ]
             );
+            $this->isNew = false;
         }
-    }
-
-    public function __toString() {
-        return sprintf(
-            __CLASS__."(id: \"%s\", scope: \"%s\", associatedEntityID: %s)",
-            $this->id,
-            $this->scope->value,
-            is_null($this->associatedEntityID) ? "null" : "\"".$this->associatedEntityID."\""
-        );
     }
 }
 

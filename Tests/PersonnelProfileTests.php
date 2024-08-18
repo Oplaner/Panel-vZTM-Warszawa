@@ -5,6 +5,15 @@ final class PersonnelProfileTests {
 
     public static function throwExceptionWhenCreatingPersonnelProfileWithoutPrivileges(): bool|string {
         $user = User::createNew(self::EXISTING_TEST_USER_LOGIN);
+        $userID = $user->getID();
+
+        DatabaseConnector::shared()->execute_query(
+            "DELETE FROM users
+            WHERE id = ?",
+            [
+                $userID
+            ]
+        );
 
         try {
             PersonnelProfile::createNew($user, $user, "", []);
@@ -17,12 +26,50 @@ final class PersonnelProfileTests {
 
     public static function createNewPersonnelProfile(): bool|string {
         $user = User::createNew(self::EXISTING_TEST_USER_LOGIN);
+        $userID = $user->getID();
         $description = DatabaseEntity::generateUUIDv4();
         $privileges = [
             Privilege::createNew(PrivilegeScope::canViewAllTimetables),
             Privilege::createNew(PrivilegeScope::canViewTimetableOfDepot, DatabaseEntity::generateUUIDv4())
         ];
+        $privilegeIDs = array_map(fn ($privilege) => $privilege->getID(), $privileges);
         $profile = PersonnelProfile::createNew($user, $user, $description, $privileges);
+        $profileID = $profile->getID();
+
+        $db = DatabaseConnector::shared();
+        $db->execute_query(
+            "DELETE FROM privileges
+            WHERE id = ? OR id = ?",
+            $privilegeIDs
+        );
+        $db->execute_query(
+            "DELETE FROM personnel_profile_privileges
+            WHERE personnel_profile_id = ?",
+            [
+                $profileID
+            ]
+        );
+        $db->execute_query(
+            "DELETE FROM profiles_personnel
+            WHERE profile_id = ?",
+            [
+                $profileID
+            ]
+        );
+        $db->execute_query(
+            "DELETE FROM profiles
+            WHERE id = ?",
+            [
+                $profileID
+            ]
+        );
+        $db->execute_query(
+            "DELETE FROM users
+            WHERE id = ?",
+            [
+                $userID
+            ]
+        );
 
         if (!is_a($profile, PersonnelProfile::class)) {
             return "Expected a ".PersonnelProfile::class." object. Found: ".gettype($profile).".";
@@ -41,15 +88,13 @@ final class PersonnelProfileTests {
 
     public static function getPersonnelProfile(): bool|string {
         $user = User::createNew(self::EXISTING_TEST_USER_LOGIN);
-        $user->save();
         $userID = $user->getID();
         $description = DatabaseEntity::generateUUIDv4();
         $privilege = Privilege::createNew(PrivilegeScope::canViewAllTimetables);
-        $privilege->save();
         $privilegeID = $privilege->getID();
         $profile = PersonnelProfile::createNew($user, $user, $description, [$privilege]);
-        $profile->save();
         $profileID = $profile->getID();
+        DatabaseEntity::removeFromCache($profile);
         unset($profile);
         $profile = PersonnelProfile::withID($profileID);
 
@@ -109,10 +154,50 @@ final class PersonnelProfileTests {
 
     public static function deactivatePersonnelProfile(): bool|string {
         $user = User::createNew(self::EXISTING_TEST_USER_LOGIN);
+        $userID = $user->getID();
         $description = DatabaseEntity::generateUUIDv4();
         $privilege = Privilege::createNew(PrivilegeScope::canViewAllTimetables);
+        $privilegeID = $privilege->getID();
         $profile = PersonnelProfile::createNew($user, $user, $description, [$privilege]);
         $profile->deactivate($user);
+        $profileID = $profile->getID();
+
+        $db = DatabaseConnector::shared();
+        $db->execute_query(
+            "DELETE FROM privileges
+            WHERE id = ?",
+            [
+                $privilegeID
+            ]
+        );
+        $db->execute_query(
+            "DELETE FROM personnel_profile_privileges
+            WHERE personnel_profile_id = ?",
+            [
+                $profileID
+            ]
+        );
+        $db->execute_query(
+            "DELETE FROM profiles_personnel
+            WHERE profile_id = ?",
+            [
+                $profileID
+            ]
+        );
+        $db->execute_query(
+            "DELETE FROM profiles
+            WHERE id = ?",
+            [
+                $profileID
+            ]
+        );
+        $db->execute_query(
+            "DELETE FROM users
+            WHERE id = ?",
+            [
+                $userID
+            ]
+        );
 
         if (is_null($profile->getDeactivatedAt())) {
             return "Deactivated personnel profile deactivatedAt value should not be null.";
@@ -127,7 +212,6 @@ final class PersonnelProfileTests {
 
     public static function getPersonnelProfileHistoryForUser(): bool|string {
         $user = User::createNew(self::EXISTING_TEST_USER_LOGIN);
-        $user->save();
         $userID = $user->getID();
         $privilegeConfigurations = [
             [PrivilegeScope::canViewAllTimetables, null],
@@ -138,18 +222,18 @@ final class PersonnelProfileTests {
             Privilege::createNew($privilegeConfigurations[0][0], $privilegeConfigurations[0][1]),
             Privilege::createNew($privilegeConfigurations[1][0], $privilegeConfigurations[1][1])
         ];
-        array_walk($privileges, fn ($privilege) => $privilege->save());
         $privilegeIDs = array_map(fn ($privilege) => $privilege->getID(), $privileges);
         $personnelProfile = PersonnelProfile::createNew($user, $user, $descriptions[0], [$privileges[0]]);
         $personnelProfile->deactivate($user);
-        $personnelProfile->save();
         $personnelProfileIDs = [$personnelProfile->getID()];
+        DatabaseEntity::removeFromCache($personnelProfile);
         unset($personnelProfile);
         $personnelProfile = PersonnelProfile::createNew($user, $user, $descriptions[1], [$privileges[1]]);
         $personnelProfile->deactivate($user);
-        $personnelProfile->save();
         $personnelProfileIDs[] = $personnelProfile->getID();
+        DatabaseEntity::removeFromCache($personnelProfile);
         unset($personnelProfile);
+        array_walk($privileges, fn ($privilege) => DatabaseEntity::removeFromCache($privilege));
         unset($privileges);
         $history = PersonnelProfile::historyForUser($user);
 
