@@ -82,6 +82,7 @@ abstract class Profile extends DatabaseEntity {
     }
 
     public function deactivate(User $deactivator): void {
+        Logger::log(LogLevel::info, "User with ID \"{$deactivator->getID()}\" is deactivating profile with ID \"{$this->getID()}\".");
         $this->deactivatedAt = SystemDateTime::now();
         $this->deactivatedBy = $deactivator;
         $this->wasModified = true;

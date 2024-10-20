@@ -1,11 +1,11 @@
 <?php
 
-enum ContractState {
-    case conditional;
-    case conditionalWithPenalty;
-    case regular;
-    case terminated;
-    case terminatedDisciplinarily;
+enum ContractState: string {
+    case conditional = "CONDITIONAL";
+    case conditionalWithPenalty = "CONDITIONAL_WITH_PENALTY";
+    case regular = "REGULAR";
+    case terminated = "TERMINATED";
+    case terminatedDisciplinarily = "TERMINATED_DISCIPLINARILY";
 }
 
 ?>
