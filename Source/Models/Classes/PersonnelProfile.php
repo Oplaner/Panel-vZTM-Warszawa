@@ -15,7 +15,7 @@ final class PersonnelProfile extends Profile {
         Logger::log(LogLevel::info, "User with ID \"{$activator->getID()}\" is creating new personnel profile with ".count($privileges)." privilege(s) for user with ID \"{$owner->getID()}\".");
 
         if (count($privileges) == 0) {
-            throw new Exception("Creating a personnel profile with 0 privileges is not allowed.");
+            throw new Exception("Creating personnel profile with 0 privileges is not allowed.");
         }
 
         return new PersonnelProfile(null, $owner->getID(), SystemDateTime::now(), $activator, null, null, $description, $privileges);
