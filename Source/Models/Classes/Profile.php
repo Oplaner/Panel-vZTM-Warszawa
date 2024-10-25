@@ -21,7 +21,6 @@ abstract class Profile extends DatabaseEntity {
 
     public static function getActiveProfilesForUser(User $user): array {
         Logger::log(LogLevel::info, "Fetching active profiles for user with ID \"{$user->getID()}\".");
-
         $result = DatabaseConnector::shared()->execute_query(
             "SELECT id, type
             FROM profiles
@@ -31,17 +30,12 @@ abstract class Profile extends DatabaseEntity {
                 $user->getID()
             ]
         );
-
         $profiles = [];
 
         while ($data = $result->fetch_assoc()) {
             $profileID = $data["id"];
             $profileType = $data["type"];
-            $profile = self::getProfileWithIDAndType($profileID, $profileType);
-
-            if (!is_null($profile)) {
-                $profiles[] = $profile;
-            }
+            $profiles[] = self::getProfileWithIDAndType($profileID, $profileType);
         }
 
         $result->free();

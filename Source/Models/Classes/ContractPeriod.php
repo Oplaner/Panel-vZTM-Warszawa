@@ -77,8 +77,27 @@ final class ContractPeriod extends DatabaseEntity {
         return $contractPeriod;
     }
 
-    public static function getAllPeriodsOfContract(Contract $contract) {
+    public static function getAllPeriodsOfContract(Contract $contract): array {
+        Logger::log(LogLevel::info, "Fetching all periods of contract with ID \"{$contract->getID()}\".");
+        $result = DatabaseConnector::shared()->execute_query(
+            "SELECT id
+            FROM contract_periods
+            WHERE contract_id = ?
+            ORDER BY valid_from ASC",
+            [
+                $contract->getID()
+            ]
+        );
+        $periods = [];
 
+        while ($data = $result->fetch_assoc()) {
+            $periodID = $data["id"];
+            $periods[] = self::withID($periodID);
+        }
+
+        $result->free();
+        Logger::log(LogLevel::info, "Found ".count($periods)." period(s) for contract with ID \"{$contract->getID()}\".");
+        return $periods;
     }
 
     public function getState(): ContractState {
