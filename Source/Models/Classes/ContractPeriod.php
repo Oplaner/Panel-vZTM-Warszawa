@@ -19,25 +19,7 @@ final class ContractPeriod extends DatabaseEntity {
 
     public static function createNew(Contract $contract, ContractState $state, SystemDateTime $validFrom, User $authorizedBy): ContractPeriod {
         Logger::log(LogLevel::info, "Creating new contract period of contract with ID \"{$contract->getID()}\", with state \"{$state->value}\" valid from {$validFrom->toDatabaseString()} and authorized by user with ID \"{$authorizedBy->getID()}\".");
-        $result = DatabaseConnector::shared()->execute_query(
-            "SELECT valid_to
-            FROM contract_periods
-            WHERE contract_id = ?
-            ORDER BY valid_from DESC
-            LIMIT 1",
-            [
-                $contract->getID()
-            ]
-        );
-        $latestContractPeriodValidTo = $result->fetch_column();
-        $result->free();
-
-        if ($latestContractPeriodValidTo !== false
-        && !is_null($latestContractPeriodValidTo)
-        && !$validFrom->isAfter(new SystemDateTime($latestContractPeriodValidTo))) {
-            throw new Exception("Tried to create new contract period with invalid validFrom value.");
-        }
-
+        self::validateValidFromIsNotBeforeLatestPeriodValidTo($contract, $validFrom);
         return new ContractPeriod(null, $contract->getID(), $state, $validFrom, $authorizedBy, null);
     }
 
@@ -51,9 +33,9 @@ final class ContractPeriod extends DatabaseEntity {
         }
 
         $result = DatabaseConnector::shared()->execute_query(
-            "SELECT cp.contract_id, cp.state, cp.valid_from, cp.authorized_by_user_id, cp.valid_to
-            FROM contract_periods AS cp
-            WHERE cp.id = ?",
+            "SELECT contract_id, state, valid_from, authorized_by_user_id, valid_to
+            FROM contract_periods
+            WHERE id = ?",
             [
                 $id
             ]
@@ -100,6 +82,27 @@ final class ContractPeriod extends DatabaseEntity {
         return $periods;
     }
 
+    private static function validateValidFromIsNotBeforeLatestPeriodValidTo(Contract $contract, SystemDateTime $validFrom): void {
+        $result = DatabaseConnector::shared()->execute_query(
+            "SELECT valid_to
+            FROM contract_periods
+            WHERE contract_id = ?
+            ORDER BY valid_from DESC
+            LIMIT 1",
+            [
+                $contract->getID()
+            ]
+        );
+        $latestContractPeriodValidTo = $result->fetch_column();
+        $result->free();
+
+        if ($latestContractPeriodValidTo !== false
+        && !is_null($latestContractPeriodValidTo)
+        && $validFrom->isBefore(new SystemDateTime($latestContractPeriodValidTo))) {
+            throw new Exception("The validFrom value of new period cannot be before validTo value of the latest contract period.");
+        }
+    }
+
     public function getState(): ContractState {
         return $this->state;
     }
@@ -125,9 +128,10 @@ final class ContractPeriod extends DatabaseEntity {
 
     public function __toString() {
         return sprintf(
-            __CLASS__."(id: \"%s\", contractID: \"%s\", validFrom: %s, authorizedByUserID: \"%s\", validTo: %s)",
+            __CLASS__."(id: \"%s\", contractID: \"%s\", state: \"%s\", validFrom: %s, authorizedByUserID: \"%s\", validTo: %s)",
             $this->id,
             $this->contractID,
+            $this->state->value,
             $this->validFrom->toDatabaseString(),
             $this->authorizedBy->getID(),
             is_null($this->validTo) ? "null" : $this->validTo->toDatabaseString()

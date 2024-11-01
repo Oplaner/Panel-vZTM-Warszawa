@@ -13,11 +13,7 @@ final class PersonnelProfile extends Profile {
 
     public static function createNew(User $owner, User $activator, string $description, array $privileges): PersonnelProfile {
         Logger::log(LogLevel::info, "User with ID \"{$activator->getID()}\" is creating new personnel profile with ".count($privileges)." privilege(s) for user with ID \"{$owner->getID()}\".");
-
-        if (count($privileges) == 0) {
-            throw new Exception("Creating personnel profile with 0 privileges is not allowed.");
-        }
-
+        self::validatePrivilegesArrayIsNotEmpty($privileges);
         return new PersonnelProfile(null, $owner->getID(), SystemDateTime::now(), $activator, null, null, $description, $privileges);
     }
 
@@ -99,6 +95,12 @@ final class PersonnelProfile extends Profile {
         $result->free();
         Logger::log(LogLevel::info, "Found ".count($personnelProfiles)." personnel profile(s) in history for user with ID \"{$user->getID()}\".");
         return $personnelProfiles;
+    }
+
+    private static function validatePrivilegesArrayIsNotEmpty($privileges): void {
+        if (count($privileges) == 0) {
+            throw new Exception("Creating personnel profile with 0 privileges is not allowed.");
+        }
     }
 
     public function getDescription(): string {

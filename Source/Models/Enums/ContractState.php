@@ -6,6 +6,10 @@ enum ContractState: string {
     case regular = "REGULAR";
     case terminated = "TERMINATED";
     case terminatedDisciplinarily = "TERMINATED_DISCIPLINARILY";
+
+    public function isFinal(): bool {
+        return $this == ContractState::terminated || $this == ContractState::terminatedDisciplinarily;
+    }
 }
 
 ?>
