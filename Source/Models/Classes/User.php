@@ -126,7 +126,7 @@ final class User extends DatabaseEntity {
     }
 
     public function getContracts(): array {
-        return Contract::getAllContractsOfUser($this);
+        return Contract::getAllByUser($this);
     }
 
     public function getCreatedAt(): SystemDateTime {

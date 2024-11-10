@@ -178,6 +178,46 @@ final class UserTests {
         return true;
     }
 
+    public static function getUserContracts(): bool|string {
+        $user = User::createNew(self::EXISTING_TEST_USER_LOGIN);
+
+        $contract = Contract::createNew($user, $user, ContractState::regular, 0);
+        $contractIDs = [$contract->getID()];
+        $contractStates = [$contract->getCurrentState()];
+        DatabaseEntity::removeFromCache($contract);
+
+        $contract = Contract::createNew($user, $user, ContractState::conditional, 0);
+        $contractIDs[] = $contract->getID();
+        $contractStates[] = $contract->getCurrentState();
+        DatabaseEntity::removeFromCache($contract);
+        unset($contract);
+
+        $contracts = $user->getContracts();
+
+        $db = DatabaseConnector::shared();
+        $db->execute_query(
+            "DELETE FROM contract_periods
+            WHERE contract_id = ? OR contract_id = ?",
+            $contractIDs
+        );
+        $db->execute_query(
+            "DELETE FROM contracts
+            WHERE id = ? OR id = ?",
+            $contractIDs
+        );
+        self::deleteTestUser();
+
+        if (count($contracts) != 2) {
+            return "The number of user contracts is incorrect. Expected: 2, found: ".count($contracts).".";
+        } elseif ($contracts[0]->getCurrentState() != $contractStates[0]) {
+            return "The first user contract state is incorrect. Expected: {$contractStates[0]->name}, found: {$contracts[0]->getCurrentState()->name}.";
+        } elseif ($contracts[1]->getCurrentState() != $contractStates[1]) {
+            return "The second user contract state is incorrect. Expected: {$contractStates[1]->name}, found: {$contracts[1]->getCurrentState()->name}.";
+        }
+
+        return true;
+    }
+
     private static function deleteTestUser() {
         DatabaseConnector::shared()->execute_query(
             "DELETE FROM users

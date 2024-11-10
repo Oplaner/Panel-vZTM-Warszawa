@@ -94,8 +94,8 @@ abstract class Profile extends DatabaseEntity {
                 $profileType,
                 $this->activatedAt->toDatabaseString(),
                 $this->activatedBy->getID(),
-                is_null($this->deactivatedAt) ? null : $this->deactivatedAt->toDatabaseString(),
-                is_null($this->deactivatedBy) ? null : $this->deactivatedBy->getID()
+                null,
+                null
             ]
         );
     }

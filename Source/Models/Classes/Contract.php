@@ -59,7 +59,7 @@ final class Contract extends DatabaseEntity {
         return $contract;
     }
 
-    public static function getAllContractsOfUser(User $user): array {
+    public static function getAllByUser(User $user): array {
         Logger::log(LogLevel::info, "Fetching all contracts of user with ID \"{$user->getID()}\".");
         $result = DatabaseConnector::shared()->execute_query(
             "SELECT c.id
@@ -67,6 +67,7 @@ final class Contract extends DatabaseEntity {
             INNER JOIN contract_periods AS cp
             ON c.id = cp.contract_id
             WHERE c.driver_id = ?
+            GROUP BY c.id
             ORDER BY MIN(cp.valid_from) ASC",
             [
                 $user->getID()
@@ -141,7 +142,7 @@ final class Contract extends DatabaseEntity {
     }
 
     protected function save(): void {
-        Logger::log(LogLevel::info, "Saving ".($this->isNew ? "new" : "existing")." personnel profile: $this.");
+        Logger::log(LogLevel::info, "Saving ".($this->isNew ? "new" : "existing")." contract: $this.");
         $db = DatabaseConnector::shared();
 
         if ($this->isNew) {

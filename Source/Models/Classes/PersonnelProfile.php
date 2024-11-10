@@ -72,8 +72,8 @@ final class PersonnelProfile extends Profile {
         return $personnelProfile;
     }
 
-    public static function historyForUser(User $user): array {
-        Logger::log(LogLevel::info, "Fetching personnel profile history for user with ID \"{$user->getID()}\".");
+    public static function getAllByUser(User $user): array {
+        Logger::log(LogLevel::info, "Fetching all personnel profiles of user with ID \"{$user->getID()}\".");
         $result = DatabaseConnector::shared()->execute_query(
             "SELECT id
             FROM profiles
