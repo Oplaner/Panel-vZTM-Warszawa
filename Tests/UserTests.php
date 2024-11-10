@@ -101,31 +101,21 @@ final class UserTests {
         return true;
     }
 
-    public static function getUserActiveProfiles(): bool|string {
+    public static function getUserProfiles(): bool|string {
         $user = User::createNew(self::EXISTING_TEST_USER_LOGIN);
+
         $directorProfile = DirectorProfile::createNew($user, $user);
         $directorProfileID = $directorProfile->getID();
         DatabaseEntity::removeFromCache($directorProfile);
-        unset($directorProfile);
+
         $description = DatabaseEntity::generateUUIDv4();
         $privilege = Privilege::createNew(PrivilegeScope::canViewAllTimetables);
-        $privilegeIDs = [$privilege->getID()];
+        $privilegeID = $privilege->getID();
         $personnelProfile = PersonnelProfile::createNew($user, $user, $description, [$privilege]);
-        $personnelProfileIDs = [$personnelProfile->getID()];
+        $personnelProfileID = $personnelProfile->getID();
         DatabaseEntity::removeFromCache($privilege);
-        unset($privilege);
         DatabaseEntity::removeFromCache($personnelProfile);
-        unset($personnelProfile);
-        $description = DatabaseEntity::generateUUIDv4();
-        $privilege = Privilege::createNew(PrivilegeScope::canViewTimetableOfDepot, DatabaseEntity::generateUUIDv4());
-        $privilegeIDs[] = $privilege->getID();
-        $personnelProfile = PersonnelProfile::createNew($user, $user, $description, [$privilege]);
-        $personnelProfile->deactivate($user);
-        $personnelProfileIDs[] = $personnelProfile->getID();
-        DatabaseEntity::removeFromCache($privilege);
-        unset($privilege);
-        DatabaseEntity::removeFromCache($personnelProfile);
-        unset($personnelProfile);
+
         $profiles = $user->getProfiles();
 
         $db = DatabaseConnector::shared();
@@ -145,32 +135,40 @@ final class UserTests {
         );
         $db->execute_query(
             "DELETE FROM privileges
-            WHERE id = ? OR id = ?",
-            $privilegeIDs
+            WHERE id = ?",
+            [
+                $privilegeID
+            ]
         );
         $db->execute_query(
             "DELETE FROM personnel_profile_privileges
-            WHERE personnel_profile_id = ? OR personnel_profile_id = ?",
-            $personnelProfileIDs
+            WHERE personnel_profile_id = ?",
+            [
+                $personnelProfileID
+            ]
         );
         $db->execute_query(
             "DELETE FROM profiles_personnel
-            WHERE profile_id = ? OR profile_id = ?",
-            $personnelProfileIDs
+            WHERE profile_id = ?",
+            [
+                $personnelProfileID
+            ]
         );
         $db->execute_query(
             "DELETE FROM profiles
-            WHERE id = ? OR id = ?",
-            $personnelProfileIDs
+            WHERE id = ?",
+            [
+                $personnelProfileID
+            ]
         );
         self::deleteTestUser();
 
         if (count($profiles) != 2) {
-            return "The number of active profiles for user is incorrect. Expected: 2, found: ".count($profiles).".";
+            return "The number of user profiles is incorrect. Expected: 2, found: ".count($profiles).".";
         } elseif (!is_a($profiles[0], DirectorProfile::class)) {
-            return "The first active profile for user is of incorrect type. Expected: ".DirectorProfile::class.", found: ".gettype($profiles[0]).".";
+            return "The first user profile is of incorrect type. Expected: ".DirectorProfile::class.", found: ".gettype($profiles[0]).".";
         } elseif (!is_a($profiles[1], PersonnelProfile::class)) {
-            return "The second active profile for user is of incorrect type. Expected: ".PersonnelProfile::class.", found: ".gettype($profiles[1]).".";
+            return "The second user profile is of incorrect type. Expected: ".PersonnelProfile::class.", found: ".gettype($profiles[1]).".";
         } elseif (count($profiles[1]->getPrivileges()) != 1) {
             return "User's personnel profile has incorrect number of privileges. Expected: 1, found: ".count($profiles[1]->getPrivileges()).".";
         } elseif ($profiles[1]->getPrivileges()[0]->getScope() != PrivilegeScope::canViewAllTimetables) {

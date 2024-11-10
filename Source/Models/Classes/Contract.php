@@ -3,7 +3,6 @@
 final class Contract extends DatabaseEntity {
     private User $driver;
     private ContractState $currentState;
-    private ?array $periods = null;
     private int $initialPenaltyTasks;
     private int $remainingPenaltyTasks;
 
@@ -17,11 +16,11 @@ final class Contract extends DatabaseEntity {
     }
 
     public static function createNew(User $driver, User $authorizer, ContractState $state, int $initialPenaltyTasks): Contract {
-        Logger::log(LogLevel::info, "User with ID \"{$authorizer->getID()}\" is creating new contract between TODO and driver with ID \"{$driver->getID()}\", with initial state \"{$state->value}\" and $initialPenaltyTasks initial penalty task(s).");
+        Logger::log(LogLevel::info, "User with ID \"{$authorizer->getID()}\" is creating new contract between TODO and user with ID \"{$driver->getID()}\", with initial state \"{$state->value}\" and $initialPenaltyTasks initial penalty task(s).");
         self::validateContractStateIsNotFinal($state);
         self::validateNumberOfInitialPenaltyTasksIsNotLessThanZero($initialPenaltyTasks);
         $contract = new Contract(null, $driver, $state, $initialPenaltyTasks, $initialPenaltyTasks);
-        ContractPeriod::createNew($contract, $state, SystemDateTime::now(), $authorizer);
+        ContractPeriod::createNew($contract, $state, $authorizer);
         return $contract;
     }
 
@@ -60,6 +59,31 @@ final class Contract extends DatabaseEntity {
         return $contract;
     }
 
+    public static function getAllContractsOfUser(User $user): array {
+        Logger::log(LogLevel::info, "Fetching all contracts of user with ID \"{$user->getID()}\".");
+        $result = DatabaseConnector::shared()->execute_query(
+            "SELECT c.id
+            FROM contracts AS c
+            INNER JOIN contract_periods AS cp
+            ON c.id = cp.contract_id
+            WHERE c.driver_id = ?
+            ORDER BY MIN(cp.valid_from) ASC",
+            [
+                $user->getID()
+            ]
+        );
+        $contracts = [];
+
+        while ($data = $result->fetch_assoc()) {
+            $contractID = $data["id"];
+            $contracts[] = self::withID($contractID);
+        }
+
+        $result->free();
+        Logger::log(LogLevel::info, "Found ".count($contracts)." contract(s) for user with ID \"{$user->getID()}\".");
+        return $contracts;
+    }
+
     private static function validateContractStateIsNotFinal(ContractState $state): void {
         if ($state->isFinal()) {
             throw new Exception("Cannot create new contract with final state.");
@@ -80,15 +104,15 @@ final class Contract extends DatabaseEntity {
         return $this->currentState;
     }
 
-    public function getPeriods(): array {
-        if (is_null($this->periods)) {
-            $this->periods = ContractPeriod::getAllPeriodsOfContract($this);
-        }
-
-        return $this->periods;
+    public function setCurrentState(ContractState $state): void {
+        $this->currentState = $state;
+        $this->wasModified = true;
+        $this->save();
     }
 
-    // TODO: Handle updating periods and currentState after adding new period.
+    public function getPeriods(): array {
+        return ContractPeriod::getAllPeriodsOfContract($this);
+    }
 
     public function getInitialPenaltyTasks(): int {
         return $this->initialPenaltyTasks;
@@ -102,6 +126,7 @@ final class Contract extends DatabaseEntity {
         $valueBeforeChange = $this->remainingPenaltyTasks;
         $this->remainingPenaltyTasks = max(0, $this->remainingPenaltyTasks - 1);
         $this->wasModified = $valueBeforeChange != $this->remainingPenaltyTasks;
+        $this->save();
     }
 
     public function __toString() {

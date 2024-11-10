@@ -17,10 +17,17 @@ final class ContractPeriod extends DatabaseEntity {
         $this->save();
     }
 
-    public static function createNew(Contract $contract, ContractState $state, SystemDateTime $validFrom, User $authorizedBy): ContractPeriod {
-        Logger::log(LogLevel::info, "Creating new contract period of contract with ID \"{$contract->getID()}\", with state \"{$state->value}\" valid from {$validFrom->toDatabaseString()} and authorized by user with ID \"{$authorizedBy->getID()}\".");
-        self::validateValidFromIsNotBeforeLatestPeriodValidTo($contract, $validFrom);
-        return new ContractPeriod(null, $contract->getID(), $state, $validFrom, $authorizedBy, null);
+    public static function createNew(Contract $contract, ContractState $state, User $authorizedBy): ContractPeriod {
+        Logger::log(LogLevel::info, "Creating new contract period of contract with ID \"{$contract->getID()}\", with state \"{$state->value}\" authorized by user with ID \"{$authorizedBy->getID()}\".");
+        $period = new ContractPeriod(null, $contract->getID(), $state, SystemDateTime::now(), $authorizedBy, null);
+
+        // For new Contract the state is set in its constructor, but for existing one
+        // it has to be explicitly updated according to the latest ContractPeriod.
+        if (!$contract->isNew) {
+            $contract->setCurrentState($state);
+        }
+
+        return $period;
     }
 
     public static function withID(string $id): ?ContractPeriod {
@@ -80,27 +87,6 @@ final class ContractPeriod extends DatabaseEntity {
         $result->free();
         Logger::log(LogLevel::info, "Found ".count($periods)." period(s) for contract with ID \"{$contract->getID()}\".");
         return $periods;
-    }
-
-    private static function validateValidFromIsNotBeforeLatestPeriodValidTo(Contract $contract, SystemDateTime $validFrom): void {
-        $result = DatabaseConnector::shared()->execute_query(
-            "SELECT valid_to
-            FROM contract_periods
-            WHERE contract_id = ?
-            ORDER BY valid_from DESC
-            LIMIT 1",
-            [
-                $contract->getID()
-            ]
-        );
-        $latestContractPeriodValidTo = $result->fetch_column();
-        $result->free();
-
-        if ($latestContractPeriodValidTo !== false
-        && !is_null($latestContractPeriodValidTo)
-        && $validFrom->isBefore(new SystemDateTime($latestContractPeriodValidTo))) {
-            throw new Exception("The validFrom value of new period cannot be before validTo value of the latest contract period.");
-        }
     }
 
     public function getState(): ContractState {

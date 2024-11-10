@@ -10,7 +10,7 @@ final class SystemDateTime {
     public function __construct(?string $dateTime = null) {
         $timeZone = new DateTimeZone("UTC");
 
-        if (isset($dateTime)) {
+        if (!is_null($dateTime)) {
             if (($dateTimeFromMySQLFormat = DateTimeImmutable::createFromFormat(self::MYSQL_DATETIME_FORMAT, $dateTime, $timeZone)) !== false) {
                 $this->dateTime = $dateTimeFromMySQLFormat;
                 return;

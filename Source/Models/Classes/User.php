@@ -6,7 +6,6 @@ final class User extends DatabaseEntity {
     private ?string $temporaryPassword = null;
     private ?SystemDateTime $temporaryPasswordValidTo = null;
     private bool $shouldChangePassword;
-    private ?array $profiles = null;
     private SystemDateTime $createdAt;
 
     private function __construct(?string $id, int $login, string $username, bool $shouldChangePassword, SystemDateTime $createdAt) {
@@ -123,11 +122,11 @@ final class User extends DatabaseEntity {
     }
 
     public function getProfiles(): array {
-        if (is_null($this->profiles)) {
-            $this->profiles = Profile::getActiveProfilesForUser($this);
-        }
+        return Profile::getAllProfilesOfUser($this);
+    }
 
-        return $this->profiles;
+    public function getContracts(): array {
+        return Contract::getAllContractsOfUser($this);
     }
 
     public function getCreatedAt(): SystemDateTime {
@@ -135,18 +134,21 @@ final class User extends DatabaseEntity {
     }
 
     public function isActive(): bool {
-        return count($this->getProfiles()) > 0;
+        $activeProfiles = array_filter(
+            $this->getProfiles(),
+            fn ($profile) => $profile->isActive()
+        );
+        return count($activeProfiles) > 0;
     }
 
     public function __toString() {
         return sprintf(
-            __CLASS__."(id: \"%s\", login: %d, temporaryPassword: %s, temporaryPasswordValidTo: %s, shouldChangePassword: %s, profiles: (%d), createdAt: %s, isNew: %s, wasModified: %s)",
+            __CLASS__."(id: \"%s\", login: %d, temporaryPassword: %s, temporaryPasswordValidTo: %s, shouldChangePassword: %s, createdAt: %s, isNew: %s, wasModified: %s)",
             $this->id,
             $this->login,
             is_null($this->temporaryPassword) ? "null" : "\"".$this->temporaryPassword."\"",
             is_null($this->temporaryPasswordValidTo) ? "null" : $this->getTemporaryPasswordValidTo()->toDatabaseString(),
             $this->shouldChangePassword() ? "true" : "false",
-            is_null($this->profiles) ? 0 : count($this->profiles),
             $this->createdAt->toDatabaseString(),
             $this->isNew ? "true" : "false",
             $this->wasModified ? "true" : "false"
