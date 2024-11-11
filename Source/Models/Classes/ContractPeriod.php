@@ -17,17 +17,9 @@ final class ContractPeriod extends DatabaseEntity {
         $this->save();
     }
 
-    public static function createNew(Contract $contract, ContractState $state, User $authorizedBy): ContractPeriod {
-        Logger::log(LogLevel::info, "Creating new contract period of contract with ID \"{$contract->getID()}\", with state \"{$state->value}\" authorized by user with ID \"{$authorizedBy->getID()}\".");
-        $period = new ContractPeriod(null, $contract->getID(), $state, SystemDateTime::now(), $authorizedBy, null);
-
-        // For new Contract the state is set in its constructor, but for existing one
-        // it has to be explicitly updated according to the latest ContractPeriod.
-        if (!$contract->isNew) {
-            $contract->setCurrentState($state);
-        }
-
-        return $period;
+    public static function createNew(Contract $contract, ContractState $state, SystemDateTime $validFrom, User $authorizedBy): ContractPeriod {
+        Logger::log(LogLevel::info, "Creating new contract period of contract with ID \"{$contract->getID()}\", with state \"{$state->value}\" valid from {$validFrom->toDatabaseString()} and authorized by user with ID \"{$authorizedBy->getID()}\".");
+        return new ContractPeriod(null, $contract->getID(), $state, $validFrom, $authorizedBy, null);
     }
 
     public static function withID(string $id): ?ContractPeriod {

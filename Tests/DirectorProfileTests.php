@@ -5,32 +5,9 @@ final class DirectorProfileTests {
 
     public static function createNewDirectorProfileAndCheckItIsNotProtected(): bool|string {
         $user = User::createNew(self::EXISTING_TEST_USER_LOGIN);
-        $userID = $user->getID();
         $profile = DirectorProfile::createNew($user, $user);
-        $profileID = $profile->getID();
 
-        $db = DatabaseConnector::shared();
-        $db->execute_query(
-            "DELETE FROM profiles_director
-            WHERE profile_id = ?",
-            [
-                $profileID
-            ]
-        );
-        $db->execute_query(
-            "DELETE FROM profiles
-            WHERE id = ?",
-            [
-                $profileID
-            ]
-        );
-        $db->execute_query(
-            "DELETE FROM users
-            WHERE id = ?",
-            [
-                $userID
-            ]
-        );
+        self::deleteProfileDataAndTestUser($profile->getID(), $user->getID());
 
         if (!is_a($profile, DirectorProfile::class)) {
             return "Expected a ".DirectorProfile::class." object. Found: ".gettype($profile).".";
@@ -55,31 +32,9 @@ final class DirectorProfileTests {
         $profile = DirectorProfile::createNew($user, $user);
         $profileID = $profile->getID();
         DatabaseEntity::removeFromCache($profile);
-        unset($profile);
         $profile = DirectorProfile::withID($profileID);
 
-        $db = DatabaseConnector::shared();
-        $db->execute_query(
-            "DELETE FROM profiles_director
-            WHERE profile_id = ?",
-            [
-                $profileID
-            ]
-        );
-        $db->execute_query(
-            "DELETE FROM profiles
-            WHERE id = ?",
-            [
-                $profileID
-            ]
-        );
-        $db->execute_query(
-            "DELETE FROM users
-            WHERE id = ?",
-            [
-                $userID
-            ]
-        );
+        self::deleteProfileDataAndTestUser($profileID, $userID);
 
         if (!is_a($profile, DirectorProfile::class)) {
             return "Expected a ".DirectorProfile::class." object. Found: ".gettype($profile).".";
@@ -100,11 +55,23 @@ final class DirectorProfileTests {
 
     public static function deactivateDirectorProfile(): bool|string {
         $user = User::createNew(self::EXISTING_TEST_USER_LOGIN);
-        $userID = $user->getID();
         $profile = DirectorProfile::createNew($user, $user);
         $profile->deactivate($user);
-        $profileID = $profile->getID();
 
+        self::deleteProfileDataAndTestUser($profile->getID(), $user->getID());
+
+        if (is_null($profile->getDeactivatedAt())) {
+            return "Deactivated director profile deactivatedAt value should not be null.";
+        } elseif (is_null($profile->getDeactivatedBy())) {
+            return "Deactivated director profile deactivatedBy value should not be null.";
+        } elseif ($profile->getDeactivatedBy()->getID() != $user->getID()) {
+            return "Deactivated director profile deactivatedBy value is incorrect. Expected (userID): \"{$user->getID()}\", found (userID): \"{$profile->getDeactivatedBy()->getID()}\".";
+        }
+
+        return true;
+    }
+
+    private static function deleteProfileDataAndTestUser(string $profileID, string $userID): void {
         $db = DatabaseConnector::shared();
         $db->execute_query(
             "DELETE FROM profiles_director
@@ -127,16 +94,6 @@ final class DirectorProfileTests {
                 $userID
             ]
         );
-
-        if (is_null($profile->getDeactivatedAt())) {
-            return "Deactivated director profile deactivatedAt value should not be null.";
-        } elseif (is_null($profile->getDeactivatedBy())) {
-            return "Deactivated director profile deactivatedBy value should not be null.";
-        } elseif ($profile->getDeactivatedBy()->getID() != $user->getID()) {
-            return "Deactivated director profile deactivatedBy value is incorrect. Expected (userID): \"{$user->getID()}\", found (userID): \"{$profile->getDeactivatedBy()->getID()}\".";
-        }
-
-        return true;
     }
 }
 

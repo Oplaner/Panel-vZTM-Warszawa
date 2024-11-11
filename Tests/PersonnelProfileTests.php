@@ -5,13 +5,12 @@ final class PersonnelProfileTests {
 
     public static function throwExceptionWhenCreatingPersonnelProfileWithoutPrivileges(): bool|string {
         $user = User::createNew(self::EXISTING_TEST_USER_LOGIN);
-        $userID = $user->getID();
 
         DatabaseConnector::shared()->execute_query(
             "DELETE FROM users
             WHERE id = ?",
             [
-                $userID
+                $user->getID()
             ]
         );
 
@@ -95,7 +94,6 @@ final class PersonnelProfileTests {
         $profile = PersonnelProfile::createNew($user, $user, $description, [$privilege]);
         $profileID = $profile->getID();
         DatabaseEntity::removeFromCache($profile);
-        unset($profile);
         $profile = PersonnelProfile::withID($profileID);
 
         $db = DatabaseConnector::shared();
@@ -227,14 +225,11 @@ final class PersonnelProfileTests {
         $personnelProfile->deactivate($user);
         $personnelProfileIDs = [$personnelProfile->getID()];
         DatabaseEntity::removeFromCache($personnelProfile);
-        unset($personnelProfile);
         $personnelProfile = PersonnelProfile::createNew($user, $user, $descriptions[1], [$privileges[1]]);
         $personnelProfile->deactivate($user);
         $personnelProfileIDs[] = $personnelProfile->getID();
         DatabaseEntity::removeFromCache($personnelProfile);
-        unset($personnelProfile);
         array_walk($privileges, fn ($privilege) => DatabaseEntity::removeFromCache($privilege));
-        unset($privileges);
         $profiles = PersonnelProfile::getAllByUser($user);
 
         $db = DatabaseConnector::shared();

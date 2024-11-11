@@ -38,8 +38,9 @@ final class UserTests {
         $user = User::createNew(self::EXISTING_TEST_USER_LOGIN);
         $userID = $user->getID();
         DatabaseEntity::removeFromCache($user);
-        unset($user);
+
         $user = User::withID($userID);
+
         self::deleteTestUser();
 
         if (!is_a($user, User::class)) {
@@ -190,7 +191,6 @@ final class UserTests {
         $contractIDs[] = $contract->getID();
         $contractStates[] = $contract->getCurrentState();
         DatabaseEntity::removeFromCache($contract);
-        unset($contract);
 
         $contracts = $user->getContracts();
 
@@ -218,7 +218,7 @@ final class UserTests {
         return true;
     }
 
-    private static function deleteTestUser() {
+    private static function deleteTestUser(): void {
         DatabaseConnector::shared()->execute_query(
             "DELETE FROM users
             WHERE login = ?",

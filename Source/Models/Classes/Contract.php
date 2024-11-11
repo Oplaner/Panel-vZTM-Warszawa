@@ -20,7 +20,7 @@ final class Contract extends DatabaseEntity {
         self::validateContractStateIsNotFinal($state);
         self::validateNumberOfInitialPenaltyTasksIsNotLessThanZero($initialPenaltyTasks);
         $contract = new Contract(null, $driver, $state, $initialPenaltyTasks, $initialPenaltyTasks);
-        ContractPeriod::createNew($contract, $state, $authorizer);
+        ContractPeriod::createNew($contract, $state, SystemDateTime::now(), $authorizer);
         return $contract;
     }
 
@@ -113,6 +113,18 @@ final class Contract extends DatabaseEntity {
 
     public function getPeriods(): array {
         return ContractPeriod::getAllPeriodsOfContract($this);
+    }
+
+    public function addPeriod(ContractState $state, User $authorizer): void {
+        if ($this->currentState->isFinal()) {
+            throw new Exception("Cannot add new period to contract in a final state.");
+        }
+
+        $periods = $this->getPeriods();
+        $lastPeriod = $periods[count($periods) - 1];
+        $lastPeriod->setValidTo(SystemDateTime::now());
+        ContractPeriod::createNew($this, $state, $lastPeriod->getValidTo(), $authorizer);
+        $this->setCurrentState($state);
     }
 
     public function getInitialPenaltyTasks(): int {
