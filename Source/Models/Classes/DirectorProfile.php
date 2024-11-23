@@ -59,14 +59,16 @@ final class DirectorProfile extends Profile {
 
     public function __toString() {
         return sprintf(
-            __CLASS__."(id: \"%s\", userID: \"%s\", activatedAt: %s, activatedByUserID: \"%s\", deactivatedAt: %s, deactivatedByUserID: %s, isProtected: %s)",
+            __CLASS__."(id: \"%s\", userID: \"%s\", activatedAt: %s, activatedByUserID: \"%s\", deactivatedAt: %s, deactivatedByUserID: %s, isProtected: %s, isNew: %s, wasModified: %s)",
             $this->id,
             $this->userID,
             $this->activatedAt->toDatabaseString(),
             $this->activatedBy->getID(),
             is_null($this->deactivatedAt) ? "null" : $this->deactivatedAt->toDatabaseString(),
             is_null($this->deactivatedBy) ? "null" : "\"{$this->deactivatedBy->getID()}\"",
-            $this->isProtected ? "true" : "false"
+            $this->isProtected ? "true" : "false",
+            $this->isNew ? "true" : "false",
+            $this->wasModified ? "true" : "false"
         );
     }
 

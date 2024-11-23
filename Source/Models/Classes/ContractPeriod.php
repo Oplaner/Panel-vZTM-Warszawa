@@ -106,13 +106,15 @@ final class ContractPeriod extends DatabaseEntity {
 
     public function __toString() {
         return sprintf(
-            __CLASS__."(id: \"%s\", contractID: \"%s\", state: \"%s\", validFrom: %s, authorizedByUserID: \"%s\", validTo: %s)",
+            __CLASS__."(id: \"%s\", contractID: \"%s\", state: \"%s\", validFrom: %s, authorizedByUserID: \"%s\", validTo: %s, isNew: %s, wasModified: %s)",
             $this->id,
             $this->contractID,
             $this->state->value,
             $this->validFrom->toDatabaseString(),
             $this->authorizedBy->getID(),
-            is_null($this->validTo) ? "null" : $this->validTo->toDatabaseString()
+            is_null($this->validTo) ? "null" : $this->validTo->toDatabaseString(),
+            $this->isNew ? "true" : "false",
+            $this->wasModified ? "true" : "false"
         );
     }
 
