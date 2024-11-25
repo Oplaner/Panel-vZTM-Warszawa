@@ -17,11 +17,9 @@ final class Privilege extends DatabaseEntity {
     }
 
     public static function withID(string $id): ?Privilege {
-        Logger::log(LogLevel::info, "Fetching privilege with ID \"$id\".");
         $cachedObject = self::findCached($id);
 
         if (is_a($cachedObject, Privilege::class)) {
-            Logger::log(LogLevel::info, "Found cached privilege: $cachedObject.");
             return $cachedObject;
         }
 
@@ -35,16 +33,14 @@ final class Privilege extends DatabaseEntity {
         );
 
         if ($result->num_rows == 0) {
-            Logger::log(LogLevel::info, "Could not find privilege with ID \"$id\".");
+            Logger::log(LogLevel::warn, "Could not find privilege with ID \"$id\".");
             $result->free();
             return null;
         }
 
         $data = $result->fetch_assoc();
         $result->free();
-        $privilege = new Privilege($id, PrivilegeScope::from($data["scope"]), $data["associated_entity_id"]);
-        Logger::log(LogLevel::info, "Fetched privilege: $privilege.");
-        return $privilege;
+        return new Privilege($id, PrivilegeScope::from($data["scope"]), $data["associated_entity_id"]);
     }
 
     public function getScope(): PrivilegeScope {
@@ -67,7 +63,6 @@ final class Privilege extends DatabaseEntity {
 
     protected function save(): void {
         if ($this->isNew) {
-            Logger::log(LogLevel::info, "Saving new privilege: $this.");
             DatabaseConnector::shared()->execute_query(
                 "INSERT INTO privileges
                 (id, scope, associated_entity_id)
