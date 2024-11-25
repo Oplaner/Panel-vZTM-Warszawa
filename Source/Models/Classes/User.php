@@ -139,15 +139,12 @@ final class User extends DatabaseEntity {
 
     public function __toString() {
         return sprintf(
-            __CLASS__."(id: \"%s\", login: %d, temporaryPassword: %s, temporaryPasswordValidTo: %s, shouldChangePassword: %s, createdAt: %s, isNew: %s, wasModified: %s)",
+            __CLASS__."(id: \"%s\", login: %d, username: \"%s\", shouldChangePassword: %s, createdAt: %s)",
             $this->id,
             $this->login,
-            is_null($this->temporaryPassword) ? "null" : "\"".$this->temporaryPassword."\"",
-            is_null($this->temporaryPasswordValidTo) ? "null" : $this->getTemporaryPasswordValidTo()->toDatabaseString(),
-            $this->shouldChangePassword() ? "true" : "false",
-            $this->createdAt->toDatabaseString(),
-            $this->isNew ? "true" : "false",
-            $this->wasModified ? "true" : "false"
+            $this->username,
+            $this->shouldChangePassword ? "true" : "false",
+            $this->createdAt->toDatabaseString()
         );
     }
 

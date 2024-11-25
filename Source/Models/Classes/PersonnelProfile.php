@@ -107,7 +107,7 @@ final class PersonnelProfile extends Profile {
 
     public function __toString() {
         return sprintf(
-            __CLASS__."(id: \"%s\", userID: \"%s\", activatedAt: %s, activatedByUserID: \"%s\", deactivatedAt: %s, deactivatedByUserID: %s, description: \"%s\", privileges: (%d), isNew: %s, wasModified: %s)",
+            __CLASS__."(id: \"%s\", userID: \"%s\", activatedAt: %s, activatedByUserID: \"%s\", deactivatedAt: %s, deactivatedByUserID: %s, description: \"%s\", privileges: (%d))",
             $this->id,
             $this->userID,
             $this->activatedAt->toDatabaseString(),
@@ -115,9 +115,7 @@ final class PersonnelProfile extends Profile {
             is_null($this->deactivatedAt) ? "null" : $this->deactivatedAt->toDatabaseString(),
             is_null($this->deactivatedBy) ? "null" : "\"{$this->deactivatedBy->getID()}\"",
             $this->description,
-            count($this->privileges),
-            $this->isNew ? "true" : "false",
-            $this->wasModified ? "true" : "false"
+            count($this->privileges)
         );
     }
 

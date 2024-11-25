@@ -53,11 +53,10 @@ final class Privilege extends DatabaseEntity {
 
     public function __toString() {
         return sprintf(
-            __CLASS__."(id: \"%s\", scope: \"%s\", associatedEntityID: %s, isNew: %s)",
+            __CLASS__."(id: \"%s\", scope: \"%s\", associatedEntityID: %s)",
             $this->id,
             $this->scope->value,
-            is_null($this->associatedEntityID) ? "null" : "\"".$this->associatedEntityID."\"",
-            $this->isNew ? "true" : "false"
+            is_null($this->associatedEntityID) ? "null" : "\"".$this->associatedEntityID."\""
         );
     }
 

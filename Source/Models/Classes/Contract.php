@@ -138,14 +138,12 @@ final class Contract extends DatabaseEntity {
 
     public function __toString() {
         return sprintf(
-            __CLASS__."(id: \"%s\", driverID: \"%s\", currentState: \"%s\", initialPenaltyTasks: %d, remainingPenaltyTasks: %d, isNew: %s, wasModified: %s)",
+            __CLASS__."(id: \"%s\", driverID: \"%s\", currentState: \"%s\", initialPenaltyTasks: %d, remainingPenaltyTasks: %d)",
             $this->id,
             $this->driver->getID(),
             $this->currentState->value,
             $this->initialPenaltyTasks,
-            $this->remainingPenaltyTasks,
-            $this->isNew ? "true" : "false",
-            $this->wasModified ? "true" : "false"
+            $this->remainingPenaltyTasks
         );
     }
 

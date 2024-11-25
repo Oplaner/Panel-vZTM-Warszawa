@@ -203,7 +203,7 @@ final class Carrier extends DatabaseEntity {
 
     public function __toString() {
         return sprintf(
-            __CLASS__."(id: \"%s\", fullName: \"%s\", shortName: \"%s\", numberOfTrialTasks: %d, numberOfPenaltyTasks: %d, createdAt: %s, createdByUserID: \"%s\", closedAt: %s, closedByUserID: %s, isNew: %s, wasModified: %s)",
+            __CLASS__."(id: \"%s\", fullName: \"%s\", shortName: \"%s\", numberOfTrialTasks: %d, numberOfPenaltyTasks: %d, createdAt: %s, createdByUserID: \"%s\", closedAt: %s, closedByUserID: %s)",
             $this->id,
             $this->fullName,
             $this->shortName,
@@ -212,9 +212,7 @@ final class Carrier extends DatabaseEntity {
             $this->createdAt->toDatabaseString(),
             $this->createdBy->getID(),
             is_null($this->closedAt) ? "null" : $this->closedAt->toDatabaseString(),
-            is_null($this->closedBy) ? "null" : "\"{$this->closedBy->getID()}\"",
-            $this->isNew ? "true" : "false",
-            $this->wasModified ? "true" : "false"
+            is_null($this->closedBy) ? "null" : "\"{$this->closedBy->getID()}\""
         );
     }
 
