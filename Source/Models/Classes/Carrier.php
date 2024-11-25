@@ -64,8 +64,7 @@ final class Carrier extends DatabaseEntity {
         $createdBy = User::withID($data["created_by_user_id"]);
         $closedAt = is_null($data["closed_at"]) ? null : new SystemDateTime($data["closed_at"]);
         $closedBy = is_null($data["closed_by_user_id"]) ? null : User::withID($data["closed_by_user_id"]);
-        $carrier = new Carrier($id, $fullName, $shortName, $numberOfTrialTasks, $numberOfPenaltyTasks, $createdAt, $createdBy, $closedAt, $closedBy);
-        return $carrier;
+        return new Carrier($id, $fullName, $shortName, $numberOfTrialTasks, $numberOfPenaltyTasks, $createdAt, $createdBy, $closedAt, $closedBy);
     }
 
     private static function validateNumberOfTrialTasksIsNotLessThanZero(int $numberOfTrialTasks): void {

@@ -52,8 +52,7 @@ final class Contract extends DatabaseEntity {
         $state = ContractState::from($data["current_state"]);
         $initialPenaltyTasks = $data["initial_penalty_tasks"];
         $remainingPenaltyTasks = $data["remaining_penalty_tasks"];
-        $contract = new Contract($id, $driver, $state, $initialPenaltyTasks, $remainingPenaltyTasks);
-        return $contract;
+        return new Contract($id, $driver, $state, $initialPenaltyTasks, $remainingPenaltyTasks);
     }
 
     public static function getAllByUser(User $user): array {

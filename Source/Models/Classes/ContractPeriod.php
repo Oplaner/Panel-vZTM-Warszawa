@@ -23,11 +23,9 @@ final class ContractPeriod extends DatabaseEntity {
     }
 
     public static function withID(string $id): ?ContractPeriod {
-        Logger::log(LogLevel::info, "Fetching contract period with ID \"$id\".");
         $cachedObject = self::findCached($id);
 
         if (is_a($cachedObject, ContractPeriod::class)) {
-            Logger::log(LogLevel::info, "Found cached contract period: $cachedObject.");
             return $cachedObject;
         }
 
@@ -41,7 +39,7 @@ final class ContractPeriod extends DatabaseEntity {
         );
 
         if ($result->num_rows == 0) {
-            Logger::log(LogLevel::info, "Could not find contract period with ID \"$id\".");
+            Logger::log(LogLevel::warn, "Could not find contract period with ID \"$id\".");
             $result->free();
             return null;
         }
@@ -53,13 +51,10 @@ final class ContractPeriod extends DatabaseEntity {
         $validFrom = new SystemDateTime($data["valid_from"]);
         $authorizedBy = User::withID($data["authorized_by_user_id"]);
         $validTo = is_null($data["valid_to"]) ? null : new SystemDateTime($data["valid_to"]);
-        $contractPeriod = new ContractPeriod($id, $contractID, $state, $validFrom, $authorizedBy, $validTo);
-        Logger::log(LogLevel::info, "Fetched contract period: $contractPeriod.");
-        return $contractPeriod;
+        return new ContractPeriod($id, $contractID, $state, $validFrom, $authorizedBy, $validTo);
     }
 
     public static function getAllPeriodsOfContract(Contract $contract): array {
-        Logger::log(LogLevel::info, "Fetching all periods of contract with ID \"{$contract->getID()}\".");
         $result = DatabaseConnector::shared()->execute_query(
             "SELECT id
             FROM contract_periods
@@ -77,7 +72,6 @@ final class ContractPeriod extends DatabaseEntity {
         }
 
         $result->free();
-        Logger::log(LogLevel::info, "Found ".count($periods)." period(s) for contract with ID \"{$contract->getID()}\".");
         return $periods;
     }
 
@@ -119,7 +113,6 @@ final class ContractPeriod extends DatabaseEntity {
     }
 
     protected function save(): void {
-        Logger::log(LogLevel::info, "Saving ".($this->isNew ? "new" : "existing")." contract period: $this.");
         $db = DatabaseConnector::shared();
 
         if ($this->isNew) {
