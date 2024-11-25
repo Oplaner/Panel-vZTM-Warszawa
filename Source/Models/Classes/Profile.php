@@ -20,7 +20,6 @@ abstract class Profile extends DatabaseEntity {
     }
 
     public static function getAllProfilesOfUser(User $user): array {
-        Logger::log(LogLevel::info, "Fetching profiles of user with ID \"{$user->getID()}\".");
         $result = DatabaseConnector::shared()->execute_query(
             "SELECT id, type
             FROM profiles
@@ -39,7 +38,6 @@ abstract class Profile extends DatabaseEntity {
         }
 
         $result->free();
-        Logger::log(LogLevel::info, "Found ".count($profiles)." profile(s) for user with ID \"{$user->getID()}\".");
         return $profiles;
     }
 
