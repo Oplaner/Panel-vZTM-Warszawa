@@ -33,11 +33,9 @@ final class Carrier extends DatabaseEntity {
     }
 
     public static function withID(string $id): ?Carrier {
-        Logger::log(LogLevel::info, "Fetching carrier with ID \"$id\".");
         $cachedObject = self::findCached($id);
 
         if (is_a($cachedObject, Carrier::class)) {
-            Logger::log(LogLevel::info, "Found cached carrier: $cachedObject.");
             return $cachedObject;
         }
 
@@ -51,7 +49,7 @@ final class Carrier extends DatabaseEntity {
         );
 
         if ($result->num_rows == 0) {
-            Logger::log(LogLevel::info, "Could not find carrier with ID \"$id\".");
+            Logger::log(LogLevel::warn, "Could not find carrier with ID \"$id\".");
             $result->free();
             return null;
         }
@@ -67,7 +65,6 @@ final class Carrier extends DatabaseEntity {
         $closedAt = is_null($data["closed_at"]) ? null : new SystemDateTime($data["closed_at"]);
         $closedBy = is_null($data["closed_by_user_id"]) ? null : User::withID($data["closed_by_user_id"]);
         $carrier = new Carrier($id, $fullName, $shortName, $numberOfTrialTasks, $numberOfPenaltyTasks, $createdAt, $createdBy, $closedAt, $closedBy);
-        Logger::log(LogLevel::info, "Fetched carrier: $carrier.");
         return $carrier;
     }
 
@@ -104,7 +101,6 @@ final class Carrier extends DatabaseEntity {
     }
 
     public function getSupervisors(): array {
-        Logger::log(LogLevel::info, "Fetching supervisors of carrier with ID \"$this->id\".");
         $result = DatabaseConnector::shared()->execute_query(
             "SELECT supervisor_id
             FROM carrier_supervisors
@@ -120,7 +116,6 @@ final class Carrier extends DatabaseEntity {
         }
 
         $result->free();
-        Logger::log(LogLevel::info, "Found ".count($supervisors)." supervisor(s) of carrier with ID \"$this->id\".");
         return $supervisors;
     }
 
@@ -225,7 +220,6 @@ final class Carrier extends DatabaseEntity {
     }
 
     protected function save(): void {
-        Logger::log(LogLevel::info, "Saving ".($this->isNew ? "new" : "existing")." carrier: $this.");
         $db = DatabaseConnector::shared();
 
         if ($this->isNew) {
