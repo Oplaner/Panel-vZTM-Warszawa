@@ -25,11 +25,9 @@ final class Contract extends DatabaseEntity {
     }
 
     public static function withID(string $id): ?Contract {
-        Logger::log(LogLevel::info, "Fetching contract with ID \"$id\".");
         $cachedObject = self::findCached($id);
 
         if (is_a($cachedObject, Contract::class)) {
-            Logger::log(LogLevel::info, "Found cached contract: $cachedObject.");
             return $cachedObject;
         }
 
@@ -43,7 +41,7 @@ final class Contract extends DatabaseEntity {
         );
 
         if ($result->num_rows == 0) {
-            Logger::log(LogLevel::info, "Could not find existing contract with ID \"$id\".");
+            Logger::log(LogLevel::warn, "Could not find contract with ID \"$id\".");
             $result->free();
             return null;
         }
@@ -55,12 +53,10 @@ final class Contract extends DatabaseEntity {
         $initialPenaltyTasks = $data["initial_penalty_tasks"];
         $remainingPenaltyTasks = $data["remaining_penalty_tasks"];
         $contract = new Contract($id, $driver, $state, $initialPenaltyTasks, $remainingPenaltyTasks);
-        Logger::log(LogLevel::info, "Fetched existing contract: $contract.");
         return $contract;
     }
 
     public static function getAllByUser(User $user): array {
-        Logger::log(LogLevel::info, "Fetching all contracts of user with ID \"{$user->getID()}\".");
         $result = DatabaseConnector::shared()->execute_query(
             "SELECT c.id
             FROM contracts AS c
@@ -81,7 +77,6 @@ final class Contract extends DatabaseEntity {
         }
 
         $result->free();
-        Logger::log(LogLevel::info, "Found ".count($contracts)." contract(s) for user with ID \"{$user->getID()}\".");
         return $contracts;
     }
 
@@ -156,7 +151,6 @@ final class Contract extends DatabaseEntity {
     }
 
     protected function save(): void {
-        Logger::log(LogLevel::info, "Saving ".($this->isNew ? "new" : "existing")." contract: $this.");
         $db = DatabaseConnector::shared();
 
         if ($this->isNew) {
