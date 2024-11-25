@@ -31,7 +31,7 @@ final class User extends DatabaseEntity {
         );
         
         if ($result->num_rows == 0) {
-            Logger::log(LogLevel::info, "Could not find new myBB user with ID $myBBUserID.");
+            Logger::log(LogLevel::info, "Could not find myBB user with ID $myBBUserID.");
             $result->free();
             return null;
         }
@@ -43,11 +43,9 @@ final class User extends DatabaseEntity {
     }
 
     public static function withID(string $id): ?User {
-        Logger::log(LogLevel::info, "Fetching existing user with ID \"$id\".");
         $cachedObject = self::findCached($id);
 
         if (is_a($cachedObject, User::class)) {
-            Logger::log(LogLevel::info, "Found cached user: $cachedObject.");
             return $cachedObject;
         }
 
@@ -61,16 +59,14 @@ final class User extends DatabaseEntity {
         );
 
         if ($result->num_rows == 0) {
-            Logger::log(LogLevel::info, "Could not find existing user with ID \"$id\".");
+            Logger::log(LogLevel::warn, "Could not find user with ID \"$id\".");
             $result->free();
             return null;
         }
 
         $data = $result->fetch_assoc();
         $result->free();
-        $user = new User($id, $data["login"], $data["username"], $data["should_change_password"], new SystemDateTime($data["created_at"]));
-        Logger::log(LogLevel::info, "Fetched existing user: $user.");
-        return $user;
+        return new User($id, $data["login"], $data["username"], $data["should_change_password"], new SystemDateTime($data["created_at"]));
     }
 
     public function getLogin(): int {
@@ -156,7 +152,6 @@ final class User extends DatabaseEntity {
     }
 
     protected function save(): void {
-        Logger::log(LogLevel::info, "Saving ".($this->isNew ? "new" : "existing")." user: $this.");
         $db = DatabaseConnector::shared();
 
         if ($this->isNew) {
