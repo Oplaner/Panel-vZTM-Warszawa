@@ -15,11 +15,9 @@ final class DirectorProfile extends Profile {
     }
 
     public static function withID(string $id): ?DirectorProfile {
-        Logger::log(LogLevel::info, "Fetching director profile with ID \"$id\".");
         $cachedObject = self::findCached($id);
 
         if (is_a($cachedObject, DirectorProfile::class)) {
-            Logger::log(LogLevel::info, "Found cached director profile: $cachedObject.");
             return $cachedObject;
         }
 
@@ -35,7 +33,7 @@ final class DirectorProfile extends Profile {
         );
 
         if ($result->num_rows == 0) {
-            Logger::log(LogLevel::info, "Could not find director profile with ID \"$id\".");
+            Logger::log(LogLevel::warn, "Could not find director profile with ID \"$id\".");
             $result->free();
             return null;
         }
@@ -48,9 +46,7 @@ final class DirectorProfile extends Profile {
         $deactivatedAt = is_null($data["deactivated_at"]) ? null : new SystemDateTime($data["deactivated_at"]);
         $deactivatedBy = is_null($data["deactivated_by_user_id"]) ? null : User::withID($data["deactivated_by_user_id"]);
         $isProtected = $data["protected"];
-        $directorProfile = new DirectorProfile($id, $userID, $activatedAt, $activatedBy, $deactivatedAt, $deactivatedBy, $isProtected);
-        Logger::log(LogLevel::info, "Fetched director profile: $directorProfile.");
-        return $directorProfile;
+        return new DirectorProfile($id, $userID, $activatedAt, $activatedBy, $deactivatedAt, $deactivatedBy, $isProtected);
     }
 
     public function isProtected(): bool {
@@ -73,8 +69,6 @@ final class DirectorProfile extends Profile {
     }
 
     protected function save(): void {
-        Logger::log(LogLevel::info, "Saving ".($this->isNew ? "new" : "existing")." director profile: $this.");
-
         if ($this->isNew) {
             DatabaseConnector::shared()->execute_query(
                 "INSERT INTO profiles_director
