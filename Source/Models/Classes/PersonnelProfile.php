@@ -18,11 +18,9 @@ final class PersonnelProfile extends Profile {
     }
 
     public static function withID(string $id): ?PersonnelProfile {
-        Logger::log(LogLevel::info, "Fetching personnel profile with ID \"$id\".");
         $cachedObject = self::findCached($id);
 
         if (is_a($cachedObject, PersonnelProfile::class)) {
-            Logger::log(LogLevel::info, "Found cached personnel profile: $cachedObject.");
             return $cachedObject;
         }
 
@@ -40,7 +38,7 @@ final class PersonnelProfile extends Profile {
         );
 
         if ($result->num_rows == 0) {
-            Logger::log(LogLevel::info, "Could not find personnel profile with ID \"$id\".");
+            Logger::log(LogLevel::warn, "Could not find personnel profile with ID \"$id\".");
             $result->free();
             return null;
         }
@@ -67,13 +65,10 @@ final class PersonnelProfile extends Profile {
         }
         
         $result->free();
-        $personnelProfile = new PersonnelProfile($id, $userID, $activatedAt, $activatedBy, $deactivatedAt, $deactivatedBy, $description, $privileges);
-        Logger::log(LogLevel::info, "Fetched personnel profile: $personnelProfile.");
-        return $personnelProfile;
+        return new PersonnelProfile($id, $userID, $activatedAt, $activatedBy, $deactivatedAt, $deactivatedBy, $description, $privileges);
     }
 
     public static function getAllByUser(User $user): array {
-        Logger::log(LogLevel::info, "Fetching all personnel profiles of user with ID \"{$user->getID()}\".");
         $result = DatabaseConnector::shared()->execute_query(
             "SELECT id
             FROM profiles
@@ -93,7 +88,6 @@ final class PersonnelProfile extends Profile {
         }
 
         $result->free();
-        Logger::log(LogLevel::info, "Found ".count($personnelProfiles)." personnel profile(s) in history for user with ID \"{$user->getID()}\".");
         return $personnelProfiles;
     }
 
@@ -128,7 +122,6 @@ final class PersonnelProfile extends Profile {
     }
 
     protected function save(): void {
-        Logger::log(LogLevel::info, "Saving ".($this->isNew ? "new" : "existing")." personnel profile: $this.");
         $db = DatabaseConnector::shared();
 
         if ($this->isNew) {
