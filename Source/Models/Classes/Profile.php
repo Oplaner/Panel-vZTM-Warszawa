@@ -2,6 +2,7 @@
 
 abstract class Profile extends DatabaseEntity {
     protected const DATABASE_PROFILE_TYPE_DIRECTOR = "DIRECTOR";
+    protected const DATABASE_PROFILE_TYPE_DRIVER = "DRIVER";
     protected const DATABASE_PROFILE_TYPE_PERSONNEL = "PERSONNEL";
 
     protected string $userID;
@@ -45,6 +46,8 @@ abstract class Profile extends DatabaseEntity {
         switch ($profileType) {
             case self::DATABASE_PROFILE_TYPE_DIRECTOR:
                 return DirectorProfile::withID($profileID);
+            case self::DATABASE_PROFILE_TYPE_DRIVER:
+                return DriverProfile::withID($profileID);
             case self::DATABASE_PROFILE_TYPE_PERSONNEL:
                 return PersonnelProfile::withID($profileID);
             default:

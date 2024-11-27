@@ -26,9 +26,10 @@ final class DirectorProfile extends Profile {
             FROM profiles AS p
             INNER JOIN profiles_director AS pd
             ON p.id = pd.profile_id
-            WHERE p.id = ? AND p.type = \"".self::DATABASE_PROFILE_TYPE_DIRECTOR."\"",
+            WHERE p.id = ? AND p.type = ?",
             [
-                $id
+                $id,
+                self::DATABASE_PROFILE_TYPE_DIRECTOR
             ]
         );
 

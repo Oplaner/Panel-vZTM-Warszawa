@@ -31,9 +31,10 @@ final class PersonnelProfile extends Profile {
             ON p.id = pp.profile_id
             INNER JOIN personnel_profile_privileges AS ppp
             ON pp.profile_id = ppp.personnel_profile_id
-            WHERE p.id = ? AND p.type = \"".self::DATABASE_PROFILE_TYPE_PERSONNEL."\"",
+            WHERE p.id = ? AND p.type = ?",
             [
-                $id
+                $id,
+                self::DATABASE_PROFILE_TYPE_PERSONNEL
             ]
         );
 
