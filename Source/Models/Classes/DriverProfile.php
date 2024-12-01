@@ -13,7 +13,7 @@ final class DriverProfile extends Profile {
 
     public static function createNew(User $owner, User $activator): DriverProfile {
         Logger::log(LogLevel::info, "User with ID \"{$activator->getID()}\" is creating new driver profile for user with ID \"{$owner->getID()}\".");
-        $initialPenaltyMultiplier = self::getPenaltyMultiplierForUser($owner);
+        $initialPenaltyMultiplier = self::getNextPenaltyMultiplierForUser($owner);
         return new DriverProfile(null, $owner->getID(), SystemDateTime::now(), $activator, null, null, $initialPenaltyMultiplier, null);
     }
 
@@ -54,7 +54,7 @@ final class DriverProfile extends Profile {
         return new DriverProfile($id, $userID, $activatedAt, $activatedBy, $deactivatedAt, $deactivatedBy, $initialPenaltyMultiplier, $acquiredPenaltyMultiplier);
     }
 
-    public static function getPenaltyMultiplierForUser(User $user): int {
+    public static function getNextPenaltyMultiplierForUser(User $user): int {
         $result = DatabaseConnector::shared()->execute_query(
             "SELECT pd.acquired_penalty_multiplier
             FROM profiles AS p
@@ -110,7 +110,7 @@ final class DriverProfile extends Profile {
             is_null($this->deactivatedAt) ? "null" : $this->deactivatedAt->toDatabaseString(),
             is_null($this->deactivatedBy) ? "null" : "\"{$this->deactivatedBy->getID()}\"",
             $this->initialPenaltyMultiplier,
-            is_null($this->acquiredPenaltyMultiplier) ? "null" : $this->acquiredPenaltyMultiplier
+            $this->acquiredPenaltyMultiplier ?? "null"
         );
     }
 
