@@ -1,18 +1,9 @@
 <?php
 
 final class PersonnelProfileTests {
-    private const EXISTING_TEST_USER_LOGIN = 1387;
-
     public static function throwExceptionWhenCreatingPersonnelProfileWithoutPrivileges(): bool|string {
-        $user = User::createNew(self::EXISTING_TEST_USER_LOGIN);
-
-        DatabaseConnector::shared()->execute_query(
-            "DELETE FROM users
-            WHERE id = ?",
-            [
-                $user->getID()
-            ]
-        );
+        $user = TestHelpers::createTestUser();
+        TestHelpers::deleteTestUser($user->getID());
 
         try {
             PersonnelProfile::createNew($user, $user, "", []);
@@ -24,51 +15,18 @@ final class PersonnelProfileTests {
     }
 
     public static function createNewPersonnelProfile(): bool|string {
-        $user = User::createNew(self::EXISTING_TEST_USER_LOGIN);
-        $userID = $user->getID();
+        $user = TestHelpers::createTestUser();
         $description = DatabaseEntity::generateUUIDv4();
         $privileges = [
-            Privilege::createNew(PrivilegeScope::canViewAllTimetables),
-            Privilege::createNew(PrivilegeScope::canViewTimetableOfDepot, DatabaseEntity::generateUUIDv4())
+            TestHelpers::createTestPrivilege(),
+            TestHelpers::createTestPrivilegeWithAssociatedEntity()
         ];
-        $privilegeIDs = array_map(fn ($privilege) => $privilege->getID(), $privileges);
         $profile = PersonnelProfile::createNew($user, $user, $description, $privileges);
-        $profileID = $profile->getID();
 
-        $db = DatabaseConnector::shared();
-        $db->execute_query(
-            "DELETE FROM privileges
-            WHERE id = ? OR id = ?",
-            $privilegeIDs
-        );
-        $db->execute_query(
-            "DELETE FROM personnel_profile_privileges
-            WHERE personnel_profile_id = ?",
-            [
-                $profileID
-            ]
-        );
-        $db->execute_query(
-            "DELETE FROM profiles_personnel
-            WHERE profile_id = ?",
-            [
-                $profileID
-            ]
-        );
-        $db->execute_query(
-            "DELETE FROM profiles
-            WHERE id = ?",
-            [
-                $profileID
-            ]
-        );
-        $db->execute_query(
-            "DELETE FROM users
-            WHERE id = ?",
-            [
-                $userID
-            ]
-        );
+        TestHelpers::deleteTestPersonnelProfileData($profile->getID());
+        TestHelpers::deleteTestPrivilege($privileges[0]->getID());
+        TestHelpers::deleteTestPrivilege($privileges[1]->getID());
+        TestHelpers::deleteTestUser($user->getID());
 
         if (!is_a($profile, PersonnelProfile::class)) {
             return "Expected a ".PersonnelProfile::class." object. Found: ".gettype($profile).".";
@@ -86,52 +44,16 @@ final class PersonnelProfileTests {
     }
 
     public static function getPersonnelProfile(): bool|string {
-        $user = User::createNew(self::EXISTING_TEST_USER_LOGIN);
-        $userID = $user->getID();
+        $user = TestHelpers::createTestUser();
         $description = DatabaseEntity::generateUUIDv4();
-        $privilege = Privilege::createNew(PrivilegeScope::canViewAllTimetables);
-        $privilegeID = $privilege->getID();
+        $privilege = TestHelpers::createTestPrivilege();
         $profile = PersonnelProfile::createNew($user, $user, $description, [$privilege]);
-        $profileID = $profile->getID();
         DatabaseEntity::removeFromCache($profile);
-        $profile = PersonnelProfile::withID($profileID);
+        $profile = PersonnelProfile::withID($profile->getID());
 
-        $db = DatabaseConnector::shared();
-        $db->execute_query(
-            "DELETE FROM privileges
-            WHERE id = ?",
-            [
-                $privilegeID
-            ]
-        );
-        $db->execute_query(
-            "DELETE FROM personnel_profile_privileges
-            WHERE personnel_profile_id = ?",
-            [
-                $profileID
-            ]
-        );
-        $db->execute_query(
-            "DELETE FROM profiles_personnel
-            WHERE profile_id = ?",
-            [
-                $profileID
-            ]
-        );
-        $db->execute_query(
-            "DELETE FROM profiles
-            WHERE id = ?",
-            [
-                $profileID
-            ]
-        );
-        $db->execute_query(
-            "DELETE FROM users
-            WHERE id = ?",
-            [
-                $userID
-            ]
-        );
+        TestHelpers::deleteTestPersonnelProfileData($profile->getID());
+        TestHelpers::deleteTestPrivilege($privilege->getID());
+        TestHelpers::deleteTestUser($user->getID());
 
         if (!is_a($profile, PersonnelProfile::class)) {
             return "Expected a ".PersonnelProfile::class." object. Found: ".gettype($profile).".";
@@ -139,8 +61,8 @@ final class PersonnelProfileTests {
             return "Personnel profile description is incorrect. Expected: \"$description\", found: \"{$profile->getDescription()}\".";
         } elseif (count($profile->getPrivileges()) != 1) {
             return "Personnel profile privileges count is incorrect. Expected: 1, found: ".count($profile->getPrivileges()).".";
-        } elseif ($profile->getPrivileges()[0]->getID() != $privilegeID) {
-            return "Personnel profile privilege ID is incorrect. Expected: \"$privilegeID\", found: \"{$profile->getPrivileges()[0]->getID()}\".";
+        } elseif ($profile->getPrivileges()[0]->getID() != $privilege->getID()) {
+            return "Personnel profile privilege ID is incorrect. Expected: \"{$privilege->getID()}\", found: \"{$profile->getPrivileges()[0]->getID()}\".";
         } elseif (is_null($profile->getActivatedAt())) {
             return "Personnel profile activatedAt value should not be null.";
         } elseif (!is_null($profile->getDeactivatedAt())) {
@@ -151,51 +73,15 @@ final class PersonnelProfileTests {
     }
 
     public static function deactivatePersonnelProfile(): bool|string {
-        $user = User::createNew(self::EXISTING_TEST_USER_LOGIN);
-        $userID = $user->getID();
+        $user = TestHelpers::createTestUser();
         $description = DatabaseEntity::generateUUIDv4();
-        $privilege = Privilege::createNew(PrivilegeScope::canViewAllTimetables);
-        $privilegeID = $privilege->getID();
+        $privilege = TestHelpers::createTestPrivilege();
         $profile = PersonnelProfile::createNew($user, $user, $description, [$privilege]);
         $profile->deactivate($user);
-        $profileID = $profile->getID();
 
-        $db = DatabaseConnector::shared();
-        $db->execute_query(
-            "DELETE FROM privileges
-            WHERE id = ?",
-            [
-                $privilegeID
-            ]
-        );
-        $db->execute_query(
-            "DELETE FROM personnel_profile_privileges
-            WHERE personnel_profile_id = ?",
-            [
-                $profileID
-            ]
-        );
-        $db->execute_query(
-            "DELETE FROM profiles_personnel
-            WHERE profile_id = ?",
-            [
-                $profileID
-            ]
-        );
-        $db->execute_query(
-            "DELETE FROM profiles
-            WHERE id = ?",
-            [
-                $profileID
-            ]
-        );
-        $db->execute_query(
-            "DELETE FROM users
-            WHERE id = ?",
-            [
-                $userID
-            ]
-        );
+        TestHelpers::deleteTestPersonnelProfileData($profile->getID());
+        TestHelpers::deleteTestPrivilege($privilege->getID());
+        TestHelpers::deleteTestUser($user->getID());
 
         if (is_null($profile->getDeactivatedAt())) {
             return "Deactivated personnel profile deactivatedAt value should not be null.";
@@ -209,76 +95,46 @@ final class PersonnelProfileTests {
     }
 
     public static function getUserPersonnelProfiles(): bool|string {
-        $user = User::createNew(self::EXISTING_TEST_USER_LOGIN);
-        $userID = $user->getID();
-        $privilegeConfigurations = [
-            [PrivilegeScope::canViewAllTimetables, null],
-            [PrivilegeScope::canViewTimetableOfDepot, DatabaseEntity::generateUUIDv4()]
-        ];
+        $user = TestHelpers::createTestUser();
         $descriptions = ["roleA", "roleB"];
         $privileges = [
-            Privilege::createNew($privilegeConfigurations[0][0], $privilegeConfigurations[0][1]),
-            Privilege::createNew($privilegeConfigurations[1][0], $privilegeConfigurations[1][1])
+            TestHelpers::createTestPrivilege(),
+            TestHelpers::createTestPrivilegeWithAssociatedEntity()
         ];
-        $privilegeIDs = array_map(fn ($privilege) => $privilege->getID(), $privileges);
         $personnelProfile = PersonnelProfile::createNew($user, $user, $descriptions[0], [$privileges[0]]);
         $personnelProfile->deactivate($user);
-        $personnelProfileIDs = [$personnelProfile->getID()];
+        $personnelProfiles = [$personnelProfile];
         DatabaseEntity::removeFromCache($personnelProfile);
         $personnelProfile = PersonnelProfile::createNew($user, $user, $descriptions[1], [$privileges[1]]);
         $personnelProfile->deactivate($user);
-        $personnelProfileIDs[] = $personnelProfile->getID();
+        $personnelProfiles[] = $personnelProfile;
         DatabaseEntity::removeFromCache($personnelProfile);
-        array_walk($privileges, fn ($privilege) => DatabaseEntity::removeFromCache($privilege));
         $profiles = PersonnelProfile::getAllByUser($user);
 
-        $db = DatabaseConnector::shared();
-        $db->execute_query(
-            "DELETE FROM privileges
-            WHERE id = ? OR id = ?",
-            $privilegeIDs
-        );
-        $db->execute_query(
-            "DELETE FROM personnel_profile_privileges
-            WHERE personnel_profile_id = ? OR personnel_profile_id = ?",
-            $personnelProfileIDs
-        );
-        $db->execute_query(
-            "DELETE FROM profiles_personnel
-            WHERE profile_id = ? OR profile_id = ?",
-            $personnelProfileIDs
-        );
-        $db->execute_query(
-            "DELETE FROM profiles
-            WHERE id = ? OR id = ?",
-            $personnelProfileIDs
-        );
-        $db->execute_query(
-            "DELETE FROM users
-            WHERE id = ?",
-            [
-                $userID
-            ]
-        );
+        TestHelpers::deleteTestPersonnelProfileData($personnelProfiles[0]->getID());
+        TestHelpers::deleteTestPersonnelProfileData($personnelProfiles[1]->getID());
+        TestHelpers::deleteTestPrivilege($privileges[0]->getID());
+        TestHelpers::deleteTestPrivilege($privileges[1]->getID());
+        TestHelpers::deleteTestUser($user->getID());
 
         if (count($profiles) != 2) {
             return "The number of fetched personnel profiles for user is incorrect. Expected: 2, found: ".count($profiles).".";
-        } elseif ($profiles[0]->getID() != $personnelProfileIDs[0]) {
-            return "The first created personnel profile ID is incorrect. Expected: \"{$personnelProfileIDs[0]}\", found: \"{$profiles[0]->getID()}\".";
-        } elseif ($profiles[1]->getID() != $personnelProfileIDs[1]) {
-            return "The second created personnel profile ID is incorrect. Expected: \"{$personnelProfileIDs[1]}\", found: \"{$profiles[1]->getID()}\".";
+        } elseif ($profiles[0]->getID() != $personnelProfiles[0]->getID()) {
+            return "The first created personnel profile ID is incorrect. Expected: \"{$personnelProfiles[0]->getID()}\", found: \"{$profiles[0]->getID()}\".";
+        } elseif ($profiles[1]->getID() != $personnelProfiles[1]->getID()) {
+            return "The second created personnel profile ID is incorrect. Expected: \"{$personnelProfiles[1]->getID()}\", found: \"{$profiles[1]->getID()}\".";
         } elseif ($profiles[0]->getDescription() != $descriptions[0]) {
             return "The first created personnel profile description is incorrect. Expected: \"{$descriptions[0]}\", found: \"{$profiles[0]->getDescription()}\".";
         } elseif ($profiles[1]->getDescription() != $descriptions[1]) {
             return "The second created personnel profile description is incorrect. Expected: \"{$descriptions[1]}\", found: \"{$profiles[1]->getDescription()}\".";
-        } elseif ($profiles[0]->getPrivileges()[0]->getScope() != $privilegeConfigurations[0][0]) {
-            return "The first created personnel profile privilege scope is incorrect. Expected: {$privilegeConfigurations[0][0]->name}, found: {$profiles[0]->getPrivileges()[0]->getScope()->name}.";
-        } elseif ($profiles[1]->getPrivileges()[0]->getScope() != $privilegeConfigurations[1][0]) {
-            return "The second created personnel profile privilege scope is incorrect. Expected: {$privilegeConfigurations[1][0]->name}, found: {$profiles[1]->getPrivileges()[0]->getScope()->name}.";
-        } elseif ($profiles[0]->getPrivileges()[0]->getAssociatedEntityID() !== $privilegeConfigurations[0][1]) {
+        } elseif ($profiles[0]->getPrivileges()[0]->getScope() != $privileges[0]->getScope()) {
+            return "The first created personnel profile privilege scope is incorrect. Expected: {$privileges[0]->getScope()->name}, found: {$profiles[0]->getPrivileges()[0]->getScope()->name}.";
+        } elseif ($profiles[1]->getPrivileges()[0]->getScope() != $privileges[1]->getScope()) {
+            return "The second created personnel profile privilege scope is incorrect. Expected: {$privileges[1]->getScope()->name}, found: {$profiles[1]->getPrivileges()[0]->getScope()->name}.";
+        } elseif ($profiles[0]->getPrivileges()[0]->getAssociatedEntityID() !== $privileges[0]->getAssociatedEntityID()) {
             return "The first created personnel profile privilege associated entity ID is incorrect. Expected: null, found: \"{$profiles[0]->getPrivileges()[0]->getAssociatedEntityID()}\".";
-        } elseif ($profiles[1]->getPrivileges()[0]->getAssociatedEntityID() !== $privilegeConfigurations[1][1]) {
-            return "The second created personnel profile privilege associated entity ID is incorrect. Expected: \"{$privilegeConfigurations[1][1]}\", found: \"{$profiles[0]->getPrivileges()[0]->getAssociatedEntityID()}\".";
+        } elseif ($profiles[1]->getPrivileges()[0]->getAssociatedEntityID() !== $privileges[1]->getAssociatedEntityID()) {
+            return "The second created personnel profile privilege associated entity ID is incorrect. Expected: \"{$privileges[1]->getAssociatedEntityID()}\", found: \"{$profiles[0]->getPrivileges()[0]->getAssociatedEntityID()}\".";
         } elseif (!$profiles[0]->getActivatedAt()->isBefore($profiles[1]->getActivatedAt())) {
             return "The first created personnel profile is not on the first position on the list.";
         }

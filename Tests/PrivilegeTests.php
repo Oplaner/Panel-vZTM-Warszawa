@@ -5,7 +5,7 @@ final class PrivilegeTests {
         $scope = PrivilegeScope::canViewAllTimetables;
         $privilege = Privilege::createNew($scope);
 
-        self::deletePrivilegeData($privilege->getID());
+        TestHelpers::deleteTestPrivilege($privilege->getID());
 
         if (!is_a($privilege, Privilege::class)) {
             return "Expected a ".Privilege::class." object. Found: ".gettype($privilege).".";
@@ -23,7 +23,7 @@ final class PrivilegeTests {
         $associatedEntityID = DatabaseEntity::generateUUIDv4();
         $privilege = Privilege::createNew($scope, $associatedEntityID);
 
-        self::deletePrivilegeData($privilege->getID());
+        TestHelpers::deleteTestPrivilege($privilege->getID());
 
         if (!is_a($privilege, Privilege::class)) {
             return "Expected a ".Privilege::class." object. Found: ".gettype($privilege).".";
@@ -40,11 +40,10 @@ final class PrivilegeTests {
         $scope = PrivilegeScope::canViewTimetableOfDepot;
         $associatedEntityID = DatabaseEntity::generateUUIDv4();
         $privilege = Privilege::createNew($scope, $associatedEntityID);
-        $privilegeID = $privilege->getID();
         DatabaseEntity::removeFromCache($privilege);
-        $privilege = Privilege::withID($privilegeID);
+        $privilege = Privilege::withID($privilege->getID());
 
-        self::deletePrivilegeData($privilegeID);
+        TestHelpers::deleteTestPrivilege($privilege->getID());
 
         if (!is_a($privilege, Privilege::class)) {
             return "Expected a ".Privilege::class." object. Found: ".gettype($privilege).".";
@@ -55,16 +54,6 @@ final class PrivilegeTests {
         }
 
         return true;
-    }
-
-    private static function deletePrivilegeData(string $privilegeID): void {
-        DatabaseConnector::shared()->execute_query(
-            "DELETE FROM privileges
-            WHERE id = ?",
-            [
-                $privilegeID
-            ]
-        );
     }
 }
 

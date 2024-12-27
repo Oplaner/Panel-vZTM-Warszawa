@@ -2,7 +2,7 @@
 
 require_once __DIR__."/Models/Classes/Autoloader.php";
 
-Autoloader::scanSourceDirectory(basename(__DIR__));
+Autoloader::scanSourceDirectory();
 Logger::log(LogLevel::info, "===== APPLICATION START =====");
 $properties = PropertiesReader::getProperties("application");
 error_reporting($properties["errorReportingEnabled"] ? E_ALL : 0);

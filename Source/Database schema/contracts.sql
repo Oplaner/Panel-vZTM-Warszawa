@@ -1,5 +1,6 @@
 CREATE TABLE `contracts` (
   `id` char(36) CHARACTER SET ascii COLLATE ascii_general_nopad_ci NOT NULL,
+  `carrier_id` char(36) CHARACTER SET ascii COLLATE ascii_general_nopad_ci NOT NULL,
   `driver_id` char(36) CHARACTER SET ascii COLLATE ascii_general_nopad_ci NOT NULL,
   `current_state` varchar(40) CHARACTER SET ascii COLLATE ascii_general_nopad_ci NOT NULL,
   `initial_penalty_tasks` tinyint(3) UNSIGNED NOT NULL,
@@ -8,4 +9,5 @@ CREATE TABLE `contracts` (
 
 ALTER TABLE `contracts`
   ADD PRIMARY KEY (`id`),
+  ADD KEY `carrier_id` (`carrier_id`),
   ADD KEY `driver_id` (`driver_id`);

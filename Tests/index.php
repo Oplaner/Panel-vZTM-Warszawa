@@ -2,7 +2,7 @@
 
 require_once __DIR__."/../Source/Models/Classes/Autoloader.php";
 
-Autoloader::scanSourceDirectory(basename(__DIR__));
+Autoloader::scanSourceAndTestsDirectory();
 
 ?>
 <!DOCTYPE html>
@@ -85,7 +85,6 @@ $testClasses = array_map(
 );
 
 foreach ($testClasses as $class):
-    require_once $class.".php";
 
 ?>
     <h2><?php echo $class ?></h2>

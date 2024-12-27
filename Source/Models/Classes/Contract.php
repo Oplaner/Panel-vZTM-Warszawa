@@ -1,13 +1,15 @@
 <?php
 
 final class Contract extends DatabaseEntity {
+    private Carrier $carrier;
     private User $driver;
     private ContractState $currentState;
     private int $initialPenaltyTasks;
     private int $remainingPenaltyTasks;
 
-    private function __construct(?string $id, User $driver, ContractState $currentState, int $initialPenaltyTasks, int $remainingPenaltyTasks) {
+    private function __construct(?string $id, Carrier $carrier, User $driver, ContractState $currentState, int $initialPenaltyTasks, int $remainingPenaltyTasks) {
         parent::__construct($id);
+        $this->carrier = $carrier;
         $this->driver = $driver;
         $this->currentState = $currentState;
         $this->initialPenaltyTasks = $initialPenaltyTasks;
@@ -15,11 +17,19 @@ final class Contract extends DatabaseEntity {
         $this->save();
     }
 
-    public static function createNew(User $driver, User $authorizer, ContractState $state, int $initialPenaltyTasks): Contract {
-        Logger::log(LogLevel::info, "User with ID \"{$authorizer->getID()}\" is creating new contract between TODO and user with ID \"{$driver->getID()}\", with initial state \"{$state->value}\" and $initialPenaltyTasks initial penalty task(s).");
+    public static function createNew(Carrier $carrier, User $driver, User $authorizer, ContractState $state): Contract {
+        Logger::log(LogLevel::info, "User with ID \"{$authorizer->getID()}\" is creating new contract between carrier \"{$carrier->getShortName()}\" and user with ID \"{$driver->getID()}\", with initial state \"{$state->value}\".");
         self::validateContractStateIsNotFinal($state);
-        self::validateNumberOfInitialPenaltyTasksIsNotLessThanZero($initialPenaltyTasks);
-        $contract = new Contract(null, $driver, $state, $initialPenaltyTasks, $initialPenaltyTasks);
+        $driverProfile = DriverProfile::createNew($driver, $authorizer);
+        $totalPenaltyTasks = 0;
+
+        if ($state == ContractState::conditionalWithPenalty) {
+            $penaltyTasksMultiplier = $driverProfile->getInitialPenaltyMultiplier();
+            $initialPenaltyTasks = $carrier->getNumberOfPenaltyTasks();
+            $totalPenaltyTasks = $penaltyTasksMultiplier * $initialPenaltyTasks;
+        }
+
+        $contract = new Contract(null, $carrier, $driver, $state, $totalPenaltyTasks, $totalPenaltyTasks);
         ContractPeriod::createNew($contract, $state, SystemDateTime::now(), $authorizer);
         return $contract;
     }
@@ -32,7 +42,7 @@ final class Contract extends DatabaseEntity {
         }
 
         $result = DatabaseConnector::shared()->execute_query(
-            "SELECT driver_id, current_state, initial_penalty_tasks, remaining_penalty_tasks
+            "SELECT carrier_id, driver_id, current_state, initial_penalty_tasks, remaining_penalty_tasks
             FROM contracts
             WHERE id = ?",
             [
@@ -48,14 +58,39 @@ final class Contract extends DatabaseEntity {
 
         $data = $result->fetch_assoc();
         $result->free();
+        $carrier = Carrier::withID($data["carrier_id"]);
         $driver = User::withID($data["driver_id"]);
         $state = ContractState::from($data["current_state"]);
         $initialPenaltyTasks = $data["initial_penalty_tasks"];
         $remainingPenaltyTasks = $data["remaining_penalty_tasks"];
-        return new Contract($id, $driver, $state, $initialPenaltyTasks, $remainingPenaltyTasks);
+        return new Contract($id, $carrier, $driver, $state, $initialPenaltyTasks, $remainingPenaltyTasks);
     }
 
-    public static function getAllByUser(User $user): array {
+    public static function getAllByCarrier(Carrier $carrier): array {
+        $result = DatabaseConnector::shared()->execute_query(
+            "SELECT c.id
+            FROM contracts AS c
+            INNER JOIN contract_periods AS cp
+            ON c.id = cp.contract_id
+            WHERE c.carrier_id = ?
+            GROUP BY c.id
+            ORDER BY MIN(cp.valid_from) ASC",
+            [
+                $carrier->getID()
+            ]
+        );
+        $contracts = [];
+
+        while ($data = $result->fetch_assoc()) {
+            $contractID = $data["id"];
+            $contracts[] = self::withID($contractID);
+        }
+
+        $result->free();
+        return $contracts;
+    }
+
+    public static function getAllByDriver(User $driver): array {
         $result = DatabaseConnector::shared()->execute_query(
             "SELECT c.id
             FROM contracts AS c
@@ -65,7 +100,7 @@ final class Contract extends DatabaseEntity {
             GROUP BY c.id
             ORDER BY MIN(cp.valid_from) ASC",
             [
-                $user->getID()
+                $driver->getID()
             ]
         );
         $contracts = [];
@@ -85,10 +120,8 @@ final class Contract extends DatabaseEntity {
         }
     }
 
-    private static function validateNumberOfInitialPenaltyTasksIsNotLessThanZero(int $initialPenaltyTasks): void {
-        if ($initialPenaltyTasks < 0) {
-            throw new Exception("Number of initial penalty tasks cannot be less than 0.");
-        }
+    public function getCarrier(): Carrier {
+        return $this->carrier;
     }
 
     public function getDriver(): User {
@@ -138,8 +171,9 @@ final class Contract extends DatabaseEntity {
 
     public function __toString() {
         return sprintf(
-            __CLASS__."(id: \"%s\", driverID: \"%s\", currentState: \"%s\", initialPenaltyTasks: %d, remainingPenaltyTasks: %d)",
+            __CLASS__."(id: \"%s\", carrierID: \"%s\", driverID: \"%s\", currentState: \"%s\", initialPenaltyTasks: %d, remainingPenaltyTasks: %d)",
             $this->id,
+            $this->carrier->getID(),
             $this->driver->getID(),
             $this->currentState->value,
             $this->initialPenaltyTasks,
@@ -153,10 +187,11 @@ final class Contract extends DatabaseEntity {
         if ($this->isNew) {
             $db->execute_query(
                 "INSERT INTO contracts
-                (id, driver_id, current_state, initial_penalty_tasks, remaining_penalty_tasks)
-                VALUES (?, ?, ?, ?, ?)",
+                (id, carrier_id, driver_id, current_state, initial_penalty_tasks, remaining_penalty_tasks)
+                VALUES (?, ?, ?, ?, ?, ?)",
                 [
                     $this->id,
+                    $this->carrier->getID(),
                     $this->driver->getID(),
                     $this->currentState->value,
                     $this->initialPenaltyTasks,

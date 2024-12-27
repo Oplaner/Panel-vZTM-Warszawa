@@ -11,7 +11,11 @@ final class DriverProfile extends Profile {
         $this->save();
     }
 
-    public static function createNew(User $owner, User $activator): DriverProfile {
+    public static function createNew(User $owner, User $activator): ?DriverProfile {
+        if (self::userHasActiveDriverProfile($owner)) {
+            return null;
+        }
+
         Logger::log(LogLevel::info, "User with ID \"{$activator->getID()}\" is creating new driver profile for user with ID \"{$owner->getID()}\".");
         $initialPenaltyMultiplier = self::getNextPenaltyMultiplierForUser($owner);
         return new DriverProfile(null, $owner->getID(), SystemDateTime::now(), $activator, null, null, $initialPenaltyMultiplier, null);
@@ -79,6 +83,14 @@ final class DriverProfile extends Profile {
         return $acquiredPenaltyMultiplier ?? 0;
     }
 
+    private static function userHasActiveDriverProfile(User $user): bool {
+        $activeDriverProfiles = array_filter(
+            $user->getProfiles(),
+            fn ($profile) => $profile->isActive() && is_a($profile, DriverProfile::class)
+        );
+        return count($activeDriverProfiles) > 0;
+    }
+
     private static function validateAcquiredPenaltyMultiplierIsNotNullOrLessThanZero(int $acquiredPenaltyMultiplier): void {
         if (is_null($acquiredPenaltyMultiplier) || $acquiredPenaltyMultiplier < 0) {
             throw new Exception("Acquired penalty multiplier cannot be null or less than 0.");
@@ -119,7 +131,7 @@ final class DriverProfile extends Profile {
             DatabaseConnector::shared()->execute_query(
                 "INSERT INTO profiles_driver
                 (profile_id, initial_penalty_multiplier, acquired_penalty_multiplier)
-                VALUES (?, ?)",
+                VALUES (?, ?, ?)",
                 [
                     $this->id,
                     $this->initialPenaltyMultiplier,

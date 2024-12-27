@@ -122,7 +122,7 @@ final class User extends DatabaseEntity {
     }
 
     public function getContracts(): array {
-        return Contract::getAllByUser($this);
+        return Contract::getAllByDriver($this);
     }
 
     public function getCreatedAt(): SystemDateTime {

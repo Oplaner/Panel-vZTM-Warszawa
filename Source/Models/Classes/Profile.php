@@ -107,8 +107,8 @@ abstract class Profile extends DatabaseEntity {
             SET deactivated_at = ?, deactivated_by_user_id = ?
             WHERE id = ?",
             [
-                $this->deactivatedAt->toDatabaseString(),
-                $this->deactivatedBy->getID(),
+                $this->deactivatedAt?->toDatabaseString(),
+                $this->deactivatedBy?->getID(),
                 $this->id
             ]
         );
