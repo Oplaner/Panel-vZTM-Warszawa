@@ -60,19 +60,10 @@ final class UserTests {
     public static function checkUsernameIsUpdated(): bool|string {
         $user = User::createNew(TestHelpers::EXISTING_TEST_USER_LOGIN);
         $username1 = $user->getUsername();
-
-        DatabaseConnector::shared()->execute_query(
-            "UPDATE mybb18_users
-            SET username = ?
-            WHERE uid = ?",
-            [
-                $username1.rand(),
-                $user->getLogin()
-            ]
-        );
-
+        self::updateUsername($user->getLogin(), $username1.rand());
         $user->updateUsername();
         $username2 = $user->getUsername();
+        self::updateUsername($user->getLogin(), $username1);
 
         TestHelpers::deleteTestUser($user->getID());
 
@@ -81,6 +72,18 @@ final class UserTests {
         }
 
         return true;
+    }
+
+    private static function updateUsername(int $myBBUserID, string $username): void {
+        DatabaseConnector::shared()->execute_query(
+            "UPDATE mybb18_users
+            SET username = ?
+            WHERE uid = ?",
+            [
+                $username,
+                $myBBUserID
+            ]
+        );
     }
 }
 
