@@ -31,6 +31,10 @@ final class ContractTests {
 
         if (!is_a($contract, Contract::class)) {
             return "Expected a ".Contract::class." object. Found: ".gettype($contract).".";
+        } elseif ($contract->getCarrier()->getID() != $carrier->getID()) {
+            return "New contract carrier ID is incorrect. Expected: \"{$carrier->getID()}\", found: \"{$contract->getCarrier()->getID()}\".";
+        } elseif ($contract->getDriver()->getID() != $user->getID()) {
+            return "New contract driver ID is incorrect. Expected: \"{$user->getID()}\", found: \"{$contract->getDriver()->getID()}\".";
         } elseif ($contract->getCurrentState() != $contractState) {
             return "New contract was created with incorrect state. Expected: {$contractState->name}, found: {$contract->getCurrentState()->name}.";
         } elseif ($contract->getInitialPenaltyTasks() != 0) {
@@ -66,6 +70,10 @@ final class ContractTests {
 
         if (!is_a($contract, Contract::class)) {
             return "Expected a ".Contract::class." object. Found: ".gettype($contract).".";
+        } elseif ($contract->getCarrier()->getID() != $carrier->getID()) {
+            return "New contract carrier ID is incorrect. Expected: \"{$carrier->getID()}\", found: \"{$contract->getCarrier()->getID()}\".";
+        } elseif ($contract->getDriver()->getID() != $user->getID()) {
+            return "New contract driver ID is incorrect. Expected: \"{$user->getID()}\", found: \"{$contract->getDriver()->getID()}\".";
         } elseif ($contract->getCurrentState() != $contractState) {
             return "New contract was created with incorrect state. Expected: {$contractState->name}, found: {$contract->getCurrentState()->name}.";
         } elseif ($contract->getInitialPenaltyTasks() != $expectedPenaltyTasks) {
@@ -105,10 +113,14 @@ final class ContractTests {
 
         if (!is_a($contract, Contract::class)) {
             return "Expected a ".Contract::class." object. Found: ".gettype($contract).".";
+        } elseif ($contract->getCarrier()->getID() != $carrier->getID()) {
+            return "The contract carrier ID is incorrect. Expected: \"{$carrier->getID()}\", found: \"{$contract->getCarrier()->getID()}\".";
+        } elseif ($contract->getDriver()->getID() != $user->getID()) {
+            return "The contract driver ID is incorrect. Expected: \"{$user->getID()}\", found: \"{$contract->getDriver()->getID()}\".";
         } elseif ($contract->getCurrentState() != $contractState) {
-            return "New contract was created with incorrect state. Expected: {$contractState->name}, found: {$contract->getCurrentState()->name}.";
+            return "The contract has incorrect state. Expected: {$contractState->name}, found: {$contract->getCurrentState()->name}.";
         } elseif (count($periods) != 1) {
-            return "New contract has incorrect number of periods. Expected: 1, found: ".count($periods).".";
+            return "The contract has incorrect number of periods. Expected: 1, found: ".count($periods).".";
         }
 
         return true;

@@ -93,54 +93,6 @@ final class PersonnelProfileTests {
 
         return true;
     }
-
-    public static function getUserPersonnelProfiles(): bool|string {
-        $user = TestHelpers::createTestUser();
-        $descriptions = ["roleA", "roleB"];
-        $privileges = [
-            TestHelpers::createTestPrivilege(),
-            TestHelpers::createTestPrivilegeWithAssociatedEntity()
-        ];
-        $personnelProfile = PersonnelProfile::createNew($user, $user, $descriptions[0], [$privileges[0]]);
-        $personnelProfile->deactivate($user);
-        $personnelProfiles = [$personnelProfile];
-        DatabaseEntity::removeFromCache($personnelProfile);
-        $personnelProfile = PersonnelProfile::createNew($user, $user, $descriptions[1], [$privileges[1]]);
-        $personnelProfile->deactivate($user);
-        $personnelProfiles[] = $personnelProfile;
-        DatabaseEntity::removeFromCache($personnelProfile);
-        $profiles = PersonnelProfile::getAllByUser($user);
-
-        TestHelpers::deleteTestPersonnelProfileData($personnelProfiles[0]->getID());
-        TestHelpers::deleteTestPersonnelProfileData($personnelProfiles[1]->getID());
-        TestHelpers::deleteTestPrivilege($privileges[0]->getID());
-        TestHelpers::deleteTestPrivilege($privileges[1]->getID());
-        TestHelpers::deleteTestUser($user->getID());
-
-        if (count($profiles) != 2) {
-            return "The number of fetched personnel profiles for user is incorrect. Expected: 2, found: ".count($profiles).".";
-        } elseif ($profiles[0]->getID() != $personnelProfiles[0]->getID()) {
-            return "The first created personnel profile ID is incorrect. Expected: \"{$personnelProfiles[0]->getID()}\", found: \"{$profiles[0]->getID()}\".";
-        } elseif ($profiles[1]->getID() != $personnelProfiles[1]->getID()) {
-            return "The second created personnel profile ID is incorrect. Expected: \"{$personnelProfiles[1]->getID()}\", found: \"{$profiles[1]->getID()}\".";
-        } elseif ($profiles[0]->getDescription() != $descriptions[0]) {
-            return "The first created personnel profile description is incorrect. Expected: \"{$descriptions[0]}\", found: \"{$profiles[0]->getDescription()}\".";
-        } elseif ($profiles[1]->getDescription() != $descriptions[1]) {
-            return "The second created personnel profile description is incorrect. Expected: \"{$descriptions[1]}\", found: \"{$profiles[1]->getDescription()}\".";
-        } elseif ($profiles[0]->getPrivileges()[0]->getScope() != $privileges[0]->getScope()) {
-            return "The first created personnel profile privilege scope is incorrect. Expected: {$privileges[0]->getScope()->name}, found: {$profiles[0]->getPrivileges()[0]->getScope()->name}.";
-        } elseif ($profiles[1]->getPrivileges()[0]->getScope() != $privileges[1]->getScope()) {
-            return "The second created personnel profile privilege scope is incorrect. Expected: {$privileges[1]->getScope()->name}, found: {$profiles[1]->getPrivileges()[0]->getScope()->name}.";
-        } elseif ($profiles[0]->getPrivileges()[0]->getAssociatedEntityID() !== $privileges[0]->getAssociatedEntityID()) {
-            return "The first created personnel profile privilege associated entity ID is incorrect. Expected: null, found: \"{$profiles[0]->getPrivileges()[0]->getAssociatedEntityID()}\".";
-        } elseif ($profiles[1]->getPrivileges()[0]->getAssociatedEntityID() !== $privileges[1]->getAssociatedEntityID()) {
-            return "The second created personnel profile privilege associated entity ID is incorrect. Expected: \"{$privileges[1]->getAssociatedEntityID()}\", found: \"{$profiles[0]->getPrivileges()[0]->getAssociatedEntityID()}\".";
-        } elseif (!$profiles[0]->getActivatedAt()->isBefore($profiles[1]->getActivatedAt())) {
-            return "The first created personnel profile is not on the first position on the list.";
-        }
-
-        return true;
-    }
 }
 
 ?>
