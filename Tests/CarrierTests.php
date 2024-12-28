@@ -50,15 +50,15 @@ final class CarrierTests {
         } elseif (count($supervisors) != 0) {
             return "New carrier has incorrect number of supervisors. Expected: 0, found: ".count($supervisors).".";
         } elseif ($carrier->getNumberOfTrialTasks() != $numberOfTrialTasks) {
-            return "New carrier number of trial tasks value is incorrect. Expected: $numberOfTrialTasks, found: {$carrier->getNumberOfTrialTasks()}.";
+            return "New carrier numberOfTrialTasks value is incorrect. Expected: $numberOfTrialTasks, found: {$carrier->getNumberOfTrialTasks()}.";
         } elseif ($carrier->getNumberOfPenaltyTasks() != $numberOfPenaltyTasks) {
-            return "New carrier number of penalty tasks value is incorrect. Expected: $numberOfPenaltyTasks, found: {$carrier->getNumberOfPenaltyTasks()}.";
+            return "New carrier numberOfPenaltyTasks value is incorrect. Expected: $numberOfPenaltyTasks, found: {$carrier->getNumberOfPenaltyTasks()}.";
         } elseif ($carrier->getCreatedBy()->getID() != $user->getID()) {
-            return "New carrier created by user ID value is incorrect. Expected: \"{$user->getID()}\", found: \"{$carrier->getCreatedBy()->getID()}\".";
+            return "New carrier createdBy user ID value is incorrect. Expected: \"{$user->getID()}\", found: \"{$carrier->getCreatedBy()->getID()}\".";
         } elseif (!is_null($carrier->getClosedAt())) {
-            return "New carrier closed at value should be null.";
+            return "New carrier closedAt value should be null.";
         } elseif (!is_null($carrier->getClosedBy())) {
-            return "New carrier closed by value should be null.";
+            return "New carrier closedBy value should be null.";
         } elseif (!$carrier->isActive()) {
             return "New carrier should be active.";
         }
@@ -89,15 +89,15 @@ final class CarrierTests {
         } elseif ($supervisors[0]->getID() != $user->getID()) {
             return "New carrier supervisor user ID is incorrect. Expected: \"{$user->getID()}\", found: \"{$supervisors[0]->getID()}\".";
         } elseif ($carrier->getNumberOfTrialTasks() != $numberOfTrialTasks) {
-            return "New carrier number of trial tasks value is incorrect. Expected: $numberOfTrialTasks, found: {$carrier->getNumberOfTrialTasks()}.";
+            return "New carrier numberOfTrialTasks value is incorrect. Expected: $numberOfTrialTasks, found: {$carrier->getNumberOfTrialTasks()}.";
         } elseif ($carrier->getNumberOfPenaltyTasks() != $numberOfPenaltyTasks) {
-            return "New carrier number of penalty tasks value is incorrect. Expected: $numberOfPenaltyTasks, found: {$carrier->getNumberOfPenaltyTasks()}.";
+            return "New carrier numberOfPenaltyTasks value is incorrect. Expected: $numberOfPenaltyTasks, found: {$carrier->getNumberOfPenaltyTasks()}.";
         } elseif ($carrier->getCreatedBy()->getID() != $user->getID()) {
-            return "New carrier created by user ID value is incorrect. Expected: \"{$user->getID()}\", found: \"{$carrier->getCreatedBy()->getID()}\".";
+            return "New carrier createdBy user ID value is incorrect. Expected: \"{$user->getID()}\", found: \"{$carrier->getCreatedBy()->getID()}\".";
         } elseif (!is_null($carrier->getClosedAt())) {
-            return "New carrier closed at value should be null.";
+            return "New carrier closedAt value should be null.";
         } elseif (!is_null($carrier->getClosedBy())) {
-            return "New carrier closed by value should be null.";
+            return "New carrier closedBy value should be null.";
         } elseif (!$carrier->isActive()) {
             return "New carrier should be active.";
         }
@@ -130,9 +130,9 @@ final class CarrierTests {
         } elseif ($supervisors[0]->getID() != $user->getID()) {
             return "The carrier supervisor user ID is incorrect. Expected: \"{$user->getID()}\", found: \"{$supervisors[0]->getID()}\".";
         } elseif ($carrier->getNumberOfTrialTasks() != $numberOfTrialTasks) {
-            return "The carrier number of trial tasks value is incorrect. Expected: $numberOfTrialTasks, found: {$carrier->getNumberOfTrialTasks()}.";
+            return "The carrier numberOfTrialTasks value is incorrect. Expected: $numberOfTrialTasks, found: {$carrier->getNumberOfTrialTasks()}.";
         } elseif ($carrier->getNumberOfPenaltyTasks() != $numberOfPenaltyTasks) {
-            return "The carrier number of penalty tasks value is incorrect. Expected: $numberOfPenaltyTasks, found: {$carrier->getNumberOfPenaltyTasks()}.";
+            return "The carrier numberOfPenaltyTasks value is incorrect. Expected: $numberOfPenaltyTasks, found: {$carrier->getNumberOfPenaltyTasks()}.";
         }
 
         return true;
@@ -221,11 +221,11 @@ final class CarrierTests {
         TestHelpers::deleteTestUser($user->getID());
 
         if (is_null($carrier->getClosedAt())) {
-            return "The carrier closed at value should not be null.";
+            return "The carrier closedAt value should not be null.";
         } elseif (is_null($carrier->getClosedBy())) {
-            return "The carrier closed by value should not be null.";
+            return "The carrier closedBy value should not be null.";
         } elseif($carrier->getClosedBy()->getID() != $user->getID()) {
-            return "The carrier closed by user ID value is incorrect. Expected: \"{$user->getID()}\", found: \"{$carrier->getClosedBy()->getID()}\".";
+            return "The carrier closedBy user ID value is incorrect. Expected: \"{$user->getID()}\", found: \"{$carrier->getClosedBy()->getID()}\".";
         } elseif ($carrier->isActive()) {
             return "The carrier should be inactive.";
         }

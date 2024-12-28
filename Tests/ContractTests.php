@@ -38,9 +38,9 @@ final class ContractTests {
         } elseif ($contract->getCurrentState() != $contractState) {
             return "New contract was created with incorrect state. Expected: {$contractState->name}, found: {$contract->getCurrentState()->name}.";
         } elseif ($contract->getInitialPenaltyTasks() != 0) {
-            return "New contract initial penalty tasks value is incorrect. Expected: 0, found: {$contract->getInitialPenaltyTasks()}.";
+            return "New contract initialPenaltyTasks value is incorrect. Expected: 0, found: {$contract->getInitialPenaltyTasks()}.";
         } elseif ($contract->getRemainingPenaltyTasks() != 0) {
-            return "New contract remaining penalty tasks value is incorrect. Expected: 0, found: {$contract->getRemainingPenaltyTasks()}.";
+            return "New contract remainingPenaltyTasks value is incorrect. Expected: 0, found: {$contract->getRemainingPenaltyTasks()}.";
         } elseif (count($periods) != 1) {
             return "New contract has incorrect number of periods. Expected: 1, found: ".count($periods).".";
         } elseif ($periods[0]->getState() != $contractState) {
@@ -77,9 +77,9 @@ final class ContractTests {
         } elseif ($contract->getCurrentState() != $contractState) {
             return "New contract was created with incorrect state. Expected: {$contractState->name}, found: {$contract->getCurrentState()->name}.";
         } elseif ($contract->getInitialPenaltyTasks() != $expectedPenaltyTasks) {
-            return "New contract initial penalty tasks value is incorrect. Expected: $expectedPenaltyTasks, found: {$contract->getInitialPenaltyTasks()}.";
+            return "New contract initialPenaltyTasks value is incorrect. Expected: $expectedPenaltyTasks, found: {$contract->getInitialPenaltyTasks()}.";
         } elseif ($contract->getRemainingPenaltyTasks() != $expectedPenaltyTasks) {
-            return "New contract remaining penalty tasks value is incorrect. Expected: $expectedPenaltyTasks, found: {$contract->getRemainingPenaltyTasks()}.";
+            return "New contract remainingPenaltyTasks value is incorrect. Expected: $expectedPenaltyTasks, found: {$contract->getRemainingPenaltyTasks()}.";
         } elseif (count($periods) != 1) {
             return "New contract has incorrect number of periods. Expected: 1, found: ".count($periods).".";
         } elseif ($periods[0]->getState() != $contractState) {
@@ -189,9 +189,9 @@ final class ContractTests {
         TestHelpers::deleteTestUser($user->getID());
 
         if ($valueAfterChange == $valueBeforeChange) {
-            return "Contract remaining penalty tasks value did not change.";
+            return "Contract remainingPenaltyTasks value did not change.";
         } elseif ($valueAfterChange != $valueBeforeChange - 1) {
-            return "Contract remaining penalty tasks value after change is incorrect. Expected: ".($valueBeforeChange - 1).", found: $valueAfterChange.";
+            return "Contract remainingPenaltyTasks value after change is incorrect. Expected: ".($valueBeforeChange - 1).", found: $valueAfterChange.";
         }
 
         return true;
@@ -211,9 +211,9 @@ final class ContractTests {
         TestHelpers::deleteTestUser($user->getID());
 
         if ($valueAfterChange != $valueBeforeChange) {
-            return "Contract remaining penalty tasks value should not have changed.";
+            return "Contract remainingPenaltyTasks value should not have changed.";
         } elseif ($valueAfterChange != 0) {
-            return "Contract remaining penalty tasks value after change is incorrect. Expected: 0, found: $valueAfterChange.";
+            return "Contract remainingPenaltyTasks value after change is incorrect. Expected: 0, found: $valueAfterChange.";
         }
 
         return true;

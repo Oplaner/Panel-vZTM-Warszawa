@@ -54,6 +54,15 @@ final class DirectorProfile extends Profile {
         return $this->isProtected;
     }
 
+    public function deactivate(User $deactivator): void {
+        if ($this->isProtected) {
+            Logger::log(LogLevel::warn, "User with ID \"{$deactivator->getID()}\" tried to deactivate protected director profile with ID \"{$this->id}\".");
+            return;
+        }
+
+        parent::deactivate($deactivator);
+    }
+
     public function __toString() {
         return sprintf(
             __CLASS__."(id: \"%s\", userID: \"%s\", activatedAt: %s, activatedByUserID: \"%s\", deactivatedAt: %s, deactivatedByUserID: %s, isProtected: %s)",
