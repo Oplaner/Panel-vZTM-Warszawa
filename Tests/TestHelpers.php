@@ -42,8 +42,16 @@ final class TestHelpers {
         );
     }
 
-    public static function deleteTestCarrier(string $carrierID): void {
-        DatabaseConnector::shared()->execute_query(
+    public static function deleteTestCarrierData(string $carrierID): void {
+        $db = DatabaseConnector::shared();
+        $db->execute_query(
+            "DELETE FROM carrier_supervisors
+            WHERE carrier_id = ?",
+            [
+                $carrierID
+            ]
+        );
+        $db->execute_query(
             "DELETE FROM carriers
             WHERE id = ?",
             [

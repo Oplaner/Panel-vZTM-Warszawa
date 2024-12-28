@@ -38,7 +38,7 @@ final class CarrierTests {
         $carrier = Carrier::createNew($fullName, $shortName, [], $numberOfTrialTasks, $numberOfPenaltyTasks, $user);
         $supervisors = $carrier->getSupervisors();
 
-        TestHelpers::deleteTestCarrier($carrier->getID());
+        TestHelpers::deleteTestCarrierData($carrier->getID());
         TestHelpers::deleteTestUser($user->getID());
 
         if (!is_a($carrier, Carrier::class)) {
@@ -75,7 +75,7 @@ final class CarrierTests {
         $carrier = Carrier::createNew($fullName, $shortName, [$user], $numberOfTrialTasks, $numberOfPenaltyTasks, $user);
         $supervisors = $carrier->getSupervisors();
 
-        TestHelpers::deleteTestCarrier($carrier->getID());
+        TestHelpers::deleteTestCarrierData($carrier->getID());
         TestHelpers::deleteTestUser($user->getID());
 
         if (!is_a($carrier, Carrier::class)) {
@@ -116,7 +116,7 @@ final class CarrierTests {
         $carrier = Carrier::withID($carrier->getID());
         $supervisors = $carrier->getSupervisors();
 
-        TestHelpers::deleteTestCarrier($carrier->getID());
+        TestHelpers::deleteTestCarrierData($carrier->getID());
         TestHelpers::deleteTestUser($user->getID());
 
         if (!is_a($carrier, Carrier::class)) {
@@ -145,7 +145,7 @@ final class CarrierTests {
         $carrier->addSupervisor($user);
         $supervisorsAfterChange = $carrier->getSupervisors();
 
-        TestHelpers::deleteTestCarrier($carrier->getID());
+        TestHelpers::deleteTestCarrierData($carrier->getID());
         TestHelpers::deleteTestUser($user->getID());
 
         if (count($supervisorsBeforeChange) != 0) {
@@ -166,7 +166,7 @@ final class CarrierTests {
         $carrier->removeSupervisor($user);
         $supervisorsAfterChange = $carrier->getSupervisors();
 
-        TestHelpers::deleteTestCarrier($carrier->getID());
+        TestHelpers::deleteTestCarrierData($carrier->getID());
         TestHelpers::deleteTestUser($user->getID());
 
         if (count($supervisorsBeforeChange) != 1) {
@@ -184,7 +184,7 @@ final class CarrierTests {
         $user = TestHelpers::createTestUser();
         $carrier = Carrier::createNew("Test Carrier", "Test", [], 0, 0, $user);
 
-        TestHelpers::deleteTestCarrier($carrier->getID());
+        TestHelpers::deleteTestCarrierData($carrier->getID());
         TestHelpers::deleteTestUser($user->getID());
 
         try {
@@ -200,7 +200,7 @@ final class CarrierTests {
         $user = TestHelpers::createTestUser();
         $carrier = Carrier::createNew("Test Carrier", "Test", [], 0, 0, $user);
 
-        TestHelpers::deleteTestCarrier($carrier->getID());
+        TestHelpers::deleteTestCarrierData($carrier->getID());
         TestHelpers::deleteTestUser($user->getID());
 
         try {
@@ -217,7 +217,7 @@ final class CarrierTests {
         $carrier = Carrier::createNew("Test Carrier", "Test", [], 0, 0, $user);
         $carrier->close($user);
 
-        TestHelpers::deleteTestCarrier($carrier->getID());
+        TestHelpers::deleteTestCarrierData($carrier->getID());
         TestHelpers::deleteTestUser($user->getID());
 
         if (is_null($carrier->getClosedAt())) {

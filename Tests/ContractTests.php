@@ -5,7 +5,7 @@ final class ContractTests {
         $user = TestHelpers::createTestUser();
         $carrier = TestHelpers::createTestCarrier($user);
 
-        TestHelpers::deleteTestCarrier($carrier->getID());
+        TestHelpers::deleteTestCarrierData($carrier->getID());
         TestHelpers::deleteTestUser($user->getID());
 
         try {
@@ -26,7 +26,7 @@ final class ContractTests {
 
         TestHelpers::deleteAllTestDriverProfiles();
         TestHelpers::deleteTestContractData($contract->getID());
-        TestHelpers::deleteTestCarrier($carrier->getID());
+        TestHelpers::deleteTestCarrierData($carrier->getID());
         TestHelpers::deleteTestUser($user->getID());
 
         if (!is_a($contract, Contract::class)) {
@@ -65,7 +65,7 @@ final class ContractTests {
 
         TestHelpers::deleteAllTestDriverProfiles();
         TestHelpers::deleteTestContractData($contract->getID());
-        TestHelpers::deleteTestCarrier($carrier->getID());
+        TestHelpers::deleteTestCarrierData($carrier->getID());
         TestHelpers::deleteTestUser($user->getID());
 
         if (!is_a($contract, Contract::class)) {
@@ -108,7 +108,7 @@ final class ContractTests {
 
         TestHelpers::deleteAllTestDriverProfiles();
         TestHelpers::deleteTestContractData($contract->getID());
-        TestHelpers::deleteTestCarrier($carrier->getID());
+        TestHelpers::deleteTestCarrierData($carrier->getID());
         TestHelpers::deleteTestUser($user->getID());
 
         if (!is_a($contract, Contract::class)) {
@@ -134,7 +134,7 @@ final class ContractTests {
 
         TestHelpers::deleteAllTestDriverProfiles();
         TestHelpers::deleteTestContractData($contract->getID());
-        TestHelpers::deleteTestCarrier($carrier->getID());
+        TestHelpers::deleteTestCarrierData($carrier->getID());
         TestHelpers::deleteTestUser($user->getID());
 
         try {
@@ -156,7 +156,7 @@ final class ContractTests {
 
         TestHelpers::deleteAllTestDriverProfiles();
         TestHelpers::deleteTestContractData($contract->getID());
-        TestHelpers::deleteTestCarrier($carrier->getID());
+        TestHelpers::deleteTestCarrierData($carrier->getID());
         TestHelpers::deleteTestUser($user->getID());
 
         if (count($periods) != 2) {
@@ -185,7 +185,7 @@ final class ContractTests {
 
         TestHelpers::deleteAllTestDriverProfiles();
         TestHelpers::deleteTestContractData($contract->getID());
-        TestHelpers::deleteTestCarrier($carrier->getID());
+        TestHelpers::deleteTestCarrierData($carrier->getID());
         TestHelpers::deleteTestUser($user->getID());
 
         if ($valueAfterChange == $valueBeforeChange) {
@@ -207,7 +207,7 @@ final class ContractTests {
 
         TestHelpers::deleteAllTestDriverProfiles();
         TestHelpers::deleteTestContractData($contract->getID());
-        TestHelpers::deleteTestCarrier($carrier->getID());
+        TestHelpers::deleteTestCarrierData($carrier->getID());
         TestHelpers::deleteTestUser($user->getID());
 
         if ($valueAfterChange != $valueBeforeChange) {
