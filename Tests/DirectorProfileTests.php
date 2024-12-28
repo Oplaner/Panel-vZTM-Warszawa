@@ -77,16 +77,7 @@ final class DirectorProfileTests {
     public static function deactivateProtectedDirectorProfile(): bool|string {
         $user = TestHelpers::createTestUser();
         $profile = DirectorProfile::createNew($user, $user);
-
-        DatabaseConnector::shared()->execute_query(
-            "UPDATE profiles_director
-            SET protected = 1
-            WHERE profile_id = ?",
-            [
-                $profile->getID()
-            ]
-        );
-
+        self::markDirectorProfileAsProtected($profile->getID());
         DatabaseEntity::removeFromCache($profile);
         $profile = DirectorProfile::withID($profile->getID());
         $profile->deactivate($user);
@@ -103,6 +94,17 @@ final class DirectorProfileTests {
         }
 
         return true;
+    }
+
+    private static function markDirectorProfileAsProtected(string $profileID): void {
+        DatabaseConnector::shared()->execute_query(
+            "UPDATE profiles_director
+            SET protected = 1
+            WHERE profile_id = ?",
+            [
+                $profileID
+            ]
+        );
     }
 }
 

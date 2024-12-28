@@ -21,6 +21,10 @@ final class TestHelpers {
         return Privilege::createNew(PrivilegeScope::canViewTimetableOfDepot, DatabaseEntity::generateUUIDv4());
     }
 
+    public static function createTestDirectorProfile(User $user): DirectorProfile {
+        return DirectorProfile::createNew($user, $user);
+    }
+
     public static function createTestInactiveDriverProfileWithAcquiredPenalty(User $user): DriverProfile {
         $profile = DriverProfile::createNew($user, $user);
         $profile->deactivate($user);

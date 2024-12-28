@@ -38,6 +38,8 @@ final class PersonnelProfileTests {
             return "Personnel profile activatedAt value should not be null.";
         } elseif (!is_null($profile->getDeactivatedAt())) {
             return "New personnel profile deactivatedAt value should be null.";
+        } elseif (!$profile->isActive()) {
+            return "New personnel profile should be active.";
         }
 
         return true;
@@ -89,6 +91,8 @@ final class PersonnelProfileTests {
             return "Deactivated personnel profile deactivatedBy value should not be null.";
         } elseif ($profile->getDeactivatedBy()->getID() != $user->getID()) {
             return "Deactivated personnel profile deactivatedBy value is incorrect. Expected (userID): \"{$user->getID()}\", found (userID): \"{$profile->getDeactivatedBy()->getID()}\".";
+        } elseif ($profile->isActive()) {
+            return "Deactivated personnel profile should be inactive.";
         }
 
         return true;
