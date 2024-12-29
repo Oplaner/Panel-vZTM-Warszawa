@@ -106,6 +106,10 @@ final class DriverProfile extends Profile {
     }
 
     public function setAcquiredPenaltyMultiplier(int $acquiredPenaltyMultiplier): void {
+        if (!$this->isActive()) {
+            return;
+        }
+
         self::validateAcquiredPenaltyMultiplierIsNotNullOrLessThanZero($acquiredPenaltyMultiplier);
         $this->acquiredPenaltyMultiplier = $acquiredPenaltyMultiplier;
         $this->wasModified = true;

@@ -151,6 +151,24 @@ final class DriverProfileTests {
         return "No exception was thrown when setting negative acquired penalty multiplier.";
     }
 
+    public static function doNotUpdateAcquiredPenaltyMultiplierWhenDriverProfileIsInactive(): bool|string {
+        $user = TestHelpers::createTestUser();
+        $profile = DriverProfile::createNew($user, $user);
+        $profile->deactivate($user);
+        $valueBeforeChange = $profile->getAcquiredPenaltyMultiplier();
+        $profile->setAcquiredPenaltyMultiplier($valueBeforeChange + 1);
+        $valueAfterChange = $profile->getAcquiredPenaltyMultiplier();
+
+        TestHelpers::deleteTestDriverProfile($profile->getID());
+        TestHelpers::deleteTestUser($user->getID());
+
+        if ($valueAfterChange != $valueBeforeChange) {
+            return "Deactivated driver profile acquiredPenaltyMultiplier value should not change.";
+        }
+
+        return true;
+    }
+
     public static function deactivateDriverProfile(): bool|string {
         $user = TestHelpers::createTestUser();
         $profile = DriverProfile::createNew($user, $user);
