@@ -112,6 +112,14 @@ final class DriverProfile extends Profile {
         $this->save();
     }
 
+    public function deactivate(User $deactivator): void {
+        if (is_null($this->acquiredPenaltyMultiplier)) {
+            $this->setAcquiredPenaltyMultiplier(0);
+        }
+
+        parent::deactivate($deactivator);
+    }
+
     public function __toString() {
         return sprintf(
             __CLASS__."(id: \"%s\", userID: \"%s\", activatedAt: %s, activatedByUserID: \"%s\", deactivatedAt: %s, deactivatedByUserID: %s, initialPenaltyMultiplier: %d, acquiredPenaltyMultiplier: %s)",

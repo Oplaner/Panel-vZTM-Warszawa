@@ -27,8 +27,8 @@ final class TestHelpers {
 
     public static function createTestInactiveDriverProfileWithAcquiredPenalty(User $user): DriverProfile {
         $profile = DriverProfile::createNew($user, $user);
-        $profile->deactivate($user);
         $profile->setAcquiredPenaltyMultiplier(2);
+        $profile->deactivate($user);
         return $profile;
     }
 
@@ -99,6 +99,24 @@ final class TestHelpers {
         $db = DatabaseConnector::shared();
         $db->execute_query(
             "DELETE FROM profiles_director
+            WHERE profile_id = ?",
+            [
+                $profileID
+            ]
+        );
+        $db->execute_query(
+            "DELETE FROM profiles
+            WHERE id = ?",
+            [
+                $profileID
+            ]
+        );
+    }
+
+    public static function deleteTestDriverProfile(string $profileID): void {
+        $db = DatabaseConnector::shared();
+        $db->execute_query(
+            "DELETE FROM profiles_driver
             WHERE profile_id = ?",
             [
                 $profileID

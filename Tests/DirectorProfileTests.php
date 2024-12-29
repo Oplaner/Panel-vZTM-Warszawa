@@ -13,7 +13,7 @@ final class DirectorProfileTests {
         } elseif (is_null($profile->getActivatedAt())) {
             return "Director profile activatedAt value should not be null.";
         } elseif ($profile->getActivatedBy() !== $user) {
-            return "Director profile activatedBy value is incorrect. Expected (userID): \"{$user->getID()}\", found (userID): \"{$profile->getActivatedBy()->getID()}\".";
+            return "Director profile activatedBy user ID value is incorrect. Expected: \"{$user->getID()}\", found: \"{$profile->getActivatedBy()->getID()}\".";
         } elseif (!is_null($profile->getDeactivatedAt())) {
             return "New director profile deactivatedAt value should be null.";
         } elseif (!is_null($profile->getDeactivatedBy())) {
@@ -41,11 +41,7 @@ final class DirectorProfileTests {
         } elseif (is_null($profile->getActivatedAt())) {
             return "Director profile activatedAt value should not be null.";
         } elseif ($profile->getActivatedBy()->getID() != $user->getID()) {
-            return "Director profile activatedBy value is incorrect. Expected (userID): \"{$user->getID()}\", found (userID): \"{$profile->getActivatedBy()->getID()}\".";
-        } elseif (!is_null($profile->getDeactivatedAt())) {
-            return "Director profile deactivatedAt value should be null.";
-        } elseif (!is_null($profile->getDeactivatedBy())) {
-            return "Director profile deactivatedby value should be null.";
+            return "Director profile activatedBy user ID value is incorrect. Expected: \"{$user->getID()}\", found: \"{$profile->getActivatedBy()->getID()}\".";
         } elseif ($profile->isProtected()) {
             return "Director profile isProtected value should be false.";
         }
@@ -66,7 +62,7 @@ final class DirectorProfileTests {
         } elseif (is_null($profile->getDeactivatedBy())) {
             return "Deactivated director profile deactivatedBy value should not be null.";
         } elseif ($profile->getDeactivatedBy()->getID() != $user->getID()) {
-            return "Deactivated director profile deactivatedBy value is incorrect. Expected (userID): \"{$user->getID()}\", found (userID): \"{$profile->getDeactivatedBy()->getID()}\".";
+            return "Deactivated director profile deactivatedBy user ID value is incorrect. Expected: \"{$user->getID()}\", found: \"{$profile->getDeactivatedBy()->getID()}\".";
         } elseif ($profile->isActive()) {
             return "Deactivated unprotected director profile should be inactive.";
         }

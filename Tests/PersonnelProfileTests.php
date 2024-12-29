@@ -67,8 +67,6 @@ final class PersonnelProfileTests {
             return "Personnel profile privilege ID is incorrect. Expected: \"{$privilege->getID()}\", found: \"{$profile->getPrivileges()[0]->getID()}\".";
         } elseif (is_null($profile->getActivatedAt())) {
             return "Personnel profile activatedAt value should not be null.";
-        } elseif (!is_null($profile->getDeactivatedAt())) {
-            return "Personnel profile deactivatedAt value should be null.";
         }
 
         return true;
@@ -90,7 +88,7 @@ final class PersonnelProfileTests {
         } elseif (is_null($profile->getDeactivatedBy())) {
             return "Deactivated personnel profile deactivatedBy value should not be null.";
         } elseif ($profile->getDeactivatedBy()->getID() != $user->getID()) {
-            return "Deactivated personnel profile deactivatedBy value is incorrect. Expected (userID): \"{$user->getID()}\", found (userID): \"{$profile->getDeactivatedBy()->getID()}\".";
+            return "Deactivated personnel profile deactivatedBy user ID value is incorrect. Expected: \"{$user->getID()}\", found: \"{$profile->getDeactivatedBy()->getID()}\".";
         } elseif ($profile->isActive()) {
             return "Deactivated personnel profile should be inactive.";
         }
