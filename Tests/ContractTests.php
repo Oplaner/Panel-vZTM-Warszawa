@@ -20,7 +20,7 @@ final class ContractTests {
     public static function createNewContractWithoutPenalty(): bool|string {
         $user = TestHelpers::createTestUser();
         $carrier = TestHelpers::createTestCarrier($user);
-        $contractState = ContractState::regular;
+        $contractState = ContractState::active;
         $contract = Contract::createNew($carrier, $user, $user, $contractState);
         $periods = $contract->getPeriods();
 
@@ -58,7 +58,7 @@ final class ContractTests {
         $user = TestHelpers::createTestUser();
         $profile = TestHelpers::createTestInactiveDriverProfileWithAcquiredPenalty($user);
         $carrier = TestHelpers::createTestCarrier($user);
-        $contractState = ContractState::conditionalWithPenalty;
+        $contractState = ContractState::probationWithPenalty;
         $contract = Contract::createNew($carrier, $user, $user, $contractState);
         $periods = $contract->getPeriods();
         $expectedPenaltyTasks = $profile->getAcquiredPenaltyMultiplier() * $carrier->getNumberOfPenaltyTasks();
@@ -97,8 +97,8 @@ final class ContractTests {
         $user = TestHelpers::createTestUser();
         $carrier = TestHelpers::createTestCarrier($user);
         $contractStates = [
-            ContractState::conditional,
-            ContractState::regular
+            ContractState::probation,
+            ContractState::active
         ];
         $contractState = $contractStates[array_rand($contractStates)];
         $contract = Contract::createNew($carrier, $user, $user, $contractState);
@@ -129,7 +129,7 @@ final class ContractTests {
     public static function throwExceptionWhenAddingPeriodToContractInFinalState(): bool|string {
         $user = TestHelpers::createTestUser();
         $carrier = TestHelpers::createTestCarrier($user);
-        $contract = Contract::createNew($carrier, $user, $user, ContractState::regular);
+        $contract = Contract::createNew($carrier, $user, $user, ContractState::active);
         $contract->addPeriod(ContractState::terminatedDisciplinarily, $user);
 
         TestHelpers::deleteAllTestDriverProfiles();
@@ -138,7 +138,7 @@ final class ContractTests {
         TestHelpers::deleteTestUser($user->getID());
 
         try {
-            $contract->addPeriod(ContractState::regular, $user);
+            $contract->addPeriod(ContractState::active, $user);
         } catch (Exception $exception) {
             return true;
         }
@@ -149,7 +149,7 @@ final class ContractTests {
     public static function addContractPeriod(): bool|string {
         $user = TestHelpers::createTestUser();
         $carrier = TestHelpers::createTestCarrier($user);
-        $contract = Contract::createNew($carrier, $user, $user, ContractState::regular);
+        $contract = Contract::createNew($carrier, $user, $user, ContractState::active);
         $newState = ContractState::terminated;
         $contract->addPeriod($newState, $user);
         $periods = $contract->getPeriods();
@@ -178,7 +178,7 @@ final class ContractTests {
         $user = TestHelpers::createTestUser();
         TestHelpers::createTestInactiveDriverProfileWithAcquiredPenalty($user);
         $carrier = TestHelpers::createTestCarrier($user);
-        $contract = Contract::createNew($carrier, $user, $user, ContractState::conditionalWithPenalty);
+        $contract = Contract::createNew($carrier, $user, $user, ContractState::probationWithPenalty);
         $valueBeforeChange = $contract->getRemainingPenaltyTasks();
         $contract->decrementRemainingPenaltyTasks();
         $valueAfterChange = $contract->getRemainingPenaltyTasks();
@@ -200,7 +200,7 @@ final class ContractTests {
     public static function decrementRemainingPenaltyTasksStartingWithZero(): bool|string {
         $user = TestHelpers::createTestUser();
         $carrier = TestHelpers::createTestCarrier($user);
-        $contract = Contract::createNew($carrier, $user, $user, ContractState::regular);
+        $contract = Contract::createNew($carrier, $user, $user, ContractState::active);
         $valueBeforeChange = $contract->getRemainingPenaltyTasks();
         $contract->decrementRemainingPenaltyTasks();
         $valueAfterChange = $contract->getRemainingPenaltyTasks();
