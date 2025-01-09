@@ -128,7 +128,7 @@ final class SystemDateTimeTests {
         $now = new SystemDateTime();
         $comparison = $myBirthday->isBefore($now);
 
-        if (!$comparison) {
+        if ($comparison == false) {
             return "Checking if \"{$myBirthday->toDatabaseString()}\" is before \"{$now->toDatabaseString()}\" should return true. Found: \"$comparison\".";
         }
 
@@ -140,7 +140,7 @@ final class SystemDateTimeTests {
         $myBirthday2 = new SystemDateTime("1998-02-10 18:00:00.000000");
         $comparison = $myBirthday1->isEqual($myBirthday2);
 
-        if (!$comparison) {
+        if ($comparison == false) {
             return "Checking if \"{$myBirthday1->toDatabaseString()}\" is equal \"{$myBirthday2->toDatabaseString()}\" should return true. Found: \"$comparison\".";
         }
 
@@ -152,7 +152,7 @@ final class SystemDateTimeTests {
         $now = new SystemDateTime();
         $comparison = $now->isAfter($myBirthday);
 
-        if (!$comparison) {
+        if ($comparison == false) {
             return "Checking if \"{$now->toDatabaseString()}\" is after \"{$myBirthday->toDatabaseString()}\" should return true. Found: \"$comparison\".";
         }
 

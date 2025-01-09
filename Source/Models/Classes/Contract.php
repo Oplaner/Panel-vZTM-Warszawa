@@ -23,7 +23,7 @@ final class Contract extends DatabaseEntity {
         $driverProfile = DriverProfile::createNew($driver, $authorizer);
         $totalPenaltyTasks = 0;
 
-        if ($state == ContractState::conditionalWithPenalty) {
+        if ($state == ContractState::probationWithPenalty) {
             $penaltyTasksMultiplier = $driverProfile->getInitialPenaltyMultiplier();
             $initialPenaltyTasks = $carrier->getNumberOfPenaltyTasks();
             $totalPenaltyTasks = $penaltyTasksMultiplier * $initialPenaltyTasks;
@@ -139,12 +139,12 @@ final class Contract extends DatabaseEntity {
     }
 
     public function getPeriods(): array {
-        return ContractPeriod::getAllPeriodsOfContract($this);
+        return ContractPeriod::getAllByContract($this);
     }
 
     public function addPeriod(ContractState $state, User $authorizer): void {
-        if ($this->currentState->isFinal()) {
-            throw new Exception("Cannot add new period to contract in a final state.");
+        if (!$this->isActive()) {
+            throw new Exception("Cannot add new period to inactive contract.");
         }
 
         $periods = $this->getPeriods();
@@ -152,6 +152,12 @@ final class Contract extends DatabaseEntity {
         $lastPeriod->setValidTo(SystemDateTime::now());
         ContractPeriod::createNew($this, $state, $lastPeriod->getValidTo(), $authorizer);
         $this->setCurrentState($state);
+
+        match ($state) {
+            ContractState::terminated => $this->deactivateDriverProfileIfNeeded($authorizer),
+            ContractState::terminatedDisciplinarily => $this->handleDisciplinarTermination($authorizer),
+            default => null
+        };
     }
 
     public function getInitialPenaltyTasks(): int {
@@ -167,6 +173,10 @@ final class Contract extends DatabaseEntity {
         $this->remainingPenaltyTasks = max(0, $this->remainingPenaltyTasks - 1);
         $this->wasModified = $valueBeforeChange != $this->remainingPenaltyTasks;
         $this->save();
+    }
+
+    public function isActive(): bool {
+        return !$this->currentState->isFinal();
     }
 
     public function __toString() {
@@ -212,6 +222,45 @@ final class Contract extends DatabaseEntity {
             );
             $this->wasModified = false;
         }
+    }
+
+    private function getDriverActiveContracts(): array {
+        return array_filter(
+            self::getAllByDriver($this->driver),
+            fn ($contract) => $contract->isActive()
+        );
+    }
+
+    private function getDriverProfile(): DriverProfile {
+        return array_filter(
+            $this->driver->getProfiles(),
+            fn ($profile) => $profile->isActive() && is_a($profile, DriverProfile::class)
+        )[0];
+    }
+
+    private function deactivateDriverProfileIfNeeded(User $authorizer): void {
+        $driverActiveContracts = $this->getDriverActiveContracts();
+
+        if (count($driverActiveContracts) == 0) {
+            Logger::log(LogLevel::info, "The last contract of user with ID \"{$this->driver->getID()}\" has been terminated. Their driver profile deactivation will follow.");
+            $this->getDriverProfile()->deactivate($authorizer);
+        }
+    }
+
+    private function handleDisciplinarTermination(User $authorizer): void {
+        Logger::log(LogLevel::info, "The contract of user with ID \"{$this->driver->getID()}\" has been terminated disciplinarily. Their other contracts termination will follow.");
+        $this->terminateDriverActiveContracts($authorizer);
+        $driverProfile = $this->getDriverProfile();
+        $driverProfile->incrementPenaltyMultiplier();
+        $driverProfile->deactivate($authorizer);
+    }
+
+    private function terminateDriverActiveContracts(User $authorizer): void {
+        $driverActiveContracts = $this->getDriverActiveContracts();
+        array_walk(
+            $driverActiveContracts,
+            fn ($contract) => $contract->addPeriod(ContractState::terminatedAutomatically, $authorizer)
+        );
     }
 }
 

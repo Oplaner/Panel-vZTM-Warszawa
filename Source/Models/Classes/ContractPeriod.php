@@ -54,7 +54,7 @@ final class ContractPeriod extends DatabaseEntity {
         return new ContractPeriod($id, $contractID, $state, $validFrom, $authorizedBy, $validTo);
     }
 
-    public static function getAllPeriodsOfContract(Contract $contract): array {
+    public static function getAllByContract(Contract $contract): array {
         $result = DatabaseConnector::shared()->execute_query(
             "SELECT id
             FROM contract_periods

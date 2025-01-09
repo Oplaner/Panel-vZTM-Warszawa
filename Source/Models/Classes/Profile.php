@@ -20,7 +20,7 @@ abstract class Profile extends DatabaseEntity {
         $this->deactivatedBy = $deactivatedBy;
     }
 
-    public static function getAllProfilesOfUser(User $user): array {
+    public static function getAllByUser(User $user): array {
         $result = DatabaseConnector::shared()->execute_query(
             "SELECT id, type
             FROM profiles
@@ -43,17 +43,11 @@ abstract class Profile extends DatabaseEntity {
     }
 
     private static function getProfileWithIDAndType(string $profileID, string $profileType): ?Profile {
-        switch ($profileType) {
-            case self::DATABASE_PROFILE_TYPE_DIRECTOR:
-                return DirectorProfile::withID($profileID);
-            case self::DATABASE_PROFILE_TYPE_DRIVER:
-                return DriverProfile::withID($profileID);
-            case self::DATABASE_PROFILE_TYPE_PERSONNEL:
-                return PersonnelProfile::withID($profileID);
-            default:
-                Logger::log(LogLevel::error, "Unexpected profile type \"$profileType\" for profile with ID \"$profileID\".");
-                return null;
-        }
+        return match ($profileType) {
+            self::DATABASE_PROFILE_TYPE_DIRECTOR => DirectorProfile::withID($profileID),
+            self::DATABASE_PROFILE_TYPE_DRIVER => DriverProfile::withID($profileID),
+            self::DATABASE_PROFILE_TYPE_PERSONNEL => PersonnelProfile::withID($profileID)
+        };
     }
 
     public function getActivatedAt(): SystemDateTime {

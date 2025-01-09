@@ -91,12 +91,6 @@ final class DriverProfile extends Profile {
         return count($activeDriverProfiles) > 0;
     }
 
-    private static function validateAcquiredPenaltyMultiplierIsNotNullOrLessThanZero(int $acquiredPenaltyMultiplier): void {
-        if (is_null($acquiredPenaltyMultiplier) || $acquiredPenaltyMultiplier < 0) {
-            throw new Exception("Acquired penalty multiplier cannot be null or less than 0.");
-        }
-    }
-
     public function getInitialPenaltyMultiplier(): int {
         return $this->initialPenaltyMultiplier;
     }
@@ -105,20 +99,19 @@ final class DriverProfile extends Profile {
         return $this->acquiredPenaltyMultiplier;
     }
 
-    public function setAcquiredPenaltyMultiplier(int $acquiredPenaltyMultiplier): void {
+    public function incrementPenaltyMultiplier(): void {
         if (!$this->isActive()) {
             return;
         }
 
-        self::validateAcquiredPenaltyMultiplierIsNotNullOrLessThanZero($acquiredPenaltyMultiplier);
-        $this->acquiredPenaltyMultiplier = $acquiredPenaltyMultiplier;
+        $this->acquiredPenaltyMultiplier = $this->initialPenaltyMultiplier + 1;
         $this->wasModified = true;
         $this->save();
     }
 
     public function deactivate(User $deactivator): void {
         if (is_null($this->acquiredPenaltyMultiplier)) {
-            $this->setAcquiredPenaltyMultiplier(0);
+            $this->acquiredPenaltyMultiplier = 0;
         }
 
         parent::deactivate($deactivator);

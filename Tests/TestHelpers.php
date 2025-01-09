@@ -27,7 +27,7 @@ final class TestHelpers {
 
     public static function createTestInactiveDriverProfileWithAcquiredPenalty(User $user): DriverProfile {
         $profile = DriverProfile::createNew($user, $user);
-        $profile->setAcquiredPenaltyMultiplier(2);
+        $profile->incrementPenaltyMultiplier();
         $profile->deactivate($user);
         return $profile;
     }

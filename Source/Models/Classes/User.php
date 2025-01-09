@@ -118,7 +118,7 @@ final class User extends DatabaseEntity {
     }
 
     public function getProfiles(): array {
-        return Profile::getAllProfilesOfUser($this);
+        return Profile::getAllByUser($this);
     }
 
     public function getContracts(): array {

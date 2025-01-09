@@ -126,7 +126,7 @@ final class ContractTests {
         return true;
     }
 
-    public static function throwExceptionWhenAddingPeriodToContractInFinalState(): bool|string {
+    public static function throwExceptionWhenAddingPeriodToInactiveContract(): bool|string {
         $user = TestHelpers::createTestUser();
         $carrier = TestHelpers::createTestCarrier($user);
         $contract = Contract::createNew($carrier, $user, $user, ContractState::active);
@@ -143,7 +143,7 @@ final class ContractTests {
             return true;
         }
 
-        return "No exception was thrown when adding new period to contract with final state.";
+        return "No exception was thrown when adding new period to inactive contract.";
     }
 
     public static function addContractPeriod(): bool|string {
@@ -169,6 +169,94 @@ final class ContractTests {
             return "The new contract period state is incorrect. Expected: {$newState->name}, found: {$periods[1]->getState()->name}.";
         } elseif ($contract->getCurrentState() != $newState) {
             return "Current contract state is incorrect. Expected: {$newState->name}, found: {$contract->getCurrentState()->name}.";
+        }
+
+        return true;
+    }
+
+    public static function keepDriverProfileWhenTerminatingNotLastUserContract(): bool|string {
+        $user = TestHelpers::createTestUser();
+        $carrier1 = TestHelpers::createTestCarrier($user);
+        $carrier2 = TestHelpers::createTestCarrier($user);
+        $contract1 = Contract::createNew($carrier1, $user, $user, ContractState::active);
+        $contract2 = Contract::createNew($carrier2, $user, $user, ContractState::probation);
+        $profile = array_filter(
+            $user->getProfiles(),
+            fn ($profile) => $profile->isActive() && is_a($profile, DriverProfile::class)
+        )[0];
+        $valueBeforeChange = $profile->isActive();
+        $contract2->addPeriod(ContractState::terminated, $user);
+        $valueAfterChange = $profile->isActive();
+
+        TestHelpers::deleteTestDriverProfile($profile->getID());
+        TestHelpers::deleteTestContractData($contract1->getID());
+        TestHelpers::deleteTestContractData($contract2->getID());
+        TestHelpers::deleteTestCarrierData($carrier1->getID());
+        TestHelpers::deleteTestCarrierData($carrier2->getID());
+        TestHelpers::deleteTestUser($user->getID());
+
+        if ($valueAfterChange != $valueBeforeChange) {
+            return "The driver profile activity state should not change.";
+        } elseif ($valueAfterChange == false) {
+            return "The driver profile should remain active.";
+        }
+
+        return true;
+    }
+
+    public static function deactivateDriverProfileWhenTerminatingLastUserContract(): bool|string {
+        $user = TestHelpers::createTestUser();
+        $carrier = TestHelpers::createTestCarrier($user);
+        $contract = Contract::createNew($carrier, $user, $user, ContractState::active);
+        $profile = array_filter(
+            $user->getProfiles(),
+            fn ($profile) => $profile->isActive() && is_a($profile, DriverProfile::class)
+        )[0];
+        $valueBeforeChange = $profile->isActive();
+        $contract->addPeriod(ContractState::terminated, $user);
+        $valueAfterChange = $profile->isActive();
+
+        TestHelpers::deleteTestDriverProfile($profile->getID());
+        TestHelpers::deleteTestContractData($contract->getID());
+        TestHelpers::deleteTestCarrierData($carrier->getID());
+        TestHelpers::deleteTestUser($user->getID());
+
+        if ($valueAfterChange == $valueBeforeChange) {
+            return "The driver profile activity state should change.";
+        } elseif ($valueAfterChange == true) {
+            return "The driver profile should become inactive.";
+        }
+
+        return true;
+    }
+
+    public static function automaticallyTerminateOtherUserContractsWhenOneIsTerminatedDisciplinarily(): bool|string {
+        $user = TestHelpers::createTestUser();
+        $carrier1 = TestHelpers::createTestCarrier($user);
+        $carrier2 = TestHelpers::createTestCarrier($user);
+        $contract1 = Contract::createNew($carrier1, $user, $user, ContractState::active);
+        $contract2 = Contract::createNew($carrier2, $user, $user, ContractState::active);
+        $profile = array_filter(
+            $user->getProfiles(),
+            fn ($profile) => $profile->isActive() && is_a($profile, DriverProfile::class)
+        )[0];
+        $contract2->addPeriod(ContractState::terminatedDisciplinarily, $user);
+
+        TestHelpers::deleteTestDriverProfile($profile->getID());
+        TestHelpers::deleteTestContractData($contract1->getID());
+        TestHelpers::deleteTestContractData($contract2->getID());
+        TestHelpers::deleteTestCarrierData($carrier1->getID());
+        TestHelpers::deleteTestCarrierData($carrier2->getID());
+        TestHelpers::deleteTestUser($user->getID());
+
+        if ($contract2->getCurrentState() != ContractState::terminatedDisciplinarily) {
+            return "The terminated contract state is incorrect. Expected: ".ContractState::terminatedDisciplinarily->name.", found: {$contract2->getCurrentState()->name}.";
+        } elseif ($contract1->getCurrentState() != ContractState::terminatedAutomatically) {
+            return "The other contract state is incorrect. Expected: ".ContractState::terminatedAutomatically->name.", found: {$contract1->getCurrentState()->name}.";
+        } elseif ($profile->isActive()) {
+            return "The driver profile should not be active.";
+        } elseif ($profile->getAcquiredPenaltyMultiplier() <= $profile->getInitialPenaltyMultiplier()) {
+            return "The driver profile acquiredPenaltyMultiplier value ({$profile->getAcquiredPenaltyMultiplier()}) should be greater than initialPenaltyMultiplier value ({$profile->getInitialPenaltyMultiplier()}).";
         }
 
         return true;

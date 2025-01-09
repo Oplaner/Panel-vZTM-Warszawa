@@ -78,16 +78,16 @@ final class UserTests {
 
     public static function checkUserBecomesActiveWhenTheyGetActiveProfile(): bool|string {
         $user = User::createNew(TestHelpers::EXISTING_TEST_USER_LOGIN);
-        $isActiveBeforeChange = $user->isActive();
+        $valueBeforeChange = $user->isActive();
         $profile = TestHelpers::createTestDirectorProfile($user);
-        $isActiveAfterChange = $user->isActive();
+        $valueAfterChange = $user->isActive();
 
         TestHelpers::deleteTestDirectorProfileData($profile->getID());
         TestHelpers::deleteTestUser($user->getID());
 
-        if ($isActiveBeforeChange) {
+        if ($valueBeforeChange == true) {
             return "User should be inactive before getting active profile.";
-        } elseif (!$isActiveAfterChange) {
+        } elseif ($valueAfterChange == false) {
             return "User should become active after getting active profile.";
         }
 
@@ -98,17 +98,17 @@ final class UserTests {
         $user = User::createNew(TestHelpers::EXISTING_TEST_USER_LOGIN);
         $profile1 = TestHelpers::createTestDirectorProfile($user);
         $profile2 = TestHelpers::createTestDirectorProfile($user);
-        $isActiveBeforeChange = $user->isActive();
+        $valueBeforeChange = $user->isActive();
         $profile1->deactivate($user);
-        $isActiveAfterChange = $user->isActive();
+        $valueAfterChange = $user->isActive();
 
         TestHelpers::deleteTestDirectorProfileData($profile1->getID());
         TestHelpers::deleteTestDirectorProfileData($profile2->getID());
         TestHelpers::deleteTestUser($user->getID());
 
-        if (!$isActiveBeforeChange) {
+        if ($valueBeforeChange == false) {
             return "User should be active before losing one active profile.";
-        } elseif (!$isActiveAfterChange) {
+        } elseif ($valueAfterChange == false) {
             return "User should remain active after losing only one of two active profiles.";
         }
 
@@ -118,16 +118,16 @@ final class UserTests {
     public static function checkUserBecomesInactiveWhenTheyLoseLastActiveProfile(): bool|string {
         $user = User::createNew(TestHelpers::EXISTING_TEST_USER_LOGIN);
         $profile = TestHelpers::createTestDirectorProfile($user);
-        $isActiveBeforeChange = $user->isActive();
+        $valueBeforeChange = $user->isActive();
         $profile->deactivate($user);
-        $isActiveAfterChange = $user->isActive();
+        $valueAfterChange = $user->isActive();
 
         TestHelpers::deleteTestDirectorProfileData($profile->getID());
         TestHelpers::deleteTestUser($user->getID());
 
-        if (!$isActiveBeforeChange) {
+        if ($valueBeforeChange == false) {
             return "User should be active before losing last active profile.";
-        } elseif ($isActiveAfterChange) {
+        } elseif ($valueAfterChange == true) {
             return "User should become inactive after losing last active profile.";
         }
 

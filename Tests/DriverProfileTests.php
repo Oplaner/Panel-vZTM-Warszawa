@@ -82,7 +82,7 @@ final class DriverProfileTests {
     public static function createNewDriverProfileWhenUserHasOneInactiveWithAcquiredPenalty(): bool|string {
         $user = TestHelpers::createTestUser();
         $profile1 = DriverProfile::createNew($user, $user);
-        $profile1->setAcquiredPenaltyMultiplier(2);
+        $profile1->incrementPenaltyMultiplier();
         $profile1->deactivate($user);
         $profile2 = DriverProfile::createNew($user, $user);
 
@@ -135,28 +135,12 @@ final class DriverProfileTests {
         return true;
     }
 
-    public static function throwExceptionWhenSettingNegativeAcquiredPenaltyMultiplier(): bool|string {
-        $user = TestHelpers::createTestUser();
-        $profile = DriverProfile::createNew($user, $user);
-
-        TestHelpers::deleteTestDriverProfile($profile->getID());
-        TestHelpers::deleteTestUser($user->getID());
-
-        try {
-            $profile->setAcquiredPenaltyMultiplier(-1);
-        } catch (Exception $exception) {
-            return true;
-        }
-
-        return "No exception was thrown when setting negative acquired penalty multiplier.";
-    }
-
     public static function doNotUpdateAcquiredPenaltyMultiplierWhenDriverProfileIsInactive(): bool|string {
         $user = TestHelpers::createTestUser();
         $profile = DriverProfile::createNew($user, $user);
         $profile->deactivate($user);
         $valueBeforeChange = $profile->getAcquiredPenaltyMultiplier();
-        $profile->setAcquiredPenaltyMultiplier($valueBeforeChange + 1);
+        $profile->incrementPenaltyMultiplier();
         $valueAfterChange = $profile->getAcquiredPenaltyMultiplier();
 
         TestHelpers::deleteTestDriverProfile($profile->getID());
@@ -164,6 +148,26 @@ final class DriverProfileTests {
 
         if ($valueAfterChange != $valueBeforeChange) {
             return "Deactivated driver profile acquiredPenaltyMultiplier value should not change.";
+        }
+
+        return true;
+    }
+
+    public static function updateAcquiredPenaltyMultiplierWhenDriverProfileIsActive(): bool|string {
+        $user = TestHelpers::createTestUser();
+        $profile = DriverProfile::createNew($user, $user);
+        $valueBeforeChange = $profile->getAcquiredPenaltyMultiplier();
+        $profile->incrementPenaltyMultiplier();
+        $valueAfterChange = $profile->getAcquiredPenaltyMultiplier();
+        $expectedValue = $profile->getInitialPenaltyMultiplier() + 1;
+
+        TestHelpers::deleteTestDriverProfile($profile->getID());
+        TestHelpers::deleteTestUser($user->getID());
+
+        if ($valueAfterChange == $valueBeforeChange) {
+            return "Active driver profile acquiredPenaltyMultiplier value should change.";
+        } elseif ($valueAfterChange != $expectedValue) {
+            return "Driver profile acquiredPenaltyMultiplier value is incorrect. Expected: $expectedValue, found: $valueAfterChange.";
         }
 
         return true;
