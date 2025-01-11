@@ -21,15 +21,32 @@ abstract class Profile extends DatabaseEntity {
     }
 
     public static function getAllByUser(User $user): array {
-        $result = DatabaseConnector::shared()->execute_query(
+        $query =
             "SELECT id, type
             FROM profiles
             WHERE user_id = ?
-            ORDER BY activated_at ASC",
-            [
-                $user->getID()
-            ]
-        );
+            ORDER BY activated_at ASC";
+        $parameters = [
+            $user->getID()
+        ];
+        return self::getWithQuery($query, $parameters);
+    }
+
+    public static function getActiveByUser(User $user): array {
+        $query =
+            "SELECT id, type
+            FROM profiles
+            WHERE user_id = ?
+            AND deactivated_at IS NULL
+            ORDER BY activated_at ASC";
+        $parameters = [
+            $user->getID()
+        ];
+        return self::getWithQuery($query, $parameters);
+    }
+
+    private static function getWithQuery(string $query, ?array $parameters = null): array {
+        $result = DatabaseConnector::shared()->execute_query($query, $parameters);
         $profiles = [];
 
         while ($data = $result->fetch_assoc()) {

@@ -151,6 +151,14 @@ final class Carrier extends DatabaseEntity {
         }
     }
 
+    public function getAllContracts(): array {
+        return Contract::getAllByCarrier($this);
+    }
+
+    public function getActiveContracts(): array {
+        return Contract::getActiveByCarrier($this);
+    }
+
     public function getNumberOfTrialTasks(): int {
         return $this->numberOfTrialTasks;
     }

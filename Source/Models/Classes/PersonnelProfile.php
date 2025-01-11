@@ -69,29 +69,6 @@ final class PersonnelProfile extends Profile {
         return new PersonnelProfile($id, $userID, $activatedAt, $activatedBy, $deactivatedAt, $deactivatedBy, $description, $privileges);
     }
 
-    public static function getAllByUser(User $user): array {
-        $result = DatabaseConnector::shared()->execute_query(
-            "SELECT id
-            FROM profiles
-            WHERE user_id = ? AND type = ?
-            ORDER BY activated_at ASC",
-            [
-                $user->getID(),
-                self::DATABASE_PROFILE_TYPE_PERSONNEL
-            ]
-        );
-
-        $personnelProfiles = [];
-
-        while ($data = $result->fetch_assoc()) {
-            $profileID = $data["id"];
-            $personnelProfiles[] = self::withID($profileID);
-        }
-
-        $result->free();
-        return $personnelProfiles;
-    }
-
     private static function validatePrivilegesArrayIsNotEmpty($privileges): void {
         if (count($privileges) == 0) {
             throw new Exception("Creating personnel profile with 0 privileges is not allowed.");

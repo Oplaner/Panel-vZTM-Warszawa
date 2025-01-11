@@ -117,12 +117,20 @@ final class User extends DatabaseEntity {
         return $this->shouldChangePassword;
     }
 
-    public function getProfiles(): array {
+    public function getAllContracts(): array {
+        return Contract::getAllByDriver($this);
+    }
+
+    public function getActiveContracts(): array {
+        return Contract::getActiveByDriver($this);
+    }
+
+    public function getAllProfiles(): array {
         return Profile::getAllByUser($this);
     }
 
-    public function getContracts(): array {
-        return Contract::getAllByDriver($this);
+    public function getActiveProfiles(): array {
+        return Profile::getActiveByUser($this);
     }
 
     public function getCreatedAt(): SystemDateTime {
@@ -130,11 +138,7 @@ final class User extends DatabaseEntity {
     }
 
     public function isActive(): bool {
-        $activeProfiles = array_filter(
-            $this->getProfiles(),
-            fn ($profile) => $profile->isActive()
-        );
-        return count($activeProfiles) > 0;
+        return count($this->getActiveProfiles()) > 0;
     }
 
     public function __toString() {

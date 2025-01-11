@@ -85,8 +85,8 @@ final class DriverProfile extends Profile {
 
     private static function userHasActiveDriverProfile(User $user): bool {
         $activeDriverProfiles = array_filter(
-            $user->getProfiles(),
-            fn ($profile) => $profile->isActive() && is_a($profile, DriverProfile::class)
+            $user->getActiveProfiles(),
+            fn ($profile) => is_a($profile, DriverProfile::class)
         );
         return count($activeDriverProfiles) > 0;
     }

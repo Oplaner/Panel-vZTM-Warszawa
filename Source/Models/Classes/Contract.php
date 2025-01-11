@@ -67,18 +67,71 @@ final class Contract extends DatabaseEntity {
     }
 
     public static function getAllByCarrier(Carrier $carrier): array {
-        $result = DatabaseConnector::shared()->execute_query(
+        $query =
             "SELECT c.id
             FROM contracts AS c
             INNER JOIN contract_periods AS cp
             ON c.id = cp.contract_id
             WHERE c.carrier_id = ?
             GROUP BY c.id
-            ORDER BY MIN(cp.valid_from) ASC",
-            [
-                $carrier->getID()
-            ]
-        );
+            ORDER BY MIN(cp.valid_from) ASC";
+        $parameters = [
+            $carrier->getID()
+        ];
+        return self::getWithQuery($query, $parameters);
+    }
+
+    public static function getActiveByCarrier(Carrier $carrier): array {
+        $finalStateQuotedStrings = self::makeFinalStateQuotedStringsArray();
+        $query =
+            "SELECT c.id
+            FROM contracts AS c
+            INNER JOIN contract_periods AS cp
+            ON c.id = cp.contract_id
+            WHERE c.carrier_id = ?
+            AND c.current_state NOT IN (".join(", ", $finalStateQuotedStrings).")
+            GROUP BY c.id
+            ORDER BY MIN(cp.valid_from) ASC";
+        $parameters = [
+            $carrier->getID()
+        ];
+        return self::getWithQuery($query, $parameters);
+    }
+
+    public static function getAllByDriver(User $driver): array {
+        $query =
+            "SELECT c.id
+            FROM contracts AS c
+            INNER JOIN contract_periods AS cp
+            ON c.id = cp.contract_id
+            WHERE c.driver_id = ?
+            GROUP BY c.id
+            ORDER BY MIN(cp.valid_from) ASC";
+        $parameters = [
+            $driver->getID()
+        ];
+        return self::getWithQuery($query, $parameters);
+    }
+
+    public static function getActiveByDriver(User $driver): array {
+        $finalStateQuotedStrings = self::makeFinalStateQuotedStringsArray();
+        $query =
+            "SELECT c.id
+            FROM contracts AS c
+            INNER JOIN contract_periods AS cp
+            ON c.id = cp.contract_id
+            WHERE c.driver_id = ?
+            AND c.current_state NOT IN (".join(", ", $finalStateQuotedStrings).")
+            GROUP BY c.id
+            ORDER BY MIN(cp.valid_from) ASC";
+        $parameters = [
+            $driver->getID()
+        ];
+        return self::getWithQuery($query, $parameters);
+    }
+
+    private static function getWithQuery(string $query, ?array $parameters = null): array {
+        $result = DatabaseConnector::shared()->execute_query($query, $parameters);
         $contracts = [];
 
         while ($data = $result->fetch_assoc()) {
@@ -90,28 +143,14 @@ final class Contract extends DatabaseEntity {
         return $contracts;
     }
 
-    public static function getAllByDriver(User $driver): array {
-        $result = DatabaseConnector::shared()->execute_query(
-            "SELECT c.id
-            FROM contracts AS c
-            INNER JOIN contract_periods AS cp
-            ON c.id = cp.contract_id
-            WHERE c.driver_id = ?
-            GROUP BY c.id
-            ORDER BY MIN(cp.valid_from) ASC",
-            [
-                $driver->getID()
-            ]
+    private static function makeFinalStateQuotedStringsArray(): array {
+        return array_map(
+            fn ($state) => "\"{$state->value}\"",
+            array_filter(
+                ContractState::cases(),
+                fn ($state) => $state->isFinal()
+            )
         );
-        $contracts = [];
-
-        while ($data = $result->fetch_assoc()) {
-            $contractID = $data["id"];
-            $contracts[] = self::withID($contractID);
-        }
-
-        $result->free();
-        return $contracts;
     }
 
     private static function validateContractStateIsNotFinal(ContractState $state): void {
@@ -224,22 +263,15 @@ final class Contract extends DatabaseEntity {
         }
     }
 
-    private function getDriverActiveContracts(): array {
-        return array_filter(
-            self::getAllByDriver($this->driver),
-            fn ($contract) => $contract->isActive()
-        );
-    }
-
     private function getDriverProfile(): DriverProfile {
         return array_filter(
-            $this->driver->getProfiles(),
-            fn ($profile) => $profile->isActive() && is_a($profile, DriverProfile::class)
+            $this->driver->getActiveProfiles(),
+            fn ($profile) => is_a($profile, DriverProfile::class)
         )[0];
     }
 
     private function deactivateDriverProfileIfNeeded(User $authorizer): void {
-        $driverActiveContracts = $this->getDriverActiveContracts();
+        $driverActiveContracts = self::getActiveByDriver($this->driver);
 
         if (count($driverActiveContracts) == 0) {
             Logger::log(LogLevel::info, "The last contract of user with ID \"{$this->driver->getID()}\" has been terminated. Their driver profile deactivation will follow.");
@@ -256,7 +288,7 @@ final class Contract extends DatabaseEntity {
     }
 
     private function terminateDriverActiveContracts(User $authorizer): void {
-        $driverActiveContracts = $this->getDriverActiveContracts();
+        $driverActiveContracts = self::getActiveByDriver($this->driver);
         array_walk(
             $driverActiveContracts,
             fn ($contract) => $contract->addPeriod(ContractState::terminatedAutomatically, $authorizer)

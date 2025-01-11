@@ -181,8 +181,8 @@ final class ContractTests {
         $contract1 = Contract::createNew($carrier1, $user, $user, ContractState::active);
         $contract2 = Contract::createNew($carrier2, $user, $user, ContractState::probation);
         $profile = array_filter(
-            $user->getProfiles(),
-            fn ($profile) => $profile->isActive() && is_a($profile, DriverProfile::class)
+            $user->getActiveProfiles(),
+            fn ($profile) => is_a($profile, DriverProfile::class)
         )[0];
         $valueBeforeChange = $profile->isActive();
         $contract2->addPeriod(ContractState::terminated, $user);
@@ -209,8 +209,8 @@ final class ContractTests {
         $carrier = TestHelpers::createTestCarrier($user);
         $contract = Contract::createNew($carrier, $user, $user, ContractState::active);
         $profile = array_filter(
-            $user->getProfiles(),
-            fn ($profile) => $profile->isActive() && is_a($profile, DriverProfile::class)
+            $user->getActiveProfiles(),
+            fn ($profile) => is_a($profile, DriverProfile::class)
         )[0];
         $valueBeforeChange = $profile->isActive();
         $contract->addPeriod(ContractState::terminated, $user);
@@ -237,8 +237,8 @@ final class ContractTests {
         $contract1 = Contract::createNew($carrier1, $user, $user, ContractState::active);
         $contract2 = Contract::createNew($carrier2, $user, $user, ContractState::active);
         $profile = array_filter(
-            $user->getProfiles(),
-            fn ($profile) => $profile->isActive() && is_a($profile, DriverProfile::class)
+            $user->getActiveProfiles(),
+            fn ($profile) => is_a($profile, DriverProfile::class)
         )[0];
         $contract2->addPeriod(ContractState::terminatedDisciplinarily, $user);
 
