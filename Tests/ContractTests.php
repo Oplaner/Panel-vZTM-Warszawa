@@ -1,6 +1,30 @@
 <?php
 
 final class ContractTests {
+    public static function throwExceptionWhenCreatingContractWhenOneIsCurrentlyActive(): bool|string {
+        $user = TestHelpers::createTestUser();
+        $carrier = TestHelpers::createTestCarrier($user);
+        $contract = Contract::createNew($carrier, $user, $user, ContractState::probation);
+        $didThrowException = false;
+
+        try {
+            Contract::createNew($carrier, $user, $user, ContractState::active);
+        } catch (Exception $exception) {
+            $didThrowException = true;
+        }
+
+        TestHelpers::deleteAllTestDriverProfiles();
+        TestHelpers::deleteTestContractData($contract->getID());
+        TestHelpers::deleteTestCarrierData($carrier->getID());
+        TestHelpers::deleteTestUser($user->getID());
+
+        if ($didThrowException) {
+            return true;
+        } else {
+            return "No exception was thrown when creating a contract when one is currently active.";
+        }
+    }
+
     public static function throwExceptionWhenCreatingContractWithFinalState(): bool|string {
         $user = TestHelpers::createTestUser();
         $carrier = TestHelpers::createTestCarrier($user);

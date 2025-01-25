@@ -19,6 +19,7 @@ final class Contract extends DatabaseEntity {
 
     public static function createNew(Carrier $carrier, User $driver, User $authorizer, ContractState $state): Contract {
         Logger::log(LogLevel::info, "User with ID \"{$authorizer->getID()}\" is creating new contract between carrier \"{$carrier->getShortName()}\" and user with ID \"{$driver->getID()}\", with initial state \"{$state->value}\".");
+        self::validateContractDoesNotExist($carrier, $driver);
         self::validateContractStateIsNotFinal($state);
         $driverProfile = DriverProfile::createNew($driver, $authorizer);
         $totalPenaltyTasks = 0;
@@ -151,6 +152,17 @@ final class Contract extends DatabaseEntity {
                 fn ($state) => $state->isFinal()
             )
         );
+    }
+
+    private static function validateContractDoesNotExist(Carrier $carrier, User $driver): void {
+        $carrierAndDriverContracts = array_filter(
+            $driver->getActiveContracts(),
+            fn ($contract) => $contract->getCarrier()->getID() == $carrier->getID()
+        );
+
+        if (count($carrierAndDriverContracts) > 0) {
+            throw new Exception("Cannot create new contract - there is one currently active.");
+        }
     }
 
     private static function validateContractStateIsNotFinal(ContractState $state): void {
