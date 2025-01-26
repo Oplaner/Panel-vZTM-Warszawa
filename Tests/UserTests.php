@@ -96,13 +96,14 @@ final class UserTests {
 
     public static function checkUserRemainsActiveWhenTheyLoseOneOfTwoActiveProfiles(): bool|string {
         $user = User::createNew(TestHelpers::EXISTING_TEST_USER_LOGIN);
-        $profile1 = TestHelpers::createTestDirectorProfile($user);
+        $profile1 = TestHelpers::createTestPersonnelProfile($user);
         $profile2 = TestHelpers::createTestDirectorProfile($user);
         $valueBeforeChange = $user->isActive();
         $profile1->deactivate($user);
         $valueAfterChange = $user->isActive();
 
-        TestHelpers::deleteTestDirectorProfileData($profile1->getID());
+        TestHelpers::deleteTestPrivilege($profile1->getPrivileges()[0]->getID());
+        TestHelpers::deleteTestPersonnelProfileData($profile1->getID());
         TestHelpers::deleteTestDirectorProfileData($profile2->getID());
         TestHelpers::deleteTestUser($user->getID());
 

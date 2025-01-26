@@ -1,6 +1,27 @@
 <?php
 
 final class DirectorProfileTests {
+    public static function throwExceptionWhenCreatingDirectorProfileWhenOneIsCurrentlyActive(): bool|string {
+        $user = TestHelpers::createTestUser();
+        $profile = DirectorProfile::createNew($user, $user);
+        $didThrowException = false;
+
+        try {
+            DirectorProfile::createNew($user, $user);
+        } catch (Exception $exception) {
+            $didThrowException = true;
+        }
+
+        TestHelpers::deleteTestDirectorProfileData($profile->getID());
+        TestHelpers::deleteTestUser($user->getID());
+
+        if ($didThrowException) {
+            return true;
+        } else {
+            return "No exception whas thrown when creating new director profile when one is currently active for the user.";
+        }
+    }
+
     public static function createNewDirectorProfileAndCheckItIsNotProtected(): bool|string {
         $user = TestHelpers::createTestUser();
         $profile = DirectorProfile::createNew($user, $user);

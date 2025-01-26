@@ -11,6 +11,7 @@ final class DirectorProfile extends Profile {
 
     public static function createNew(User $owner, User $activator): DirectorProfile {
         Logger::log(LogLevel::info, "User with ID \"{$activator->getID()}\" is creating new director profile for user with ID \"{$owner->getID()}\".");
+        self::validateDirectorProfileDoesNotExist($owner);
         return new DirectorProfile(null, $owner->getID(), SystemDateTime::now(), $activator, null, null, false);
     }
 
@@ -48,6 +49,17 @@ final class DirectorProfile extends Profile {
         $deactivatedBy = is_null($data["deactivated_by_user_id"]) ? null : User::withID($data["deactivated_by_user_id"]);
         $isProtected = $data["protected"];
         return new DirectorProfile($id, $userID, $activatedAt, $activatedBy, $deactivatedAt, $deactivatedBy, $isProtected);
+    }
+
+    private static function validateDirectorProfileDoesNotExist(User $owner): void {
+        $userDirectorProfiles = array_filter(
+            $owner->getActiveProfiles(),
+            fn ($profile) => is_a($profile, DirectorProfile::class)
+        );
+
+        if (count($userDirectorProfiles) > 0) {
+            throw new Exception("Cannot create new director profile - there is one currently active for the user.");
+        }
     }
 
     public function isProtected(): bool {

@@ -6,7 +6,7 @@ final class PersonnelProfileTests {
         TestHelpers::deleteTestUser($user->getID());
 
         try {
-            PersonnelProfile::createNew($user, $user, "", []);
+            PersonnelProfile::createNew($user, $user, "Test PersonnelProfile", []);
         } catch (Exception $exception) {
             return true;
         }
@@ -16,7 +16,7 @@ final class PersonnelProfileTests {
 
     public static function createNewPersonnelProfile(): bool|string {
         $user = TestHelpers::createTestUser();
-        $description = DatabaseEntity::generateUUIDv4();
+        $description = "Test PersonnelProfile";
         $privileges = [
             TestHelpers::createTestPrivilege(),
             TestHelpers::createTestPrivilegeWithAssociatedEntity()
@@ -47,7 +47,7 @@ final class PersonnelProfileTests {
 
     public static function getPersonnelProfile(): bool|string {
         $user = TestHelpers::createTestUser();
-        $description = DatabaseEntity::generateUUIDv4();
+        $description = "Test PersonnelProfile";
         $privilege = TestHelpers::createTestPrivilege();
         $profile = PersonnelProfile::createNew($user, $user, $description, [$privilege]);
         DatabaseEntity::removeFromCache($profile);
@@ -74,7 +74,7 @@ final class PersonnelProfileTests {
 
     public static function deactivatePersonnelProfile(): bool|string {
         $user = TestHelpers::createTestUser();
-        $description = DatabaseEntity::generateUUIDv4();
+        $description = "Test PersonnelProfile";
         $privilege = TestHelpers::createTestPrivilege();
         $profile = PersonnelProfile::createNew($user, $user, $description, [$privilege]);
         $profile->deactivate($user);

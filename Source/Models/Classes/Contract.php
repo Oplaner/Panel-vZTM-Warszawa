@@ -161,7 +161,7 @@ final class Contract extends DatabaseEntity {
         );
 
         if (count($carrierAndDriverContracts) > 0) {
-            throw new Exception("Cannot create new contract - there is one currently active.");
+            throw new Exception("Cannot create new contract - there is one currently active for the user.");
         }
     }
 

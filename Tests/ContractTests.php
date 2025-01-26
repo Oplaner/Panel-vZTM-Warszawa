@@ -21,7 +21,7 @@ final class ContractTests {
         if ($didThrowException) {
             return true;
         } else {
-            return "No exception was thrown when creating a contract when one is currently active.";
+            return "No exception was thrown when creating new contract when one is currently active for the user.";
         }
     }
 
@@ -38,7 +38,7 @@ final class ContractTests {
             return true;
         }
 
-        return "No exception was thrown when creating a contract with final state.";
+        return "No exception was thrown when creating new contract with final state.";
     }
 
     public static function createNewContractWithoutPenalty(): bool|string {

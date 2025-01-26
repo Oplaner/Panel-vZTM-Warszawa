@@ -21,6 +21,11 @@ final class TestHelpers {
         return Privilege::createNew(PrivilegeScope::canViewTimetableOfDepot, DatabaseEntity::generateUUIDv4());
     }
 
+    public static function createTestPersonnelProfile(User $user): PersonnelProfile {
+        $privilege = self::createTestPrivilege();
+        return PersonnelProfile::createNew($user, $user, "Test PersonnelProfile", [$privilege]);
+    }
+
     public static function createTestDirectorProfile(User $user): DirectorProfile {
         return DirectorProfile::createNew($user, $user);
     }
