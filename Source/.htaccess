@@ -1,3 +1,4 @@
-# Redirect all traffic to index.php to be handled by Router
+# Except for assets, redirect all traffic to index.php to be handled by Router
 RewriteEngine on
+RewriteCond %{REQUEST_URI} !^/Source/Views/(Images|Scripts|Styles)/
 RewriteRule .* index.php

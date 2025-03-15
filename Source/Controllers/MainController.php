@@ -2,12 +2,28 @@
 
 final class MainController extends Controller {
     #[Route("/", RequestMethod::get, DEFAULT_ROUTE)]
+    #[Access(
+        group: AccessGroup::everyone
+    )]
     public function mainPage(): void {
-        $this->renderView("MainPage");
+        global $_USER;
+
+        if (isset($_USER)) {
+            self::renderView("MainPage");
+        } else {
+            self::renderView("LoginPage");
+        }
     }
 
     /*
-    #[Route("/title/{pageTitle}/user/{user}", RequestMethod::get)]
+    #[Route("/timetable/{depotID}", RequestMethod::get)]
+    #[Access(
+        group: AccessGroup::oneOfProfiles,
+        profiles: [PersonnelProfile::class],
+        allowedPersonnelPrivileges: [
+            ["scope" => PrivilegeScope::canViewTimetableOfDepot, "entityKey" => "depotID"]
+        ]
+    )]
     public function loginPage(array $input): void {
         extract($input["pathData"]);
         $viewParameters = [
@@ -19,35 +35,42 @@ final class MainController extends Controller {
     }
     */
 
-    #[Route("/", RequestMethod::post)]
+    #[Route("/login", RequestMethod::post)]
+    #[Access(
+        group: AccessGroup::guestsOnly
+    )]
     public function login(array $input): void {
         $post = $input["postData"];
         $login = $post["login"];
         $password = $post["password"];
         // TODO: Sanitize user input.
         $authentication = Authenticator::authenticateUser($login, $password);
+
+        if ($authentication == AuthenticationResult::success) {
+            $this->mainPage();
+            return;
+        }
+
         $viewParameters = [
             "authenticationResult" => $authentication
         ];
 
-        $this->renderView("MainPage", $viewParameters);
+        self::renderView("LoginPage", $viewParameters);
     }
 
     #[Route("/logout", RequestMethod::get)]
+    #[Access(
+        group: AccessGroup::anyProfile
+    )]
     public function logout(): void {
         global $_USER;
-        $didLogout = false;
-
-        if (isset($_USER)) {
-            Authenticator::endUserSession();
-            $didLogout = true;
-        }
-
+        
+        Authenticator::endUserSession();
         $viewParameters = [
-            "showLogoutMessage" => $didLogout
+            "showLogoutMessage" => true
         ];
 
-        $this->renderView("MainPage", $viewParameters);
+        self::renderView("LoginPage", $viewParameters);
     }
 }
 

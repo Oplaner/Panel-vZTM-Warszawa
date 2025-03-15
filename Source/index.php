@@ -9,7 +9,7 @@ error_reporting($properties["errorReportingEnabled"] ? E_ALL : 0);
 
 try {
     $_USER = Authenticator::getUserFromSessionData();
-    $router = new Router(basename(__DIR__));
+    $router = new Router();
     $path = $_SERVER["REQUEST_URI"];
     $method = RequestMethod::from($_SERVER["REQUEST_METHOD"]);
     $router->dispatchRequest($path, $method);
