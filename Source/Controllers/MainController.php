@@ -1,7 +1,7 @@
 <?php
 
 final class MainController extends Controller {
-    #[Route("/", RequestMethod::get, DEFAULT_ROUTE)]
+    #[Route("/", RequestMethod::get)]
     #[Access(
         group: AccessGroup::everyone
     )]
@@ -47,7 +47,7 @@ final class MainController extends Controller {
         $authentication = Authenticator::authenticateUser($login, $password);
 
         if ($authentication == AuthenticationResult::success) {
-            $this->mainPage();
+            Router::redirectToHome();
             return;
         }
 

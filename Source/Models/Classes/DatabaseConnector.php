@@ -3,8 +3,6 @@
 final class DatabaseConnector {
     private static ?mysqli $sharedInstance = null;
 
-    public function __construct() {}
-
     public static function shared(): mysqli {
         if (is_null(self::$sharedInstance)) {
             self::$sharedInstance = self::initializeClient();
@@ -14,7 +12,7 @@ final class DatabaseConnector {
     }
 
     public static function closeConnection(): void {
-        if (isset(self::$sharedInstance)) {
+        if (!is_null(self::$sharedInstance)) {
             self::$sharedInstance->close();
             self::$sharedInstance = null;
             Logger::log(LogLevel::info, "Closed database connection.");

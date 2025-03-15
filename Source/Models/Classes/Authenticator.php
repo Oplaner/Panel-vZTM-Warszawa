@@ -10,8 +10,6 @@ final class Authenticator {
         "specialCharacters" => "!@#$%&?"
     ];
 
-    public function __construct() {}
-
     public static function getUserFromSessionData(): ?User {
         $_USER = null;
         $properties = PropertiesReader::getProperties("authenticator");

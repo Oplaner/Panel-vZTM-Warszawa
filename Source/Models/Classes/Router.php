@@ -7,11 +7,13 @@ final class Router {
     private const ACCESS_KEY = "access";
 
     private array $routes;
-    private string $defaultController;
-    private string $defaultAction;
 
     public function __construct() {
         $this->registerRoutes();
+    }
+
+    public static function redirect(string $path): void {
+        header("Location: ".PathBuilder::action($path));
     }
 
     public static function redirectToHome(): void {
@@ -41,7 +43,7 @@ final class Router {
                 ];
 
                 if (!AccessChecker::userCanAccess($access, $input["pathData"])) {
-                    Logger::log(LogLevel::info, "Access denied for path: \"$path\". Redirecting to home.");
+                    Logger::log(LogLevel::info, "Access denied. Redirecting to home.");
                     self::redirectToHome();
                 }
 
@@ -51,8 +53,8 @@ final class Router {
             }
         }
 
-        $controller = new $this->defaultController();
-        $controller->{$this->defaultAction}();
+        Logger::log(LogLevel::info, "Invalid route. Redirecting to home.");
+        self::redirectToHome();
     }
 
     private function registerRoutes(): void {
@@ -89,11 +91,6 @@ final class Router {
                     $this->routes[$path][$route->method->name][self::CONTROLLER_KEY] = $controller;
                     $this->routes[$path][$route->method->name][self::ACTION_KEY] = $action;
                     $this->routes[$path][$route->method->name][self::ACCESS_KEY] = $access;
-
-                    if ($route->isDefault) {
-                        $this->defaultController = $controller;
-                        $this->defaultAction = $action;
-                    }
                 }
             }
         }
