@@ -63,8 +63,6 @@ final class MainController extends Controller {
         group: AccessGroup::anyProfile
     )]
     public function logout(): void {
-        global $_USER;
-        
         Authenticator::endUserSession();
         $viewParameters = [
             "showLogoutMessage" => true
