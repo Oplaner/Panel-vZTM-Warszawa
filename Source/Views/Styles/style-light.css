@@ -29,13 +29,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #loginForm {
+    width: 400px;
     margin-top: calc(10vh - 1.5rem);
     padding: 1.5rem;
 }
 
 #loginForm img {
     display: block;
-    width: 60%;
+    width: 200px;
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 1rem;
@@ -113,6 +114,7 @@ input[type=submit]:hover {
 
 .successMessage, .errorMessage {
     width: 90%;
+    display: flex;
     margin: 0 auto 1rem auto;
     padding: 0.3rem;
     font-size: 0.8rem;
