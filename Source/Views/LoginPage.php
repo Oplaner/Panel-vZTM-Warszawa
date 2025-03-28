@@ -8,7 +8,9 @@
 <body>
     <div id="loginPageContainer">
         <div id="loginForm">
-            <img src="<?php echo PathBuilder::image("vZTMLogo.svg") ?>" alt="Logo vZTM Warszawa">
+            <a href="<?php echo PathBuilder::root() ?>">
+                <img src="<?php echo PathBuilder::image("vZTMLogo.svg") ?>" alt="Logo vZTM Warszawa">
+            </a>
             <h1>Panel vZTM Warszawa</h1>
 <?php
 
