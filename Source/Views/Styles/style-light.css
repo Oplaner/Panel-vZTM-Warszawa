@@ -81,7 +81,7 @@ input[type=text]:focus, input[type=password]:focus {
     flex: 1;
 }
 
-a.button, input[type=submit] {
+.button, input[type=submit] {
     padding: 0.4rem;
     font-size: 0.9rem;
     font-weight: 500;
@@ -93,12 +93,12 @@ a.button, input[type=submit] {
     cursor: pointer;
 }
 
-a.button {
+.button {
     background-color: #EFEFEF;
     border-color: #C2C4C5;
 }
 
-a.button:hover {
+.button:hover {
     background-color: #FFFFFF;
 }
 
@@ -142,6 +142,91 @@ input[type=submit]:hover {
     background-color: #FFC3C3;
     border-color: #FF8585;
     color: #972525;
+}
+
+#topBar {
+    width: 100%;
+    height: 50px;
+    position: fixed;
+    top: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 2rem;
+    background-color: #FFFFFF;
+    border-bottom: 2px solid #5D2612;
+    z-index: 1;
+}
+
+#topBar img {
+    height: 100%;
+}
+
+#menuButton {
+    width: 35px;
+    cursor: pointer;
+}
+
+#menuButton div {
+    width: 100%;
+    height: 5px;
+    margin: 5px 0;
+    background-color: #9B422C;
+    border-radius: 3px;
+    transition: transform 0.25s, opacity 0.125s;
+}
+
+#menuButton.active div:nth-of-type(1) {
+    transform: translate(0, 10px) rotate(-45deg);
+}
+
+#menuButton.active div:nth-of-type(2) {
+    opacity: 0;
+}
+
+#menuButton.active div:nth-of-type(3) {
+    transform: translate(0, -10px) rotate(45deg);
+}
+
+#topBarUserInfo {
+    line-height: 21px;
+    text-align: right;
+}
+
+#topBarUserInfo a:link, #topBarUserInfo a:visited {
+    font-weight: 500;
+    color: #9B422C;
+    text-decoration: none;
+}
+
+#topBarUserInfo a:hover {
+    text-decoration: underline;
+}
+
+#menu {
+    position: fixed;
+    top: 50px;
+    width: 100%;
+    height: calc(100vh - 50px);
+    background-color: #FFFFFF;
+    overflow: auto;
+    opacity: 0;
+    transition: opacity 0.25s;
+    z-index: 1;
+}
+
+#menu.active {
+    opacity: 1;
+}
+
+#content {
+    position: fixed;
+    top: 50px;
+    width: 100%;
+    height: calc(100vh - 50px);
+    padding: 2rem;
+    overflow: auto;
+    z-index: 0;
 }
 
 @media only screen and (max-width: 600px) {

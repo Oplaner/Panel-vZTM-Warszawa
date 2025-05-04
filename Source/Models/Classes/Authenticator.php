@@ -110,6 +110,7 @@ final class Authenticator {
 
     public static function endUserSession(): void {
         global $_USER;
+        $_USER = null;
         $token = $_SESSION["token"];
 
         DatabaseConnector::shared()->execute_query(
@@ -120,7 +121,7 @@ final class Authenticator {
             ]
         );
 
-        $_USER = null;
+        self::endSession();
     }
 
     public static function generateTemporaryPassword(): string {
