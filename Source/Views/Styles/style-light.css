@@ -23,6 +23,16 @@ h1, h2, h3, h4, h5, h6 {
     margin-bottom: 1rem;
 }
 
+a:link:not(.button), a:visited:not(.button) {
+    font-weight: 500;
+    color: #9B422C;
+    text-decoration: none;
+}
+
+a:hover:not(.button) {
+    text-decoration: underline;
+}
+
 #loginPageContainer {
     display: flex;
     justify-content: center;
@@ -193,21 +203,15 @@ input[type=submit]:hover {
     text-align: right;
 }
 
-#topBarUserInfo a:link, #topBarUserInfo a:visited {
-    font-weight: 500;
-    color: #9B422C;
-    text-decoration: none;
-}
-
-#topBarUserInfo a:hover {
-    text-decoration: underline;
-}
-
 #menu {
     position: fixed;
     top: 50px;
     width: 100%;
     height: calc(100vh - 50px);
+    padding: 2rem;
+    align-content: flex-start;
+    gap: 4rem;
+    flex-wrap: wrap;
     background-color: #FFFFFF;
     overflow: auto;
     opacity: 0;
@@ -217,6 +221,11 @@ input[type=submit]:hover {
 
 #menu.active {
     opacity: 1;
+}
+
+#menu ul {
+    list-style-type: none;
+    padding-left: 0.25rem;
 }
 
 #content {
@@ -249,5 +258,19 @@ input[type=submit]:hover {
 
     .successMessage, .errorMessage {
         width: 100%;
+    }
+
+    #topBar {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    #menu {
+        padding: 1rem;
+        gap: 2rem;
+    }
+
+    #content {
+        padding: 1rem;
     }
 }

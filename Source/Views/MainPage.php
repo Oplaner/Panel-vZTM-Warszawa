@@ -2,6 +2,7 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="<?php echo PathBuilder::stylesheet("style-light.css") ?>">
     <script src="<?php echo PathBuilder::script("menu.js") ?>"></script>
     <title>Panel vZTM Warszawa</title>
@@ -17,7 +18,68 @@
         <div id="topBarUserInfo">#<?php echo $_USER->getLogin() ?> &bull; <?php echo $_USER->getUsername() ?><br><a href="<?php echo PathBuilder::action("/logout") ?>">Wyloguj się</a></div>
     </div>
     <div id="menu">
-        <p>Future menu content.</p>
+        <div class="menuSection">
+            <h2>Kierownik R-1</h2>
+            <ul>
+                <li><a href="#">Zadania</a></li>
+                <li><a href="#">Kierowcy</a></li>
+                <li><a href="#">Tabor</a></li>
+            </ul>
+        </div>
+        <div class="menuSection">
+            <h2>Kierownik R-2</h2>
+            <ul>
+                <li><a href="#">Zadania</a></li>
+                <li><a href="#">Kierowcy</a></li>
+                <li><a href="#">Tabor</a></li>
+                <li><a href="#">Zadania</a></li>
+                <li><a href="#">Kierowcy</a></li>
+                <li><a href="#">Tabor</a></li>
+                <li><a href="#">Zadania</a></li>
+                <li><a href="#">Kierowcy</a></li>
+                <li><a href="#">Tabor</a></li>
+            </ul>
+        </div>
+        <div class="menuSection">
+            <h2>Kierownik R-3</h2>
+            <ul>
+                <li><a href="#">Zadania</a></li>
+                <li><a href="#">Kierowcy</a></li>
+                <li><a href="#">Tabor</a></li>
+            </ul>
+        </div>
+        <div class="menuSection">
+            <h2>Kierownik R-4</h2>
+            <ul>
+                <li><a href="#">Zadania</a></li>
+                <li><a href="#">Kierowcy</a></li>
+                <li><a href="#">Tabor</a></li>
+            </ul>
+        </div>
+        <div class="menuSection">
+            <h2>Kierownik R-5</h2>
+            <ul>
+                <li><a href="#">Zadania</a></li>
+                <li><a href="#">Kierowcy</a></li>
+                <li><a href="#">Tabor</a></li>
+            </ul>
+        </div>
+        <div class="menuSection">
+            <h2>Kierownik R-6</h2>
+            <ul>
+                <li><a href="#">Zadania</a></li>
+                <li><a href="#">Kierowcy</a></li>
+                <li><a href="#">Tabor</a></li>
+            </ul>
+        </div>
+        <div class="menuSection">
+            <h2>Dyrektor</h2>
+            <ul>
+                <li><a href="#">Pracownicy funkcyjni</a></li>
+                <li><a href="#">Zakłady</a></li>
+                <li><a href="#">Ustawienia</a></li>
+            </ul>
+        </div>
     </div>
     <div id="content">
         <h1>Bonjour</h1>

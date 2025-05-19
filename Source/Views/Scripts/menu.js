@@ -13,7 +13,7 @@ window.addEventListener("DOMContentLoaded", () => {
             menu.classList.remove("active");
             setTimeout(() => hideElement(menu), menuAnimationDuration);
         } else {
-            showElement(menu);
+            showElement(menu, "flex");
             requestAnimationFrame(() => {
                 menu.classList.add("active");
             });
@@ -27,6 +27,6 @@ function hideElement(element) {
     element.style.display = "none";
 }
 
-function showElement(element) {
-    element.style.display = "block";
+function showElement(element, displayStyle) {
+    element.style.display = displayStyle;
 }
