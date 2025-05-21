@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="<?php echo PathBuilder::stylesheet("style-light.css") ?>">
-    <title>Panel vZTM Warszawa</title>
-</head>
+<?php
+
+ViewBuilder::buildHead(Style::light, [], null)
+
+?>
 <body>
     <div id="loginPageContainer">
         <div id="loginForm">

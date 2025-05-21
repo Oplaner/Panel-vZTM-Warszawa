@@ -1,86 +1,17 @@
 <!DOCTYPE html>
 <html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="<?php echo PathBuilder::stylesheet("style-light.css") ?>">
-    <script src="<?php echo PathBuilder::script("menu.js") ?>"></script>
-    <title>Panel vZTM Warszawa</title>
-</head>
+<?php
+
+ViewBuilder::buildHead(Style::light, [Script::menu], null)
+
+?>
 <body>
-    <div id="topBar">
-        <div id="menuButton">
-            <div></div>
-            <div></div>
-            <div></div>
-        </div>
-        <img src="<?php echo PathBuilder::image("vztm-logo-short.svg") ?>" alt="Logo vZTM Warszawa">
-        <div id="topBarUserInfo">#<?php echo $_USER->getLogin() ?> &bull; <?php echo $_USER->getUsername() ?><br><a href="<?php echo PathBuilder::action("/logout") ?>">Wyloguj się</a></div>
-    </div>
-    <div id="menu">
-        <div class="menuSection">
-            <h2>Kierownik R-1</h2>
-            <ul>
-                <li><a href="#">Zadania</a></li>
-                <li><a href="#">Kierowcy</a></li>
-                <li><a href="#">Tabor</a></li>
-            </ul>
-        </div>
-        <div class="menuSection">
-            <h2>Kierownik R-2</h2>
-            <ul>
-                <li><a href="#">Zadania</a></li>
-                <li><a href="#">Kierowcy</a></li>
-                <li><a href="#">Tabor</a></li>
-                <li><a href="#">Zadania</a></li>
-                <li><a href="#">Kierowcy</a></li>
-                <li><a href="#">Tabor</a></li>
-                <li><a href="#">Zadania</a></li>
-                <li><a href="#">Kierowcy</a></li>
-                <li><a href="#">Tabor</a></li>
-            </ul>
-        </div>
-        <div class="menuSection">
-            <h2>Kierownik R-3</h2>
-            <ul>
-                <li><a href="#">Zadania</a></li>
-                <li><a href="#">Kierowcy</a></li>
-                <li><a href="#">Tabor</a></li>
-            </ul>
-        </div>
-        <div class="menuSection">
-            <h2>Kierownik R-4</h2>
-            <ul>
-                <li><a href="#">Zadania</a></li>
-                <li><a href="#">Kierowcy</a></li>
-                <li><a href="#">Tabor</a></li>
-            </ul>
-        </div>
-        <div class="menuSection">
-            <h2>Kierownik R-5</h2>
-            <ul>
-                <li><a href="#">Zadania</a></li>
-                <li><a href="#">Kierowcy</a></li>
-                <li><a href="#">Tabor</a></li>
-            </ul>
-        </div>
-        <div class="menuSection">
-            <h2>Kierownik R-6</h2>
-            <ul>
-                <li><a href="#">Zadania</a></li>
-                <li><a href="#">Kierowcy</a></li>
-                <li><a href="#">Tabor</a></li>
-            </ul>
-        </div>
-        <div class="menuSection">
-            <h2>Dyrektor</h2>
-            <ul>
-                <li><a href="#">Pracownicy funkcyjni</a></li>
-                <li><a href="#">Zakłady</a></li>
-                <li><a href="#">Ustawienia</a></li>
-            </ul>
-        </div>
-    </div>
+<?php
+
+    ViewBuilder::buildTopBar($_USER);
+    ViewBuilder::buildMenu($_USER->getActiveProfiles());
+
+?>
     <div id="content">
         <h1>Bonjour</h1>
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin euismod feugiat lorem sed tempus. Vestibulum lectus felis, tincidunt nec lacus eu, accumsan posuere metus. Donec congue diam a risus efficitur finibus. Sed finibus volutpat arcu sed mattis. Donec convallis orci nec quam aliquam, at feugiat leo eleifend. Praesent placerat eros mi, a consectetur purus gravida eu. Phasellus imperdiet dui diam. Aenean lacinia lobortis tortor nec tincidunt.</p>
