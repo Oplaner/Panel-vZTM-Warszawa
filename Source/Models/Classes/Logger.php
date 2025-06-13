@@ -51,27 +51,27 @@ final class Logger {
     private static function findAllLogFileNames(): array {
         $properties = PropertiesReader::getProperties("logger");
         return array_map(
-            fn ($file) => preg_replace("/^(\S+)\.log$/", "$1", $file),
+            fn($file) => preg_replace("/^(\S+)\.log$/", "$1", $file),
             array_filter(
                 array_diff(
                     scandir(__DIR__.$properties["directory"]),
                     [".", ".."]
                 ),
-                fn ($file) => preg_match(self::LOG_FILE_PATTERN, $file)
+                fn($file) => preg_match(self::LOG_FILE_PATTERN, $file)
             )
         );
     }
 
     private static function findLatestLogFileName(): ?string {
         $logFileNames = self::findAllLogFileNames();
-        usort($logFileNames, fn ($a, $b) => self::compareLogFileNames($a, $b, false));
+        usort($logFileNames, fn($a, $b) => self::compareLogFileNames($a, $b, false));
         return count($logFileNames) == 0 ? null : $logFileNames[0];
     }
 
     private static function deleteExpiredLogFiles(): void {
         $properties = PropertiesReader::getProperties("logger");
         $logFileNames = self::findAllLogFileNames();
-        usort($logFileNames, fn ($a, $b) => self::compareLogFileNames($a, $b));
+        usort($logFileNames, fn($a, $b) => self::compareLogFileNames($a, $b));
 
         foreach ($logFileNames as $logFileName) {
             $logFileDateTime = new SystemDateTime($logFileName);

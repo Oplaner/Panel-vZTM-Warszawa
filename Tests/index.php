@@ -74,13 +74,13 @@ Autoloader::scanSourceAndTestsDirectory();
 <?php
 
 $testClasses = array_map(
-    fn ($file) => preg_replace("/^(\S+)\.php$/", "$1", $file),
+    fn($file) => preg_replace("/^(\S+)\.php$/", "$1", $file),
     array_filter(
         array_diff(
             scandir(__DIR__),
             [".", "..", basename(__DIR__)]
         ),
-        fn ($file) => preg_match("/^\S+Tests\.php$/", $file)
+        fn($file) => preg_match("/^\S+Tests\.php$/", $file)
     )
 );
 

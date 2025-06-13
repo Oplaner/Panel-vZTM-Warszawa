@@ -113,7 +113,7 @@ final class LoggerTests {
                 scandir(self::LOG_FILES_DIRECTORY),
                 [".", ".."]
             ),
-            fn ($file) => preg_match($pattern, $file)
+            fn($file) => preg_match($pattern, $file)
         );
     }
 
@@ -121,10 +121,10 @@ final class LoggerTests {
         clearstatcache();
         return array_reduce(
             array_map(
-                fn ($file) => filesize(self::LOG_FILES_DIRECTORY.$file),
+                fn($file) => filesize(self::LOG_FILES_DIRECTORY.$file),
                 self::getLogFiles()
             ),
-            fn ($carry, $item) => $carry + $item,
+            fn($carry, $item) => $carry + $item,
             0
         );
     }

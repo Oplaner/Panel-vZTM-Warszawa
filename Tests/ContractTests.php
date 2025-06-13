@@ -204,10 +204,10 @@ final class ContractTests {
         $carrier2 = TestHelpers::createTestCarrier($user);
         $contract1 = Contract::createNew($carrier1, $user, $user, ContractState::active);
         $contract2 = Contract::createNew($carrier2, $user, $user, ContractState::probation);
-        $profile = array_filter(
+        $profile = array_find(
             $user->getActiveProfiles(),
-            fn ($profile) => is_a($profile, DriverProfile::class)
-        )[0];
+            fn($profile) => is_a($profile, DriverProfile::class)
+        );
         $valueBeforeChange = $profile->isActive();
         $contract2->addPeriod(ContractState::terminated, $user);
         $valueAfterChange = $profile->isActive();
@@ -232,10 +232,10 @@ final class ContractTests {
         $user = TestHelpers::createTestUser();
         $carrier = TestHelpers::createTestCarrier($user);
         $contract = Contract::createNew($carrier, $user, $user, ContractState::active);
-        $profile = array_filter(
+        $profile = array_find(
             $user->getActiveProfiles(),
-            fn ($profile) => is_a($profile, DriverProfile::class)
-        )[0];
+            fn($profile) => is_a($profile, DriverProfile::class)
+        );
         $valueBeforeChange = $profile->isActive();
         $contract->addPeriod(ContractState::terminated, $user);
         $valueAfterChange = $profile->isActive();
@@ -260,10 +260,10 @@ final class ContractTests {
         $carrier2 = TestHelpers::createTestCarrier($user);
         $contract1 = Contract::createNew($carrier1, $user, $user, ContractState::active);
         $contract2 = Contract::createNew($carrier2, $user, $user, ContractState::active);
-        $profile = array_filter(
+        $profile = array_find(
             $user->getActiveProfiles(),
-            fn ($profile) => is_a($profile, DriverProfile::class)
-        )[0];
+            fn($profile) => is_a($profile, DriverProfile::class)
+        );
         $contract2->addPeriod(ContractState::terminatedDisciplinarily, $user);
 
         TestHelpers::deleteTestDriverProfile($profile->getID());

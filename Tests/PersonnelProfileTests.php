@@ -33,7 +33,7 @@ final class PersonnelProfileTests {
         } elseif ($profile->getDescription() != $description) {
             return "Personnel profile description is incorrect. Expected: \"$description\", found: \"{$profile->getDescription()}\".";
         } elseif ($profile->getPrivileges() !== $privileges) {
-            return "Personnel profile privileges array is incorrect. Expected: [$privileges[0], $privileges[1]], found: [".implode(", ", array_map(fn ($privilege) => (string) $privilege, $profile->getPrivileges()))."].";
+            return "Personnel profile privileges array is incorrect. Expected: [$privileges[0], $privileges[1]], found: [".implode(", ", array_map(fn($privilege) => (string) $privilege, $profile->getPrivileges()))."].";
         } elseif (is_null($profile->getActivatedAt())) {
             return "Personnel profile activatedAt value should not be null.";
         } elseif (!is_null($profile->getDeactivatedAt())) {

@@ -36,10 +36,10 @@ final class PathBuilder {
     private static function build(string ...$components): string {
         $components = array_filter(
             array_map(
-                fn ($component) => trim($component, "\/"),
+                fn($component) => trim($component, "\/"),
                 $components
             ),
-            fn ($component) => $component != ""
+            fn($component) => $component != ""
         );
         return self::FORWARD_SLASH.join(self::FORWARD_SLASH, $components);
     }

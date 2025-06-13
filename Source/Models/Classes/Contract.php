@@ -146,10 +146,10 @@ final class Contract extends DatabaseEntity {
 
     private static function makeFinalStateQuotedStringsArray(): array {
         return array_map(
-            fn ($state) => "\"{$state->value}\"",
+            fn($state) => "\"{$state->value}\"",
             array_filter(
                 ContractState::cases(),
-                fn ($state) => $state->isFinal()
+                fn($state) => $state->isFinal()
             )
         );
     }
@@ -157,7 +157,7 @@ final class Contract extends DatabaseEntity {
     private static function validateContractDoesNotExist(Carrier $carrier, User $driver): void {
         $carrierAndDriverContracts = array_filter(
             $driver->getActiveContracts(),
-            fn ($contract) => $contract->getCarrier()->getID() == $carrier->getID()
+            fn($contract) => $contract->getCarrier()->getID() == $carrier->getID()
         );
 
         if (count($carrierAndDriverContracts) > 0) {
@@ -276,10 +276,10 @@ final class Contract extends DatabaseEntity {
     }
 
     private function getDriverProfile(): DriverProfile {
-        return array_filter(
+        return array_find(
             $this->driver->getActiveProfiles(),
-            fn ($profile) => is_a($profile, DriverProfile::class)
-        )[0];
+            fn($profile) => is_a($profile, DriverProfile::class)
+        );
     }
 
     private function deactivateDriverProfileIfNeeded(User $authorizer): void {
@@ -303,7 +303,7 @@ final class Contract extends DatabaseEntity {
         $driverActiveContracts = self::getActiveByDriver($this->driver);
         array_walk(
             $driverActiveContracts,
-            fn ($contract) => $contract->addPeriod(ContractState::terminatedAutomatically, $authorizer)
+            fn($contract) => $contract->addPeriod(ContractState::terminatedAutomatically, $authorizer)
         );
     }
 }

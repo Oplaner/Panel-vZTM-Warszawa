@@ -36,7 +36,7 @@ final class Router {
                 $input = [
                     "pathData" => array_filter(
                         $matches,
-                        fn ($key) => is_string($key),
+                        fn($key) => is_string($key),
                         ARRAY_FILTER_USE_KEY
                     ),
                     "postData" => $_POST
@@ -59,13 +59,13 @@ final class Router {
 
     private function registerRoutes(): void {
         $controllerNames = array_map(
-            fn ($file) => preg_replace("/^(\S+)\.php$/", "$1", $file),
+            fn($file) => preg_replace("/^(\S+)\.php$/", "$1", $file),
             array_filter(
                 array_diff(
                     scandir(self::CONTROLLERS_DIRECTORY),
                     [".", ".."]
                 ),
-                fn ($file) => preg_match("/^\S+Controller\.php$/", $file)
+                fn($file) => preg_match("/^\S+Controller\.php$/", $file)
             )
         );
 

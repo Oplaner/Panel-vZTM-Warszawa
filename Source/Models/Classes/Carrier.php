@@ -28,7 +28,7 @@ final class Carrier extends DatabaseEntity {
         self::validateNumberOfTrialTasksIsNotLessThanZero($numberOfTrialTasks);
         self::validateNumberOfPenaltyTasksIsNotLessThanZero($numberOfPenaltyTasks);
         $carrier = new Carrier(null, $fullName, $shortName, $numberOfTrialTasks, $numberOfPenaltyTasks, SystemDateTime::now(), $creator, null, null);
-        array_walk($supervisors, fn ($supervisor) => $carrier->addSupervisor($supervisor));
+        array_walk($supervisors, fn($supervisor) => $carrier->addSupervisor($supervisor));
         return $carrier;
     }
 

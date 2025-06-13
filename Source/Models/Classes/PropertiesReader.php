@@ -43,14 +43,14 @@ final class PropertiesReader {
         $properties = [];
 
         while (($line = fgets($file)) !== false) {
-            $line = str_replace(PHP_EOL, "", $line);
+            $line = trim($line);
             $matches = [];
 
             if (preg_match(self::PROPERTY_LINE_PATTERN, $line, $matches, PREG_UNMATCHED_AS_NULL)) {
                 $matches = array_values(
                     array_filter(
                         $matches,
-                        fn ($value, $key) => is_string($key) && isset($value),
+                        fn($value, $key) => is_string($key) && isset($value),
                         ARRAY_FILTER_USE_BOTH
                     )
                 );
