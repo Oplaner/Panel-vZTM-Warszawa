@@ -14,6 +14,7 @@ final class PersonnelProfile extends Profile {
     public static function createNew(User $owner, User $activator, string $description, array $privileges): PersonnelProfile {
         Logger::log(LogLevel::info, "User with ID \"{$activator->getID()}\" is creating new personnel profile with ".count($privileges)." privilege(s) for user with ID \"{$owner->getID()}\".");
         self::validatePrivilegesArrayIsNotEmpty($privileges);
+        self::validateUserDoesNotHaveProfileOfType($owner);
         return new PersonnelProfile(null, $owner->getID(), SystemDateTime::now(), $activator, null, null, $description, $privileges);
     }
 

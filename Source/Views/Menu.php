@@ -53,6 +53,11 @@
                 <li><a href="#">Tabor</a></li>
             </ul>
         </div>
+<?php
+
+        if ($_USER->hasActiveProfileOfType(DirectorProfile::class)):
+
+?>
         <div class="menuSection">
             <h2>Dyrektor</h2>
             <ul>
@@ -61,4 +66,9 @@
                 <li><a href="#">Ustawienia</a></li>
             </ul>
         </div>
+<?php
+
+        endif;
+
+?>
     </div>

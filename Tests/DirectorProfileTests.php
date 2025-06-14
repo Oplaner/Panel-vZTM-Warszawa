@@ -18,7 +18,7 @@ final class DirectorProfileTests {
         if ($didThrowException) {
             return true;
         } else {
-            return "No exception whas thrown when creating new director profile when one is currently active for the user.";
+            return "No exception was thrown when creating new director profile when one is currently active for the user.";
         }
     }
 

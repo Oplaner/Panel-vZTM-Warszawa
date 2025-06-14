@@ -1,6 +1,27 @@
 <?php
 
 final class DriverProfileTests {
+    public static function throwExceptionWhenCreatingDriverProfileWhenOneIsCurrentlyActive(): bool|string {
+        $user = TestHelpers::createTestUser();
+        $profile = DriverProfile::createNew($user, $user);
+        $didThrowException = false;
+
+        try {
+            DriverProfile::createNew($user, $user);
+        } catch (Exception $exception) {
+            $didThrowException = true;
+        }
+
+        TestHelpers::deleteTestDriverProfile($profile->getID());
+        TestHelpers::deleteTestUser($user->getID());
+
+        if ($didThrowException) {
+            return true;
+        } else {
+            return "No exception was thrown when creating new driver profile when one is currently active for the user.";
+        }
+    }
+
     public static function createNewDriverProfileFirstForUser(): bool|string {
         $user = TestHelpers::createTestUser();
         $profile = DriverProfile::createNew($user, $user);
@@ -24,23 +45,6 @@ final class DriverProfileTests {
             return "New driver profile deactivatedBy value should be null.";
         } elseif (!$profile->isActive()) {
             return "New driver profile should be active.";
-        }
-
-        return true;
-    }
-
-    public static function createNewDriverProfileWhenUserHasOneActiveAlready(): bool|string {
-        $user = TestHelpers::createTestUser();
-        $profile1 = DriverProfile::createNew($user, $user);
-        $profile2 = DriverProfile::createNew($user, $user);
-
-        TestHelpers::deleteTestDriverProfile($profile1->getID());
-        TestHelpers::deleteTestUser($user->getID());
-
-        if (!is_a($profile1, DriverProfile::class)) {
-            return "Expected a ".DriverProfile::class." object. Found: ".gettype($profile1).".";
-        } elseif (!is_null($profile2)) {
-            return "The second driver profile should not be created.";
         }
 
         return true;

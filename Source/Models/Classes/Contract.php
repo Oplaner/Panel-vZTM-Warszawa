@@ -21,13 +21,16 @@ final class Contract extends DatabaseEntity {
         Logger::log(LogLevel::info, "User with ID \"{$authorizer->getID()}\" is creating new contract between carrier \"{$carrier->getShortName()}\" and user with ID \"{$driver->getID()}\", with initial state \"{$state->value}\".");
         self::validateContractDoesNotExist($carrier, $driver);
         self::validateContractStateIsNotFinal($state);
-        $driverProfile = DriverProfile::createNew($driver, $authorizer);
         $totalPenaltyTasks = 0;
 
-        if ($state == ContractState::probationWithPenalty) {
-            $penaltyTasksMultiplier = $driverProfile->getInitialPenaltyMultiplier();
-            $initialPenaltyTasks = $carrier->getNumberOfPenaltyTasks();
-            $totalPenaltyTasks = $penaltyTasksMultiplier * $initialPenaltyTasks;
+        if (!$driver->hasActiveProfileOfType(DriverProfile::class)) {
+            $driverProfile = DriverProfile::createNew($driver, $authorizer);
+
+            if ($state == ContractState::probationWithPenalty) {
+                $penaltyTasksMultiplier = $driverProfile->getInitialPenaltyMultiplier();
+                $initialPenaltyTasks = $carrier->getNumberOfPenaltyTasks();
+                $totalPenaltyTasks = $penaltyTasksMultiplier * $initialPenaltyTasks;
+            }
         }
 
         $contract = new Contract(null, $carrier, $driver, $state, $totalPenaltyTasks, $totalPenaltyTasks);

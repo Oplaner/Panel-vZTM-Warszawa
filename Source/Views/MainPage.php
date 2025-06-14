@@ -9,7 +9,7 @@ ViewBuilder::buildHead(Style::light, [Script::menu], null)
 <?php
 
     ViewBuilder::buildTopBar($_USER);
-    ViewBuilder::buildMenu($_USER->getActiveProfiles());
+    ViewBuilder::buildMenu($_USER);
 
 ?>
     <div id="content">

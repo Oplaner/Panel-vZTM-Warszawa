@@ -40,9 +40,9 @@ final class TestHelpers {
     public static function deleteTestUser(string $userID): void {
         DatabaseConnector::shared()->execute_query(
             "DELETE FROM users
-            WHERE login = ?",
+            WHERE id = ?",
             [
-                self::EXISTING_TEST_USER_LOGIN
+                $userID
             ]
         );
     }

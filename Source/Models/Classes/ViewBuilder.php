@@ -20,7 +20,7 @@ final class ViewBuilder {
         self::printNewLine();
     }
 
-    public static function buildMenu(array $userProfiles): void {
+    public static function buildMenu(User $_USER): void {
         include self::VIEWS_DIRECTORY.self::MENU_VIEW_NAME.".php";
         self::printNewLine();
     }

@@ -3,15 +3,45 @@
 final class PersonnelProfileTests {
     public static function throwExceptionWhenCreatingPersonnelProfileWithoutPrivileges(): bool|string {
         $user = TestHelpers::createTestUser();
-        TestHelpers::deleteTestUser($user->getID());
+        $didThrowException = false;
 
         try {
             PersonnelProfile::createNew($user, $user, "Test PersonnelProfile", []);
         } catch (Exception $exception) {
-            return true;
+            $didThrowException = true;
         }
 
-        return "No exception was thrown when creating a personnel profile without privileges.";
+        TestHelpers::deleteTestUser($user->getID());
+
+        if ($didThrowException) {
+            return true;
+        } else {
+            return "No exception was thrown when creating a personnel profile without privileges.";
+        }
+    }
+
+    public static function throwExceptionWhenCreatingPersonnelProfileWhenOneIsCurrentlyActive(): bool|string {
+        $user = TestHelpers::createTestUser();
+        $description = "Test PersonnelProfile";
+        $privilege = TestHelpers::createTestPrivilege();
+        $profile = PersonnelProfile::createNew($user, $user, $description, [$privilege]);
+        $didThrowException = false;
+
+        try {
+            PersonnelProfile::createNew($user, $user, $description, [$privilege]);
+        } catch (Exception $exception) {
+            $didThrowException = true;
+        }
+
+        TestHelpers::deleteTestPersonnelProfileData($profile->getID());
+        TestHelpers::deleteTestPrivilege($privilege->getID());
+        TestHelpers::deleteTestUser($user->getID());
+
+        if ($didThrowException) {
+            return true;
+        } else {
+            return "No exception was thrown when creating new personnel profile when one is currently active for the user.";
+        }
     }
 
     public static function createNewPersonnelProfile(): bool|string {

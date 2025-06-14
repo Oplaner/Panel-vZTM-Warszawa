@@ -45,6 +45,14 @@ abstract class Profile extends DatabaseEntity {
         return self::getWithQuery($query, $parameters);
     }
 
+    protected static function validateUserDoesNotHaveProfileOfType(User $user): void {
+        $profileType = static::class;
+
+        if ($user->hasActiveProfileOfType($profileType)) {
+            throw new Exception("Cannot create new $profileType - there is one currently active for the user.");
+        }
+    }
+
     private static function getWithQuery(string $query, ?array $parameters = null): array {
         $result = DatabaseConnector::shared()->execute_query($query, $parameters);
         $profiles = [];

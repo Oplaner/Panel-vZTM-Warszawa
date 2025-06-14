@@ -12,11 +12,8 @@ final class DriverProfile extends Profile {
     }
 
     public static function createNew(User $owner, User $activator): ?DriverProfile {
-        if (self::userHasActiveDriverProfile($owner)) {
-            return null;
-        }
-
         Logger::log(LogLevel::info, "User with ID \"{$activator->getID()}\" is creating new driver profile for user with ID \"{$owner->getID()}\".");
+        self::validateUserDoesNotHaveProfileOfType($owner);
         $initialPenaltyMultiplier = self::getNextPenaltyMultiplierForUser($owner);
         return new DriverProfile(null, $owner->getID(), SystemDateTime::now(), $activator, null, null, $initialPenaltyMultiplier, null);
     }
@@ -81,14 +78,6 @@ final class DriverProfile extends Profile {
         $acquiredPenaltyMultiplier = $result->fetch_column();
         $result->free();
         return $acquiredPenaltyMultiplier ?? 0;
-    }
-
-    private static function userHasActiveDriverProfile(User $user): bool {
-        $activeDriverProfiles = array_filter(
-            $user->getActiveProfiles(),
-            fn ($profile) => is_a($profile, DriverProfile::class)
-        );
-        return count($activeDriverProfiles) > 0;
     }
 
     public function getInitialPenaltyMultiplier(): int {

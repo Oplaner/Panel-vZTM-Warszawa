@@ -133,6 +133,13 @@ final class User extends DatabaseEntity {
         return Profile::getActiveByUser($this);
     }
 
+    public function hasActiveProfileOfType(string $profileClass): bool {
+        return array_any(
+            $this->getActiveProfiles(),
+            fn($profile) => is_a($profile, $profileClass)
+        );
+    }
+
     public function getCreatedAt(): SystemDateTime {
         return $this->createdAt;
     }
