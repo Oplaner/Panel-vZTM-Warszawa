@@ -40,7 +40,7 @@ done
 # Create tables
 docker exec -i ${MARIADB_APPLICATION_NAME} mariadb -u ${DATABASE_USER} \
     -e "CREATE DATABASE ${DATABASE_NAME} CHARACTER SET ${DATABASE_CHARSET} COLLATE ${DATABASE_COLLATION};"
-for file in "../Source/Database schema/*.sql"; do
+for file in "../Source/Schemas/*.sql"; do
     docker exec -i ${MARIADB_APPLICATION_NAME} mariadb -u ${DATABASE_USER} ${DATABASE_NAME} < "$file"
 done
 
