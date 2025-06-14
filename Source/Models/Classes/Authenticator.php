@@ -220,7 +220,6 @@ final class Authenticator {
         $properties = PropertiesReader::getProperties("authenticator");
         $options = [
             "name" => $properties["sessionName"],
-            "sid_length" => $properties["sessionIDLength"],
             "gc_maxlifetime" => $properties["sessionLifetimeSeconds"],
             "cookie_lifetime" => $properties["sessionCookieLifetimeSeconds"],
             "cookie_domain" => $properties["sessionCookieDomain"],
