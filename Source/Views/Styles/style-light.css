@@ -168,8 +168,9 @@ input[type=submit]:hover {
     z-index: 1;
 }
 
-#topBar img {
+#topBarLogo, #topBarLogo img {
     height: 100%;
+    display: block;
 }
 
 #menuButton {

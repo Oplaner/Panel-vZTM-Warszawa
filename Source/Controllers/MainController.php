@@ -9,9 +9,9 @@ final class MainController extends Controller {
         global $_USER;
 
         if (isset($_USER)) {
-            self::renderView("MainPage");
+            self::renderView("Main");
         } else {
-            self::renderView("LoginPage");
+            self::renderView("Login");
         }
     }
 
@@ -55,7 +55,7 @@ final class MainController extends Controller {
             "authenticationResult" => $authentication
         ];
 
-        self::renderView("LoginPage", $viewParameters);
+        self::renderView("Login", $viewParameters);
     }
 
     #[Route("/logout", RequestMethod::get)]
@@ -68,7 +68,7 @@ final class MainController extends Controller {
             "showLogoutMessage" => true
         ];
 
-        self::renderView("LoginPage", $viewParameters);
+        self::renderView("Login", $viewParameters);
     }
 }
 
