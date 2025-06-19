@@ -239,6 +239,48 @@ input[type=submit]:hover {
     z-index: 0;
 }
 
+table {
+    width: 100%;
+    background: #FFFFFF;
+    border: 1px solid #929FA9;
+    border-radius: 5px;
+    border-spacing: 0;
+    text-align: left;
+    overflow: hidden;
+}
+
+tr:nth-child(even) {
+    background-color: #F6F7F8;
+}
+
+th, td {
+    padding: 1rem;
+}
+
+th {
+    font-weight: 500;
+}
+
+td.status span {
+    padding: 0.3rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 5px;
+    text-transform: uppercase;
+}
+
+td.status span.active {
+    border-color: #2B4F12;
+    color: #2B4F12;
+}
+
+td.status span.inactive {
+    border-color: #972525;
+    color: #972525;
+}
+
 @media only screen and (max-width: 600px) {
     #loginForm {
         margin-top: 0;

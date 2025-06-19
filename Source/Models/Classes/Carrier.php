@@ -67,6 +67,36 @@ final class Carrier extends DatabaseEntity {
         return new Carrier($id, $fullName, $shortName, $numberOfTrialTasks, $numberOfPenaltyTasks, $createdAt, $createdBy, $closedAt, $closedBy);
     }
 
+    public static function getAll(): array {
+        $query =
+        "SELECT c.id
+        FROM carriers AS c
+        ORDER BY c.created_at ASC";
+        return self::getWithQuery($query);
+    }
+    
+    public static function getAllActive(): array {
+        $query =
+        "SELECT c.id
+        FROM carriers AS c
+        WHERE closed_at IS NULL
+        ORDER BY c.created_at ASC";
+        return self::getWithQuery($query);
+    }
+
+    private static function getWithQuery(string $query, ?array $parameters = null): array {
+        $result = DatabaseConnector::shared()->execute_query($query, $parameters);
+        $carriers = [];
+
+        while ($data = $result->fetch_assoc()) {
+            $carrierID = $data["id"];
+            $carriers[] = self::withID($carrierID);
+        }
+
+        $result->free();
+        return $carriers;
+    }
+
     private static function validateNumberOfTrialTasksIsNotLessThanZero(int $numberOfTrialTasks): void {
         if ($numberOfTrialTasks < 0) {
             throw new Exception("Number of trial tasks cannot be less than 0.");

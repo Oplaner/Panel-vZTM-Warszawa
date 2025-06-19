@@ -6,8 +6,23 @@ final class CarrierController extends Controller {
         group: AccessGroup::oneOfProfiles,
         profiles: [DirectorProfile::class]        
     )]
-    public function carriersList(): void {
-        self::renderView("Carriers");
+    public function carriersListAll(): void {
+        $viewParameters = [
+            "carriers" => Carrier::getAll()
+        ];
+        self::renderView("Carriers", $viewParameters);
+    }
+
+    #[Route("/carriers/active", RequestMethod::get)]
+    #[Access(
+        group: AccessGroup::oneOfProfiles,
+        profiles: [DirectorProfile::class]        
+    )]
+    public function carriersListAllActive(): void {
+        $viewParameters = [
+            "carriers" => Carrier::getAllActive()
+        ];
+        self::renderView("Carriers", $viewParameters);
     }
 }
 
