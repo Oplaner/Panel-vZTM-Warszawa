@@ -20,7 +20,8 @@ final class CarrierController extends Controller {
     )]
     public function carriersListAllActive(): void {
         $viewParameters = [
-            "carriers" => Carrier::getAllActive()
+            "carriers" => Carrier::getAllActive(),
+            "showingActiveOnly" => true
         ];
         self::renderView("Carriers", $viewParameters);
     }

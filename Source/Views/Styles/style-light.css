@@ -72,13 +72,45 @@ input[type=text], input[type=password] {
     padding: 0.3rem;
     font-size: 0.9rem;
     color: #555555;
+    background-color: #FFFFFF;
     border: 1px solid #929FA9;
     border-radius: 5px;
 }
 
-input[type=text]:focus, input[type=password]:focus {
+input[type=text]:focus, input[type=text]:hover,
+input[type=password]:focus, input[type=password]:hover,
+input[type=checkbox]:focus, input[type=checkbox]:hover {
     border-color: #251B16;
     outline: none;
+}
+
+input[type=checkbox] {
+    appearance: none;
+    display: grid;
+    place-content: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    background-color: #FFFFFF;
+    border: 1px solid #929FA9;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+input[type=checkbox]:before {
+    content: "";
+    width: calc(1.25rem - 2px);
+    height: calc(1.25rem - 2px);
+    background-color: #9B422C;
+    clip-path: polygon(42% 68%, 75% 10%, 92% 20%, 49% 95%, 7% 71%, 18% 53%);
+    opacity: 0;
+    transform: scale(0);
+    transform-origin: bottom left;
+    transition: transform 0.25s, opacity 0.125s;
+}
+
+input[type=checkbox]:checked::before {
+    opacity: 1;
+    transform: scale(1);
 }
 
 .buttonContainer {
@@ -237,6 +269,27 @@ input[type=submit]:hover {
     padding: 2rem;
     overflow: auto;
     z-index: 0;
+}
+
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.optionContainer {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.optionContainer input {
+    margin-top: -1px;
+}
+
+.optionContainer label {
+    padding-left: 0;
+    cursor: pointer;
 }
 
 table {

@@ -2,7 +2,7 @@
 <html lang="pl">
 <?php
 
-ViewBuilder::buildHead(Style::light, [Script::menu], null)
+ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], null)
 
 ?>
 <body>
@@ -14,6 +14,26 @@ ViewBuilder::buildHead(Style::light, [Script::menu], null)
 ?>
     <div id="content">
         <h1>Przewoźnicy</h1>
+        <div class="toolbar">
+            <div class="optionContainer">
+<?php
+
+                $checked = "";
+                $redirectURL = PathBuilder::action("/carriers/active");
+
+                if (isset($showingActiveOnly) && $showingActiveOnly) {
+                    $checked = " checked";
+                    $redirectURL = PathBuilder::action("/carriers");
+                }
+
+?>
+                <input type="checkbox" id="showActiveCarriersOnly" data-redirect="<?php echo $redirectURL ?>"<?php echo $checked ?>>
+                <label for="showActiveCarriersOnly">Pokaż tylko aktywnych</label>
+            </div>
+            <div>
+                <a href="#" class="button">Utwórz nowego</a>
+            </div>
+        </div>
         <table>
             <tr>
                 <th>Status</th>
