@@ -274,6 +274,7 @@ input[type=submit]:hover {
 .toolbar {
     display: flex;
     justify-content: space-between;
+    gap: 0.5rem;
     margin-bottom: 1rem;
 }
 
@@ -368,5 +369,9 @@ td.status span.inactive {
 
     #content {
         padding: 1rem;
+    }
+
+    .toolbar {
+        flex-direction: column-reverse;
     }
 }
