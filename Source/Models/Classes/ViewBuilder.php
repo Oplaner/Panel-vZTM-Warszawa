@@ -2,26 +2,23 @@
 
 final class ViewBuilder {
     private const VIEWS_DIRECTORY = __DIR__."/../../Views/";
-    private const HEAD_VIEW_NAME = "Head";
-    private const TOP_BAR_VIEW_NAME = "TopBar";
-    private const MENU_VIEW_NAME = "Menu";
 
     private static ?string $basePageTitle = null;
 
     public static function buildHead(Style $style, array $scripts, ?string $pageSubtitle): void {
         $basePageTitle = self::getBasePageTitle();
         $pageTitle = is_null($pageSubtitle) ? $basePageTitle : "$basePageTitle &ndash;&nbsp;$pageSubtitle";
-        include self::VIEWS_DIRECTORY.self::HEAD_VIEW_NAME.".php";
+        include self::VIEWS_DIRECTORY.View::head->value.".php";
         self::printNewLine();
     }
 
     public static function buildTopBar(User $_USER): void {
-        include self::VIEWS_DIRECTORY.self::TOP_BAR_VIEW_NAME.".php";
+        include self::VIEWS_DIRECTORY.View::topBar->value.".php";
         self::printNewLine();
     }
 
     public static function buildMenu(User $_USER): void {
-        include self::VIEWS_DIRECTORY.self::MENU_VIEW_NAME.".php";
+        include self::VIEWS_DIRECTORY.View::menu->value.".php";
         self::printNewLine();
     }
 

@@ -18,19 +18,19 @@ final class PathBuilder {
     }
 
     public static function action(string $path): string {
-        return self::build(self::$root, $path);
+        return self::build(self::root(), $path);
     }
 
     public static function image(string $name): string {
-        return self::build(self::$root, self::IMAGES_COMPONENT, $name);
+        return self::build(self::root(), self::IMAGES_COMPONENT, $name);
     }
 
     public static function script(string $name): string {
-        return self::build(self::$root, self::SCRIPTS_COMPONENT, $name);
+        return self::build(self::root(), self::SCRIPTS_COMPONENT, $name);
     }
 
     public static function stylesheet(string $name): string {
-        return self::build(self::$root, self::STYLES_COMPONENT, $name);
+        return self::build(self::root(), self::STYLES_COMPONENT, $name);
     }
 
     private static function build(string ...$components): string {

@@ -1,6 +1,9 @@
 <?php
 
 final class Router {
+    public const PATH_DATA_KEY = "pathData";
+    public const POST_DATA_KEY = "postData";
+
     private const CONTROLLERS_DIRECTORY = __DIR__."/../../Controllers/";
     private const CONTROLLER_KEY = "controller";
     private const ACTION_KEY = "action";
@@ -34,15 +37,15 @@ final class Router {
                 $action = $this->routes[$routePattern][$method->name][self::ACTION_KEY];
                 $access = $this->routes[$routePattern][$method->name][self::ACCESS_KEY];
                 $input = [
-                    "pathData" => array_filter(
+                    self::PATH_DATA_KEY => array_filter(
                         $matches,
                         fn($key) => is_string($key),
                         ARRAY_FILTER_USE_KEY
                     ),
-                    "postData" => $_POST
+                    self::POST_DATA_KEY => $_POST
                 ];
 
-                if (!AccessChecker::userCanAccess($access, $input["pathData"])) {
+                if (!AccessChecker::userCanAccess($access, $input[self::PATH_DATA_KEY])) {
                     Logger::log(LogLevel::info, "Access denied. Redirecting to home.");
                     self::redirectToHome();
                 }

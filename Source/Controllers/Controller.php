@@ -3,10 +3,10 @@
 abstract class Controller {
     private const VIEWS_DIRECTORY = __DIR__."/../Views/";
 
-    protected static function renderView(string $name, array $parameters = []): void {
+    protected static function renderView(View $view, array $parameters = []): void {
         global $_USER;
         extract($parameters);
-        include self::VIEWS_DIRECTORY.$name.".php";
+        include self::VIEWS_DIRECTORY.$view->value.".php";
     }
 }
 

@@ -9,9 +9,9 @@ final class MainController extends Controller {
         global $_USER;
 
         if (isset($_USER)) {
-            self::renderView("Main");
+            self::renderView(View::main);
         } else {
-            self::renderView("Login");
+            self::renderView(View::login);
         }
     }
 
@@ -40,7 +40,7 @@ final class MainController extends Controller {
         group: AccessGroup::guestsOnly
     )]
     public function login(array $input): void {
-        $post = $input["postData"];
+        $post = $input[Router::POST_DATA_KEY];
         $login = $post["login"];
         $password = $post["password"];
         // TODO: Sanitize user input.
@@ -55,7 +55,7 @@ final class MainController extends Controller {
             "authenticationResult" => $authentication
         ];
 
-        self::renderView("Login", $viewParameters);
+        self::renderView(View::login, $viewParameters);
     }
 
     #[Route("/logout", RequestMethod::get)]
@@ -68,7 +68,7 @@ final class MainController extends Controller {
             "showLogoutMessage" => true
         ];
 
-        self::renderView("Login", $viewParameters);
+        self::renderView(View::login, $viewParameters);
     }
 }
 

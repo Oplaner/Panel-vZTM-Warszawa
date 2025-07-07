@@ -75,13 +75,13 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], null)
                 <td class="optional"><?php echo count($carrier->getActiveContracts()) ?></td>
                 <td class="optional"><?php echo $createdAt ?></td>
                 <td class="optional"><?php echo $closedAt ?></td>
-                <td class="action"><a href="#">Zarządzaj</a></td>
+                <td class="action"><a href="<?php echo PathBuilder::action("/carriers/{$carrier->getID()}") ?>">Zarządzaj</a></td>
                 <td class="summary">
                     <div class="statusContainer">
                         <span class="status <?php echo $statusClass ?>"><?php echo $statusText ?></span>
                     </div>
                     <?php echo $carrier->getFullName() ?><br>
-                    <a href="#">Zarządzaj</a>
+                    <a href="<?php echo PathBuilder::action("/carriers/{$carrier->getID()}") ?>">Zarządzaj</a>
                 </td>
             </tr>
 <?php
