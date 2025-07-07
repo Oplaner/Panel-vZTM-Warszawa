@@ -315,7 +315,19 @@ th {
     font-weight: 500;
 }
 
-td.status span {
+th.summary, td.summary {
+    display: none;
+}
+
+td.action {
+    text-align: right;
+}
+
+.statusContainer {
+    margin-bottom: 0.5rem;
+}
+
+.status {
     padding: 0.3rem;
     font-size: 0.8rem;
     font-weight: 500;
@@ -325,14 +337,20 @@ td.status span {
     text-transform: uppercase;
 }
 
-td.status span.active {
+.status.active {
     border-color: #2B4F12;
     color: #2B4F12;
 }
 
-td.status span.inactive {
+.status.inactive {
     border-color: #972525;
     color: #972525;
+}
+
+@media only screen and (max-width: 1000px) {
+    th.optional, td.optional {
+        display: none;
+    }
 }
 
 @media only screen and (max-width: 600px) {
@@ -373,5 +391,25 @@ td.status span.inactive {
 
     .toolbar {
         flex-direction: column-reverse;
+    }
+
+    tr:first-child {
+        display: none;
+    }
+
+    tr:nth-child(even) {
+        background-color: #FFFFFF;
+    }
+
+    tr:nth-child(odd) {
+        background-color: #F6F7F8;
+    }
+
+    td.summary {
+        display: table-cell;
+    }
+
+    td:not(.summary) {
+        display: none;
     }
 }

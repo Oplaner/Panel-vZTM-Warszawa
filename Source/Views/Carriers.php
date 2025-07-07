@@ -37,10 +37,11 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], null)
                 <th>Status</th>
                 <th>Nazwa</th>
                 <th>Kierownicy</th>
-                <th>Liczba kierowców</th>
-                <th>Data utworzenia</th>
-                <th>Data zamknięcia</th>
+                <th class="optional">Liczba kierowców</th>
+                <th class="optional">Data utworzenia</th>
+                <th class="optional">Data zamknięcia</th>
                 <th>&nbsp;</th>
+                <th class="summary">&nbsp;</th>
             </tr>
 <?php
 
@@ -48,7 +49,7 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], null)
 
 ?>
             <tr>
-                <td colspan="6">Brak danych do wyświetlenia.</td>
+                <td colspan="8">Brak danych do wyświetlenia.</td>
             </tr>
 <?php
 
@@ -68,15 +69,20 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], null)
 
 ?>
             <tr>
-                <td class="status">
-                    <span class="<?php echo $statusClass ?>"><?php echo $statusText ?></span>
-                </td>
+                <td><span class="status <?php echo $statusClass ?>"><?php echo $statusText ?></span></td>
                 <td><?php echo $carrier->getFullName() ?></td>
                 <td><?php echo $supervisors ?></td>
-                <td><?php echo count($carrier->getActiveContracts()) ?></td>
-                <td><?php echo $createdAt ?></td>
-                <td><?php echo $closedAt ?></td>
-                <td><a href="#">Zarządzaj</a></td>
+                <td class="optional"><?php echo count($carrier->getActiveContracts()) ?></td>
+                <td class="optional"><?php echo $createdAt ?></td>
+                <td class="optional"><?php echo $closedAt ?></td>
+                <td class="action"><a href="#">Zarządzaj</a></td>
+                <td class="summary">
+                    <div class="statusContainer">
+                        <span class="status <?php echo $statusClass ?>"><?php echo $statusText ?></span>
+                    </div>
+                    <?php echo $carrier->getFullName() ?><br>
+                    <a href="#">Zarządzaj</a>
+                </td>
             </tr>
 <?php
 
