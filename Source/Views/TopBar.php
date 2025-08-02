@@ -10,7 +10,7 @@
             </a>
         </div>
         <div id="topBarUserInfo">
-            #<?php echo $_USER->getLogin() ?> &bull; <?php echo $_USER->getUsername() ?><br>
+            <?php echo $_USER->getFormattedLoginAndUsername() ?><br>
             <a href="<?php echo PathBuilder::action("/logout") ?>">Wyloguj się</a>
         </div>
     </div>

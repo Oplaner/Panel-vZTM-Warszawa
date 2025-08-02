@@ -23,6 +23,10 @@ h1, h2, h3, h4, h5, h6 {
     margin-bottom: 1rem;
 }
 
+h1 a {
+    font-size: 0.8em;
+}
+
 a:link:not(.button), a:visited:not(.button) {
     font-weight: 500;
     color: #9B422C;
@@ -144,6 +148,15 @@ input[type=checkbox]:checked::before {
     background-color: #FFFFFF;
 }
 
+.button.destructive {
+    background-color: #CBCBCB;
+    border-color: #919191;
+}
+
+.button.destructive:hover {
+    background-color: #EFEFEF;
+}
+
 input[type=submit] {
     color: #FFFFFF;
     background-color: #893723;
@@ -242,7 +255,6 @@ input[type=submit]:hover {
     width: 100%;
     height: calc(100vh - 50px);
     padding: 2rem;
-    align-content: flex-start;
     gap: 4rem;
     flex-wrap: wrap;
     background-color: #FFFFFF;
@@ -271,6 +283,14 @@ input[type=submit]:hover {
     z-index: 0;
 }
 
+#content > .sectionContainer {
+    margin-bottom: 1rem;
+}
+
+#content > *:last-child {
+    margin-bottom: 0;
+}
+
 .toolbar {
     display: flex;
     justify-content: space-between;
@@ -293,12 +313,64 @@ input[type=submit]:hover {
     cursor: pointer;
 }
 
+.sectionContainer {
+    display: flex;
+    gap: 1rem;
+}
+
+.sectionContainer.column {
+    flex-direction: column;
+}
+
+.section {
+    background: #FFFFFF;
+    border: 1px solid #929FA9;
+    border-radius: 5px;
+    padding: 1rem;
+}
+
+.sectionContainer.wide, .section.wide {
+    flex: 1.618 1 0;
+}
+
+.sectionContainer.narrow, .section.narrow {
+    flex: 1 1 0;
+}
+
+.section > *:last-child {
+    margin-bottom: 0;
+}
+
+.flexLayout {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.flexLayout > div > *:last-child {
+    margin-bottom: 0;
+}
+
+p {
+    margin-bottom: 1rem;
+}
+
+b {
+    font-weight: 500;
+}
+
+ul {
+    list-style-position: inside;
+}
+
 table {
     width: 100%;
     background: #FFFFFF;
     border: 1px solid #929FA9;
     border-radius: 5px;
     border-spacing: 0;
+    margin-bottom: 1rem;
     text-align: left;
     overflow: hidden;
 }
@@ -350,6 +422,10 @@ td.action {
 @media only screen and (max-width: 1000px) {
     th.optional, td.optional {
         display: none;
+    }
+
+    .sectionContainer {
+        flex-direction: column;
     }
 }
 
@@ -411,5 +487,9 @@ td.action {
 
     td:not(.summary) {
         display: none;
+    }
+
+    .flexLayout {
+        flex-direction: column;
     }
 }

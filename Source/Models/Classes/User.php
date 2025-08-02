@@ -77,6 +77,10 @@ final class User extends DatabaseEntity {
         return $this->username;
     }
 
+    public function getFormattedLoginAndUsername(): string {
+        return "#".$this->login." &bull; ".$this->username;
+    }
+
     public function updateUsername(): void {
         if ($this->isNew) {
             return;
