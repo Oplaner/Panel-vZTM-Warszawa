@@ -218,11 +218,11 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     function hideLoaderContainer(loaderContainer) {
-        loader.style.display = "none";
+        loaderContainer.style.display = "none";
     }
 
     function showLoaderContainer(loaderContainer) {
-        loader.style.display = "inline-block";
+        loaderContainer.style.display = "inline-block";
     }
 
     function hideSearchMatchesContainer(searchMatchesContainer) {
