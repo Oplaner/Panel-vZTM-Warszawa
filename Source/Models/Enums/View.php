@@ -2,6 +2,7 @@
 
 enum View: string {
     case carrierDetails = "CarrierDetails";
+    case carrierEdit = "CarrierEdit";
     case carriers = "Carriers";
     case head = "Head";
     case login = "Login";

@@ -5,7 +5,7 @@ final class MainController extends Controller {
     #[Access(
         group: AccessGroup::everyone
     )]
-    public function mainPage(): void {
+    public function showMainPage(): void {
         global $_USER;
 
         if (isset($_USER)) {
@@ -39,7 +39,7 @@ final class MainController extends Controller {
     #[Access(
         group: AccessGroup::guestsOnly
     )]
-    public function login(array $input): void {
+    public function handleLogin(array $input): void {
         $post = $input[Router::POST_DATA_KEY];
         $login = $post["login"];
         $password = $post["password"];
@@ -62,7 +62,7 @@ final class MainController extends Controller {
     #[Access(
         group: AccessGroup::anyProfile
     )]
-    public function logout(): void {
+    public function handleLogout(): void {
         Authenticator::endUserSession();
         $viewParameters = [
             "showLogoutMessage" => true

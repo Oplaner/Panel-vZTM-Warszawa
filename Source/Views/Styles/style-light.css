@@ -75,10 +75,14 @@ input[type=text], input[type=password] {
     margin-bottom: 0.5rem;
     padding: 0.3rem;
     font-size: 0.9rem;
-    color: #555555;
+    color: #251B16;
     background-color: #FFFFFF;
     border: 1px solid #929FA9;
     border-radius: 5px;
+}
+
+input[type=text]::placeholder {
+    color: #555555;
 }
 
 input[type=text]:focus, input[type=text]:hover,
@@ -115,6 +119,92 @@ input[type=checkbox]:before {
 input[type=checkbox]:checked::before {
     opacity: 1;
     transform: scale(1);
+}
+
+.inputWithLoader {
+    position: relative;
+    margin-bottom: 0.5rem;
+}
+
+.inputWithLoader input {
+    margin-bottom: 0;
+}
+
+.loaderContainer {
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    height: calc(100% - 2px);
+    padding: 0.3rem;
+    padding-left: 0.6rem;
+    background: linear-gradient(to right, transparent 0%, #FFFFFF 0.3rem, #FFFFFF 100%);
+    border-radius: 0 5px 5px 0;
+    display: none;
+}
+
+.loader {
+    height: 100%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 4px solid transparent;
+    border-top: 4px solid #9B422C;
+    animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(1turn); }
+}
+
+.searchContainer {
+    position: relative;
+}
+
+.searchMatchesContainer {
+    position: absolute;
+    width: 100%;
+    padding-bottom: 2rem;
+    display: none;
+}
+
+.searchMatches {
+    background-color: #FFFFFF;
+    border: 1px solid #929FA9;
+    border-radius: 5px;
+}
+
+.searchMatches div {
+    padding: 0.3rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #9B422C;
+    cursor: pointer;
+    border-bottom: 1px solid #929FA9;
+}
+
+.searchMatches div:hover {
+    text-decoration: underline;
+}
+
+.searchMatches div:last-child {
+    border-bottom: none;
+}
+
+.selectionContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.selectionContainer:has(*) {
+    margin-bottom: 0.5rem;
+}
+
+.selection {
+    padding: 0 0.3rem;
+    background: #F8FEFF;
+    border: 1px solid #929FA9;
+    border-radius: 5px;
 }
 
 .buttonContainer {
@@ -352,6 +442,10 @@ input[type=submit]:hover {
     margin-bottom: 0;
 }
 
+.noBottomMargin {
+    margin-bottom: 0;
+}
+
 p {
     margin-bottom: 1rem;
 }
@@ -491,5 +585,9 @@ td.action {
 
     .flexLayout {
         flex-direction: column;
+    }
+
+    .searchMatchesContainer {
+        padding-bottom: 1rem;
     }
 }

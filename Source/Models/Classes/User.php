@@ -69,6 +69,38 @@ final class User extends DatabaseEntity {
         return new User($id, $data["login"], $data["username"], $data["should_change_password"], new SystemDateTime($data["created_at"]));
     }
 
+    public static function getAllLoginAndUsernamePairsContaining(string $substring): array {
+        $pattern = "%$substring%";
+        $result = DatabaseConnector::shared()->execute_query(
+            "SELECT uid, username
+            FROM mybb18_users
+            WHERE uid LIKE ? OR username LIKE ?
+            ORDER BY uid ASC",
+            [
+                $pattern,
+                $pattern
+            ]
+        );
+        $users = [];
+
+        while ($data = $result->fetch_assoc()) {
+            $login = $data["uid"];
+            $username = $data["username"];
+            $formattedString = self::makeFormattedLoginAndUsernameString($login, $username);
+            $users[] = [
+                "key" => $login,
+                "value" => $formattedString
+            ];
+        }
+
+        $result->free();
+        return $users;
+    }
+
+    private static function makeFormattedLoginAndUsernameString(string $login, string $username): string {
+        return "#$login &bull; $username";
+    }
+
     public function getLogin(): int {
         return $this->login;
     }
@@ -78,7 +110,7 @@ final class User extends DatabaseEntity {
     }
 
     public function getFormattedLoginAndUsername(): string {
-        return "#".$this->login." &bull; ".$this->username;
+        return self::makeFormattedLoginAndUsernameString($this->login, $this->username);
     }
 
     public function updateUsername(): void {

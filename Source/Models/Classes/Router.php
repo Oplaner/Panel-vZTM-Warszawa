@@ -82,7 +82,7 @@ final class Router {
 
                 foreach ($routeAttributes as $routeAttribute) {
                     $route = $routeAttribute->newInstance();
-                    $path = preg_replace("/\\\{(.+?)\\\}/", "(?<$1>.+)", preg_quote($route->path, "/"));
+                    $path = preg_replace("/\\\{(.+?)\\\}/", "(?<$1>[[:alnum:]-]+)", preg_quote($route->path, "/"));
                     $access = null;
 
                     if (count($accessAttributes) == 1) {

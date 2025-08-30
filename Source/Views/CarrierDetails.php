@@ -20,8 +20,8 @@ ViewBuilder::buildHead(Style::light, [Script::menu], null)
 
 ?>
         <div class="toolbar">
-            <a href="#" class="button">Edytuj</a>
-            <a href="#" class="button destructive">Zamknij zakład</a>
+            <a href="<?php echo PathBuilder::action("/carriers/{$carrier->getID()}/edit") ?>" class="button">Edytuj</a>
+            <a href="<?php echo PathBuilder::action("/carriers/{$carrier->getID()}/close") ?>" class="button destructive">Zamknij zakład</a>
         </div>
 <?php
 
@@ -36,7 +36,6 @@ ViewBuilder::buildHead(Style::light, [Script::menu], null)
                         <p><b>Nazwa pełna</b><br><?php echo $carrier->getFullName() ?></p>
                         <p><b>Nazwa skrócona</b><br><?php echo $carrier->getShortName() ?></p>
                     </div>
-                
 <?php
 
                     $statusClass = $carrier->isActive() ? "active" : "inactive";
@@ -71,7 +70,7 @@ ViewBuilder::buildHead(Style::light, [Script::menu], null)
                     </div>
 <?php
 
-                endif;
+                    endif;
 
 ?>
                 </div>

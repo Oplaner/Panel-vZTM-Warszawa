@@ -4,16 +4,16 @@ window.addEventListener("DOMContentLoaded", () => {
     const menuAnimationDuration = 250;
     let isMenuOpen = false;
 
-    hideElement(menu);
+    hideMenu();
 
     menuButton.onclick = () => {
         menuButton.classList.toggle("active");
 
         if (isMenuOpen) {
             menu.classList.remove("active");
-            setTimeout(() => hideElement(menu), menuAnimationDuration);
+            setTimeout(() => hideMenu(), menuAnimationDuration);
         } else {
-            showElement(menu, "flex");
+            showMenu();
             requestAnimationFrame(() => {
                 menu.classList.add("active");
             });
@@ -21,12 +21,12 @@ window.addEventListener("DOMContentLoaded", () => {
 
         isMenuOpen = !isMenuOpen;
     }
+
+    function hideMenu() {
+        menu.style.display = "none";
+    }
+    
+    function showMenu() {
+        menu.style.display = "flex";
+    }
 });
-
-function hideElement(element) {
-    element.style.display = "none";
-}
-
-function showElement(element, displayStyle) {
-    element.style.display = displayStyle;
-}

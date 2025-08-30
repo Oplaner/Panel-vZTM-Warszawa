@@ -6,7 +6,7 @@ final class CarrierController extends Controller {
         group: AccessGroup::oneOfProfiles,
         profiles: [DirectorProfile::class]        
     )]
-    public function carriersListAll(): void {
+    public function showAllCarriersList(): void {
         $viewParameters = [
             "carriers" => Carrier::getAll()
         ];
@@ -18,7 +18,7 @@ final class CarrierController extends Controller {
         group: AccessGroup::oneOfProfiles,
         profiles: [DirectorProfile::class]        
     )]
-    public function carriersListAllActive(): void {
+    public function showActiveCarriersList(): void {
         $viewParameters = [
             "carriers" => Carrier::getAllActive(),
             "showingActiveOnly" => true
@@ -31,7 +31,26 @@ final class CarrierController extends Controller {
         group: AccessGroup::oneOfProfiles,
         profiles: [DirectorProfile::class]
     )]
-    public function carrierDetails(array $input): void {
+    public function showCarrierDetails(array $input): void {
+        extract($input[Router::PATH_DATA_KEY]);
+        $carrier = Carrier::withID($carrierID);
+
+        if (is_null($carrier) || !$carrier->isActive()) {
+            Router::redirect("/carriers");
+        }
+
+        $viewParameters = [
+            "carrier" => $carrier
+        ];
+        self::renderView(View::carrierDetails, $viewParameters);
+    }
+
+    #[Route("/carriers/{carrierID}/edit", RequestMethod::get)]
+    #[Access(
+        group: AccessGroup::oneOfProfiles,
+        profiles: [DirectorProfile::class]
+    )]
+    public function showCarrierEdit(array $input): void {
         extract($input[Router::PATH_DATA_KEY]);
         $carrier = Carrier::withID($carrierID);
 
@@ -42,7 +61,7 @@ final class CarrierController extends Controller {
         $viewParameters = [
             "carrier" => $carrier
         ];
-        self::renderView(View::carrierDetails, $viewParameters);
+        self::renderView(View::carrierEdit, $viewParameters);
     }
 }
 

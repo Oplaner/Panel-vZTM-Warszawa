@@ -8,6 +8,11 @@ abstract class Controller {
         extract($parameters);
         include self::VIEWS_DIRECTORY.$view->value.".php";
     }
+
+    protected static function renderJSON(array $jsonObject): void {
+        header("Content-Type: application/json; charset=UTF-8");
+        echo json_encode($jsonObject, JSON_UNESCAPED_UNICODE);
+    }
 }
 
 ?>
