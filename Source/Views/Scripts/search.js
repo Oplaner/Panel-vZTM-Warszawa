@@ -20,7 +20,7 @@ window.addEventListener("DOMContentLoaded", () => {
             const substring = searchInput.value;
 
             if (!substringLengthIsBelowThreshold(substring)) {
-                buildAndShowSearchMatchesContainer(results, searchMatchesContainer);
+                buildAndShowSearchMatches(results, searchMatchesContainer);
             }
         });
 
@@ -34,17 +34,17 @@ window.addEventListener("DOMContentLoaded", () => {
 
             if (substringLengthIsBelowThreshold(substring)) {
                 results = [];
-                buildAndShowSearchMatchesContainer(results, searchMatchesContainer);
+                buildAndShowSearchMatches(results, searchMatchesContainer);
                 return;
             }
 
             timeout = setTimeout(async () => {
-                showLoaderContainer(loaderContainer);
+                showLoader(loaderContainer);
                 results = await fetchResults(searchEndpoint, substring);
-                hideLoaderContainer(loaderContainer);
+                hideLoader(loaderContainer);
 
                 if (inputHasFocus) {
-                    buildAndShowSearchMatchesContainer(results, searchMatchesContainer);
+                    buildAndShowSearchMatches(results, searchMatchesContainer);
                 }
             }, fetchDelayMilliseconds);
         });
@@ -69,7 +69,7 @@ window.addEventListener("DOMContentLoaded", () => {
             }
 
             if (!inputHasFocus) {
-                hideSearchMatchesContainer(searchMatchesContainer);
+                hideSearchMatches(searchMatchesContainer);
             }
         });
     });
@@ -93,12 +93,12 @@ window.addEventListener("DOMContentLoaded", () => {
         return results;
     }
 
-    function buildAndShowSearchMatchesContainer(results, searchMatchesContainer) {
+    function buildAndShowSearchMatches(results, searchMatchesContainer) {
         const searchMatches = searchMatchesContainer.querySelector(".searchMatches");
         searchMatches.innerHTML = "";
 
         if (results.length == 0) {
-            hideSearchMatchesContainer(searchMatchesContainer);
+            hideSearchMatches(searchMatchesContainer);
             return;
         }
 
@@ -109,7 +109,7 @@ window.addEventListener("DOMContentLoaded", () => {
             searchMatches.appendChild(match);
         });
 
-        showSearchMatchesContainer(searchMatchesContainer);
+        showSearchMatches(searchMatchesContainer);
     }
 
     function handleSelection(selection, selectionInput, selectionContainer) {
@@ -217,19 +217,19 @@ window.addEventListener("DOMContentLoaded", () => {
         return substring.length < minCharactersForSearch;
     }
 
-    function hideLoaderContainer(loaderContainer) {
+    function hideLoader(loaderContainer) {
         loaderContainer.style.display = "none";
     }
 
-    function showLoaderContainer(loaderContainer) {
+    function showLoader(loaderContainer) {
         loaderContainer.style.display = "inline-block";
     }
 
-    function hideSearchMatchesContainer(searchMatchesContainer) {
+    function hideSearchMatches(searchMatchesContainer) {
         searchMatchesContainer.style.display = "none";
     }
 
-    function showSearchMatchesContainer(searchMatchesContainer) {
+    function showSearchMatches(searchMatchesContainer) {
         searchMatchesContainer.style.display = "block";
     }
 });

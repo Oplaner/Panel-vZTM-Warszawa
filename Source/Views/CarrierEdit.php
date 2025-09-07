@@ -87,7 +87,9 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::search], null)
                                 </div>
                             </div>
                             <div class="searchMatchesContainer">
-                                <div class="searchMatches"></div>
+                                <div class="searchMatchesScrollContainer">
+                                    <div class="searchMatches"></div>
+                                </div>
                             </div>
                         </div>
                     </div>

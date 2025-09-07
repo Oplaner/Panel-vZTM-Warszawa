@@ -167,10 +167,16 @@ input[type=checkbox]:checked::before {
     display: none;
 }
 
-.searchMatches {
+.searchMatchesScrollContainer {
     background-color: #FFFFFF;
     border: 1px solid #929FA9;
     border-radius: 5px;
+    overflow: hidden;
+}
+
+.searchMatches {
+    max-height: 200px;
+    overflow-y: auto;
 }
 
 .searchMatches div {
