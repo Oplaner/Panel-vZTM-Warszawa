@@ -44,12 +44,13 @@ final class MainController extends Controller {
         $login = InputValidator::clean($post["login"]);
         $password = InputValidator::clean($post["password"]);
         $authenticatorProperties = PropertiesReader::getProperties("authenticator");
+        $minPasswordLength = $authenticatorProperties["minPasswordLength"];
         $authentication = AuthenticationResult::invalidCredentials;
 
         if (InputValidator::nonEmpty($login)
         && InputValidator::nonEmpty($password)
         && InputValidator::length($login, 1, 10)
-        && InputValidator::length($password, $authenticatorProperties["minPasswordLength"], 255)) {
+        && InputValidator::length($password, $minPasswordLength, 255)) {
             $authentication = Authenticator::authenticateUser($login, $password);
 
             if ($authentication == AuthenticationResult::success) {
