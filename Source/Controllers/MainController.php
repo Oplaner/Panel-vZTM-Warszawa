@@ -41,14 +41,21 @@ final class MainController extends Controller {
     )]
     public function handleLogin(array $input): void {
         $post = $input[Router::POST_DATA_KEY];
-        $login = $post["login"];
-        $password = $post["password"];
-        // TODO: Sanitize user input.
-        $authentication = Authenticator::authenticateUser($login, $password);
+        $login = InputValidator::clean($post["login"]);
+        $password = InputValidator::clean($post["password"]);
+        $authenticatorProperties = PropertiesReader::getProperties("authenticator");
+        $authentication = AuthenticationResult::invalidCredentials;
 
-        if ($authentication == AuthenticationResult::success) {
-            Router::redirectToHome();
-            return;
+        if (InputValidator::nonEmpty($login)
+        && InputValidator::nonEmpty($password)
+        && InputValidator::length($login, 1, 10)
+        && InputValidator::length($password, $authenticatorProperties["minPasswordLength"], 255)) {
+            $authentication = Authenticator::authenticateUser($login, $password);
+
+            if ($authentication == AuthenticationResult::success) {
+                Router::redirectToHome();
+                return;
+            }
         }
 
         $viewParameters = [
