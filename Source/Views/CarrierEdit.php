@@ -2,7 +2,7 @@
 <html lang="pl">
 <?php
 
-ViewBuilder::buildHead(Style::light, [Script::menu, Script::search], null)
+ViewBuilder::buildHead(Style::light, [Script::menu, Script::search], $carrier->getFullName())
 
 ?>
 <body>
