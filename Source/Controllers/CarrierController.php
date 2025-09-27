@@ -35,7 +35,7 @@ final class CarrierController extends Controller {
         extract($input[Router::PATH_DATA_KEY]);
         $carrier = Carrier::withID($carrierID);
 
-        if (is_null($carrier) || !$carrier->isActive()) {
+        if (is_null($carrier)) {
             Router::redirect("/carriers");
         }
 

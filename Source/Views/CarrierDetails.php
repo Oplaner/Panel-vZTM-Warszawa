@@ -81,11 +81,6 @@ ViewBuilder::buildHead(Style::light, [Script::menu], null)
                     <p><b>Liczba zadań do wykonania w trakcie okresu próbnego</b><br><?php echo $carrier->getNumberOfTrialTasks() ?></p>
                     <p><b>Liczba zadań do wykonania w trakcie okresu karnego</b><br><?php echo $carrier->getNumberOfPenaltyTasks() ?></p>
                 </div>
-<?php
-
-                if ($carrier->isActive()):
-
-?>
                 <div class="section">
                     <h2>Kierownicy</h2>
 <?php
@@ -119,11 +114,6 @@ ViewBuilder::buildHead(Style::light, [Script::menu], null)
 
 ?>
                 </div>
-<?php
-
-                endif;
-
-?>
             </div>
         </div>
     </div>
