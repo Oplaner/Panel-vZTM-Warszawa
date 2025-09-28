@@ -14,20 +14,6 @@ ViewBuilder::buildHead(Style::light, [Script::menu], $carrier->getFullName())
 ?>
     <div id="content">
         <h1><a href="<?php echo PathBuilder::action("/carriers") ?>">&#8617;</a> <?php echo $carrier->getFullName() ?></h1>
-<?php
-
-        if ($carrier->isActive()):
-
-?>
-        <div class="toolbar">
-            <a href="<?php echo PathBuilder::action("/carriers/{$carrier->getID()}/edit") ?>" class="button">Edytuj</a>
-            <a href="<?php echo PathBuilder::action("/carriers/{$carrier->getID()}/close") ?>" class="button destructive">Zamknij zakład</a>
-        </div>
-<?php
-
-        endif;
-
-?>
         <div class="sectionContainer">
             <div class="section wide">
                 <h2>Dane podstawowe</h2>
@@ -116,6 +102,20 @@ ViewBuilder::buildHead(Style::light, [Script::menu], $carrier->getFullName())
                 </div>
             </div>
         </div>
+<?php
+
+        if ($carrier->isActive()):
+
+?>
+        <div class="toolbar bottom">
+            <a href="<?php echo PathBuilder::action("/carriers/{$carrier->getID()}/edit") ?>" class="button">Edytuj</a>
+            <a href="<?php echo PathBuilder::action("/carriers/{$carrier->getID()}/close") ?>" class="button destructive">Zamknij zakład</a>
+        </div>
+<?php
+
+        endif;
+
+?>
     </div>
 </body>
 </html>

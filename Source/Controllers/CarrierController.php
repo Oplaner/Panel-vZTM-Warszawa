@@ -26,6 +26,15 @@ final class CarrierController extends Controller {
         self::renderView(View::carriers, $viewParameters);
     }
 
+    #[Route("/carriers/new", RequestMethod::get)]
+    #[Access(
+        group: AccessGroup::oneOfProfiles,
+        profiles: [DirectorProfile::class]        
+    )]
+    public function showNewCarrierForm(): void {
+        self::renderView(View::carrierNew);
+    }
+
     #[Route("/carriers/{carrierID}", RequestMethod::get)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
@@ -50,7 +59,7 @@ final class CarrierController extends Controller {
         group: AccessGroup::oneOfProfiles,
         profiles: [DirectorProfile::class]
     )]
-    public function showCarrierEdit(array $input): void {
+    public function showEditCarrierForm(array $input): void {
         extract($input[Router::PATH_DATA_KEY]);
         $carrier = Carrier::withID($carrierID);
 

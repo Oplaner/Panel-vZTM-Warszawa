@@ -72,7 +72,7 @@ label {
 
 input[type=text], input[type=password] {
     width: 100%;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
     padding: 0.3rem;
     font-size: 0.9rem;
     color: #251B16;
@@ -379,11 +379,11 @@ input[type=submit]:hover {
     z-index: 0;
 }
 
-#content > .sectionContainer {
+#content > .sectionContainer, #content form > .sectionContainer {
     margin-bottom: 1rem;
 }
 
-#content > *:last-child {
+#content > *:last-child, #content form > *:last-child {
     margin-bottom: 0;
 }
 
@@ -392,6 +392,15 @@ input[type=submit]:hover {
     justify-content: space-between;
     gap: 0.5rem;
     margin-bottom: 1rem;
+}
+
+.toolbar.bottom {
+    border-top: 1px solid #DADFE3;
+    padding-top: 1rem;
+}
+
+.toolbar.singleAction {
+    justify-content: right;
 }
 
 .optionContainer {

@@ -2,7 +2,7 @@
 <html lang="pl">
 <?php
 
-ViewBuilder::buildHead(Style::light, [Script::menu, Script::search], $carrier->getFullName())
+ViewBuilder::buildHead(Style::light, [Script::menu, Script::search], "Nowy przewoźnik")
 
 ?>
 <body>
@@ -13,37 +13,29 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::search], $carrier->g
 
 ?>
     <div id="content">
-        <h1><a href="<?php echo PathBuilder::action("/carriers") ?>">&#8617;</a> <?php echo $carrier->getFullName() ?></h1>
-        <form action="<?php echo PathBuilder::action("/carriers/{$carrier->getID()}/edit") ?>" method="POST">
+        <h1><a href="<?php echo PathBuilder::action("/carriers") ?>">&#8617;</a> Nowy przewoźnik</h1>
+        <form action="<?php echo PathBuilder::action("/carriers/new") ?>" method="POST">
             <div class="sectionContainer">
                 <div class="section wide">
                     <h2>Dane podstawowe</h2>
                     <label for="fullName">Nazwa pełna:</label>
-                    <input type="text" id="fullName" name="fullName" value="<?php echo $carrier->getFullName() ?>">
+                    <input type="text" id="fullName" name="fullName" value="">
                     <label for="shortName">Nazwa skrócona:</label>
-                    <input type="text" id="shortName" name="shortName" value="<?php echo $carrier->getShortName() ?>">
-<?php
-
-                    $createdAt = $carrier->getCreatedAt()->toLocalizedString(SystemDateTimeFormat::dateAndTimeWithoutSeconds);
-                    $createdBy = $carrier->getCreatedBy()->getFormattedLoginAndUsername();
-
-?>
-                    <p><b>Data utworzenia</b><br><?php echo $createdAt ?></p>
-                    <p><b>Utworzony przez</b><br><?php echo $createdBy ?></p>
+                    <input type="text" id="shortName" name="shortName" value="">
                 </div>
                 <div class="sectionContainer column narrow">
                     <div class="section">
                         <h2>Konfiguracja</h2>
                         <label for="numberOfTrialTasks">Liczba zadań do wykonania w trakcie okresu próbnego:</label>
-                        <input type="text" id="numberOfTrialTasks" name="numberOfTrialTasks" value="<?php echo $carrier->getNumberOfTrialTasks() ?>">
+                        <input type="text" id="numberOfTrialTasks" name="numberOfTrialTasks" value="">
                         <label for="numberOfPenaltyTasks">Liczba zadań do wykonania w trakcie okresu karnego:</label>
-                        <input type="text" id="numberOfPenaltyTasks" name="numberOfPenaltyTasks" value="<?php echo $carrier->getNumberOfPenaltyTasks() ?>">
+                        <input type="text" id="numberOfPenaltyTasks" name="numberOfPenaltyTasks" value="">
                     </div>
                     <div class="section">
                         <h2>Kierownicy</h2>
 <?php
 
-                        $supervisors = $carrier->getSupervisors();
+                        $supervisors = [];
                         usort($supervisors, fn($a, $b) => $a->getLogin() <=> $b->getLogin());
                         $supervisorLoginsString = join(
                             ";",
@@ -87,9 +79,8 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::search], $carrier->g
                     </div>
                 </div>
             </div>
-            <div class="toolbar bottom">
-                <a href="<?php echo PathBuilder::action("/carriers/{$carrier->getID()}") ?>" class="button">Anuluj</a>
-                <input type="submit" value="Zapisz">
+            <div class="toolbar bottom singleAction">
+                <input type="submit" value="Utwórz">
             </div>
         </form>
     </div>
