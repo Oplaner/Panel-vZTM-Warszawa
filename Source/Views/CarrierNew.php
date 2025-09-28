@@ -18,17 +18,18 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::search], "Nowy przew
             <div class="sectionContainer">
                 <div class="section wide">
                     <h2>Dane podstawowe</h2>
-                    <label for="fullName">Nazwa pełna:</label>
+                    <label for="fullName" class="required">Nazwa pełna:</label>
                     <input type="text" id="fullName" name="fullName" value="">
-                    <label for="shortName">Nazwa skrócona:</label>
+                    <label for="shortName" class="required">Nazwa skrócona:</label>
                     <input type="text" id="shortName" name="shortName" value="">
+                    <p class="message info">Informacje dotyczące utworzenia przewoźnika (data i czas, twórca) są zapisywane automatycznie.</p>
                 </div>
                 <div class="sectionContainer column narrow">
                     <div class="section">
                         <h2>Konfiguracja</h2>
-                        <label for="numberOfTrialTasks">Liczba zadań do wykonania w trakcie okresu próbnego:</label>
+                        <label for="numberOfTrialTasks" class="required">Liczba zadań do wykonania w trakcie okresu próbnego:</label>
                         <input type="text" id="numberOfTrialTasks" name="numberOfTrialTasks" value="">
-                        <label for="numberOfPenaltyTasks">Liczba zadań do wykonania w trakcie okresu karnego:</label>
+                        <label for="numberOfPenaltyTasks" class="required">Liczba zadań do wykonania w trakcie okresu karnego:</label>
                         <input type="text" id="numberOfPenaltyTasks" name="numberOfPenaltyTasks" value="">
                     </div>
                     <div class="section">

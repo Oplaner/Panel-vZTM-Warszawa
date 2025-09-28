@@ -18,9 +18,9 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::search], $carrier->g
             <div class="sectionContainer">
                 <div class="section wide">
                     <h2>Dane podstawowe</h2>
-                    <label for="fullName">Nazwa pełna:</label>
+                    <label for="fullName" class="required">Nazwa pełna:</label>
                     <input type="text" id="fullName" name="fullName" value="<?php echo $carrier->getFullName() ?>">
-                    <label for="shortName">Nazwa skrócona:</label>
+                    <label for="shortName" class="required">Nazwa skrócona:</label>
                     <input type="text" id="shortName" name="shortName" value="<?php echo $carrier->getShortName() ?>">
 <?php
 
@@ -34,9 +34,9 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::search], $carrier->g
                 <div class="sectionContainer column narrow">
                     <div class="section">
                         <h2>Konfiguracja</h2>
-                        <label for="numberOfTrialTasks">Liczba zadań do wykonania w trakcie okresu próbnego:</label>
+                        <label for="numberOfTrialTasks" class="required">Liczba zadań do wykonania w trakcie okresu próbnego:</label>
                         <input type="text" id="numberOfTrialTasks" name="numberOfTrialTasks" value="<?php echo $carrier->getNumberOfTrialTasks() ?>">
-                        <label for="numberOfPenaltyTasks">Liczba zadań do wykonania w trakcie okresu karnego:</label>
+                        <label for="numberOfPenaltyTasks" class="required">Liczba zadań do wykonania w trakcie okresu karnego:</label>
                         <input type="text" id="numberOfPenaltyTasks" name="numberOfPenaltyTasks" value="<?php echo $carrier->getNumberOfPenaltyTasks() ?>">
                     </div>
                     <div class="section">

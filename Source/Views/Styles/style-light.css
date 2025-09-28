@@ -70,6 +70,11 @@ label {
     padding-left: 0.125rem;
 }
 
+label.required::before {
+    content: "\002A";
+    color: #E62314;
+}
+
 input[type=text], input[type=password] {
     width: 100%;
     margin-bottom: 1rem;
@@ -263,10 +268,9 @@ input[type=submit]:hover {
     background-color: #9B422C;
 }
 
-.successMessage, .errorMessage {
-    width: 90%;
+.message {
     display: flex;
-    margin: 0 auto 1rem auto;
+    margin-bottom: 1rem;
     padding: 0.3rem;
     font-size: 0.8rem;
     font-weight: 500;
@@ -275,24 +279,34 @@ input[type=submit]:hover {
     border-radius: 5px;
 }
 
-.successMessage:before {
+.message.success:before {
     content: "\2714\00A0";
 }
 
-.successMessage {
+.message.success {
     background-color: #E7FFC6;
     border-color: #AAE36E;
     color: #2B4F12;
 }
 
-.errorMessage:before {
+.message.error:before {
     content: "\274C\00A0";
 }
 
-.errorMessage {
+.message.error {
     background-color: #FFC3C3;
     border-color: #FF8585;
     color: #972525;
+}
+
+.message.info:before {
+    content: "\2139\FE0F\00A0";
+}
+
+.message.info {
+    background-color: #D8E8FF;
+    border-color: #B1CCFF;
+    color: #2550A3;
 }
 
 #topBar {

@@ -12,31 +12,29 @@ ViewBuilder::buildHead(Style::light, [], null)
                 <img src="<?php echo PathBuilder::image("vztm-logo-full.svg") ?>" alt="Logo vZTM Warszawa">
             </a>
             <h1>Panel vZTM Warszawa</h1>
+            <form action="<?php echo PathBuilder::action("/login") ?>" method="POST">
 <?php
 
-            if (isset($showLogoutMessage) && $showLogoutMessage):
+                if (isset($showLogoutMessage) && $showLogoutMessage):
 
 ?>
-            <p class="successMessage">Pomyślnie wylogowano z systemu.</p>
+                <p class="message success">Pomyślnie wylogowano z systemu.</p>
 <?php
 
-            endif;
+                endif;
 
-            if (isset($authenticationResult)):
-                $authenticationError = "Dane logowania są nieprawidłowe.";
+                if (isset($authenticationResult)):
+                    $authenticationError = $authenticationResult == AuthenticationResult::expiredPassword
+                        ? "Twoje hasło wygasło. Użyj opcji resetu hasła."
+                        : "Dane logowania są nieprawidłowe.";
 
-                if ($authenticationResult == AuthenticationResult::expiredPassword):
-                    $authenticationError = "Twoje hasło wygasło. Użyj opcji resetu hasła.";
+?>
+                <p class="message error"><?php echo $authenticationError ?></p>
+<?php
+
                 endif;
 
 ?>
-            <p class="errorMessage"><?php echo $authenticationError ?></p>
-<?php
-
-            endif;
-
-?>
-            <form action="<?php echo PathBuilder::action("/login") ?>" method="POST">
                 <label for="login">Login:</label>
                 <input type="text" id="login" name="login">
                 <label for="password">Hasło:</label>
