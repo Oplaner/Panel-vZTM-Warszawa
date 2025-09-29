@@ -99,13 +99,13 @@ final class Carrier extends DatabaseEntity {
 
     private static function validateNumberOfTrialTasksIsNotLessThanZero(int $numberOfTrialTasks): void {
         if ($numberOfTrialTasks < 0) {
-            throw new Exception("Number of trial tasks cannot be less than 0.");
+            throw new InvalidArgumentException("Number of trial tasks cannot be less than 0.");
         }
     }
 
     private static function validateNumberOfPenaltyTasksIsNotLessThanZero(int $numberOfPenaltyTasks): void {
         if ($numberOfPenaltyTasks < 0) {
-            throw new Exception("Number of penalty tasks cannot be less than 0.");
+            throw new InvalidArgumentException("Number of penalty tasks cannot be less than 0.");
         }
     }
 

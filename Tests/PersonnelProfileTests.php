@@ -7,7 +7,7 @@ final class PersonnelProfileTests {
 
         try {
             PersonnelProfile::createNew($user, $user, "Test PersonnelProfile", []);
-        } catch (Exception $exception) {
+        } catch (DomainException) {
             $didThrowException = true;
         }
 
@@ -29,7 +29,7 @@ final class PersonnelProfileTests {
 
         try {
             PersonnelProfile::createNew($user, $user, $description, [$privilege]);
-        } catch (Exception $exception) {
+        } catch (DomainException) {
             $didThrowException = true;
         }
 

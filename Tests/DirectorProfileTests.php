@@ -8,7 +8,7 @@ final class DirectorProfileTests {
 
         try {
             DirectorProfile::createNew($user, $user);
-        } catch (Exception $exception) {
+        } catch (DomainException) {
             $didThrowException = true;
         }
 

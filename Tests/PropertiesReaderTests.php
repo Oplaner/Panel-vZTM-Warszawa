@@ -5,7 +5,7 @@ final class PropertiesReaderTests {
         try {
             $group = "invalidGroup";
             PropertiesReader::getProperties($group);
-        } catch (Exception $exception) {
+        } catch (InvalidArgumentException) {
             return true;
         }
 

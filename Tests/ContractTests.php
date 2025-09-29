@@ -9,7 +9,7 @@ final class ContractTests {
 
         try {
             Contract::createNew($carrier, $user, $user, ContractState::active);
-        } catch (Exception $exception) {
+        } catch (DomainException) {
             $didThrowException = true;
         }
 
@@ -34,7 +34,7 @@ final class ContractTests {
 
         try {
             Contract::createNew($carrier, $user, $user, ContractState::terminated);
-        } catch (Exception $exception) {
+        } catch (DomainException) {
             return true;
         }
 
@@ -163,7 +163,7 @@ final class ContractTests {
 
         try {
             $contract->addPeriod(ContractState::active, $user);
-        } catch (Exception $exception) {
+        } catch (DomainException) {
             return true;
         }
 

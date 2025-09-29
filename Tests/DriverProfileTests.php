@@ -8,7 +8,7 @@ final class DriverProfileTests {
 
         try {
             DriverProfile::createNew($user, $user);
-        } catch (Exception $exception) {
+        } catch (DomainException) {
             $didThrowException = true;
         }
 

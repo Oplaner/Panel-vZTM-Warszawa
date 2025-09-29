@@ -49,7 +49,7 @@ abstract class Profile extends DatabaseEntity {
         $profileType = static::class;
 
         if ($user->hasActiveProfileOfType($profileType)) {
-            throw new Exception("Cannot create new $profileType - there is one currently active for the user.");
+            throw new DomainException("Cannot create new $profileType - there is one currently active for the user.");
         }
     }
 

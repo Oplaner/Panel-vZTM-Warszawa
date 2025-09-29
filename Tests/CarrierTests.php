@@ -8,7 +8,7 @@ final class CarrierTests {
 
         try {
             Carrier::createNew("Test Carrier", "Test", [], -1, 0, $user);
-        } catch (Exception $exception) {
+        } catch (InvalidArgumentException) {
             return true;
         }
 
@@ -22,7 +22,7 @@ final class CarrierTests {
 
         try {
             Carrier::createNew("Test Carrier", "Test", [], 0, -1, $user);
-        } catch (Exception $exception) {
+        } catch (InvalidArgumentException) {
             return true;
         }
 
@@ -189,7 +189,7 @@ final class CarrierTests {
 
         try {
             $carrier->setNumberOfTrialTasks(-1);
-        } catch (Exception $exception) {
+        } catch (InvalidArgumentException) {
             return true;
         }
 
@@ -205,7 +205,7 @@ final class CarrierTests {
 
         try {
             $carrier->setNumberOfPenaltyTasks(-1);
-        } catch (Exception $exception) {
+        } catch (InvalidArgumentException) {
             return true;
         }
 

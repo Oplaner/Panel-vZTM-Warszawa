@@ -164,13 +164,13 @@ final class Contract extends DatabaseEntity {
         );
 
         if (count($carrierAndDriverContracts) > 0) {
-            throw new Exception("Cannot create new contract - there is one currently active for the user.");
+            throw new DomainException("Cannot create new contract - there is one currently active for the user.");
         }
     }
 
     private static function validateContractStateIsNotFinal(ContractState $state): void {
         if ($state->isFinal()) {
-            throw new Exception("Cannot create new contract with final state.");
+            throw new DomainException("Cannot create new contract with final state.");
         }
     }
 
@@ -198,7 +198,7 @@ final class Contract extends DatabaseEntity {
 
     public function addPeriod(ContractState $state, User $authorizer): void {
         if (!$this->isActive()) {
-            throw new Exception("Cannot add new period to inactive contract.");
+            throw new DomainException("Cannot add new period to inactive contract.");
         }
 
         $periods = $this->getPeriods();

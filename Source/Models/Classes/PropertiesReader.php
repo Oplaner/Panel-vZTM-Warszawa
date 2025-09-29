@@ -17,7 +17,7 @@ final class PropertiesReader {
         $propertiesVariableName = $group."Properties";
 
         if (!in_array($propertiesVariableName, array_keys(get_class_vars(self::class)))) {
-            throw new Exception("Requested properties group \"$group\" does not exist.");
+            throw new InvalidArgumentException("Requested properties group \"$group\" does not exist.");
         }
 
         if (is_null(self::$$propertiesVariableName)) {
@@ -32,12 +32,12 @@ final class PropertiesReader {
         $file = fopen($path, "r");
 
         if ($file === false) {
-            throw new Exception("Failed to open \"$group.properties\" file.");
+            throw new RuntimeException("Failed to open \"$group.properties\" file.");
         }
 
         if (!flock($file, LOCK_SH)) {
             fclose($file);
-            throw new Exception("Failed to lock \"$group.properties\" file.");
+            throw new RuntimeException("Failed to lock \"$group.properties\" file.");
         }
 
         $properties = [];
