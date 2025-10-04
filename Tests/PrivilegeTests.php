@@ -55,6 +55,41 @@ final class PrivilegeTests {
 
         return true;
     }
+
+    public static function getPrivilegeByScope(): bool|string {
+        $scope = PrivilegeScope::canViewAllTimetables;
+        $privilege = Privilege::createNew($scope);
+        $privilegeID = $privilege->getID();
+        $privilege = Privilege::withScopeAndAssociatedEntityID($scope, null);
+
+        TestHelpers::deleteTestPrivilege($privilege->getID());
+
+        if (!is_a($privilege, Privilege::class)) {
+            return "Expected a ".Privilege::class." object. Found: ".gettype($privilege).".";
+        } elseif ($privilege->getID() != $privilegeID) {
+            return "Privilege ID is incorrect. Expected: \"$privilegeID\", found: \"{$privilege->getID()}\".";
+        }
+
+        return true;
+    }
+
+    public static function getPrivilegeByScopeAndAssociatedEntityID(): bool|string {
+        $scope = PrivilegeScope::canViewTimetableOfDepot;
+        $associatedEntityID = DatabaseEntity::generateUUIDv4();
+        $privilege = Privilege::createNew($scope, $associatedEntityID);
+        $privilegeID = $privilege->getID();
+        $privilege = Privilege::withScopeAndAssociatedEntityID($scope, $associatedEntityID);
+
+        TestHelpers::deleteTestPrivilege($privilege->getID());
+
+        if (!is_a($privilege, Privilege::class)) {
+            return "Expected a ".Privilege::class." object. Found: ".gettype($privilege).".";
+        } elseif ($privilege->getID() != $privilegeID) {
+            return "Privilege ID is incorrect. Expected: \"$privilegeID\", found: \"{$privilege->getID()}\".";
+        }
+
+        return true;
+    }
 }
 
 ?>

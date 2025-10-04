@@ -43,6 +43,36 @@ final class Privilege extends DatabaseEntity {
         return new Privilege($id, PrivilegeScope::from($data["scope"]), $data["associated_entity_id"]);
     }
 
+    public static function withScopeAndAssociatedEntityID(PrivilegeScope $scope, ?string $associatedEntityID): ?Privilege {
+        $associatedEntityIDQueryString = "IS NULL";
+        $parameters = [
+            $scope->value
+        ];
+
+        if (!is_null($associatedEntityID)) {
+            $associatedEntityIDQueryString = "= ?";
+            $parameters[] = $associatedEntityID;
+        }
+
+        $result = DatabaseConnector::shared()->execute_query(
+            "SELECT id
+            FROM privileges
+            WHERE scope = ? AND associated_entity_id $associatedEntityIDQueryString",
+            $parameters
+        );
+
+        if ($result->num_rows == 0) {
+            $associatedEntityIDString = is_null($associatedEntityID) ? "null" : "\"$associatedEntityID\"";
+            Logger::log(LogLevel::info, "Could not find privilege with scope \"{$scope->value}\" and associated entity ID $associatedEntityIDString.");
+            $result->free();
+            return null;
+        }
+
+        $id = $result->fetch_column();
+        $result->free();
+        return self::withID($id);
+    }
+
     public function getScope(): PrivilegeScope {
         return $this->scope;
     }
