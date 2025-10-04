@@ -31,7 +31,7 @@ final class User extends DatabaseEntity {
         );
         
         if ($result->num_rows == 0) {
-            Logger::log(LogLevel::info, "Could not find myBB user with ID $myBBUserID.");
+            Logger::log(LogLevel::info, "Could not find new myBB user with ID $myBBUserID.");
             $result->free();
             return null;
         }
@@ -69,18 +69,53 @@ final class User extends DatabaseEntity {
         return new User($id, $data["login"], $data["username"], $data["should_change_password"], new SystemDateTime($data["created_at"]));
     }
 
-    public static function getAllLoginAndUsernamePairsContaining(string $substring): array {
-        $pattern = "%$substring%";
+    public static function withLogin(int $login): ?User {
         $result = DatabaseConnector::shared()->execute_query(
+            "SELECT id
+            FROM users
+            WHERE login = ?",
+            [
+                $login
+            ]
+        );
+
+        if ($result->num_rows == 0) {
+            Logger::log(LogLevel::info, "Could not find user with login $login.");
+            $result->free();
+            return null;
+        }
+
+        $id = $result->fetch_column();
+        $result->free();
+        return self::withID($id);
+    }
+
+    public static function getLoginAndUsernamePairsForAnyUsersWithLogins(array $logins): array {
+        $query =
+            "SELECT uid, username
+            FROM mybb18_users
+            WHERE uid IN (".implode(", ", array_fill(0, count($logins), "?")).")
+            ORDER BY uid ASC";
+        $parameters = $logins;
+        return self::getLoginAndUsernamePairsWithQuery($query, $parameters);
+    }
+
+    public static function getAllLoginAndUsernamePairsContainingSubstring(string $substring): array {
+        $query =
             "SELECT uid, username
             FROM mybb18_users
             WHERE uid LIKE ? OR username LIKE ?
-            ORDER BY uid ASC",
-            [
-                $pattern,
-                $pattern
-            ]
-        );
+            ORDER BY uid ASC";
+        $pattern = "%$substring%";
+        $parameters = [
+            $pattern,
+            $pattern
+        ];
+        return self::getLoginAndUsernamePairsWithQuery($query, $parameters);
+    }
+
+    private static function getLoginAndUsernamePairsWithQuery(string $query, ?array $parameters = null): array {
+        $result = DatabaseConnector::shared()->execute_query($query, $parameters);
         $users = [];
 
         while ($data = $result->fetch_assoc()) {

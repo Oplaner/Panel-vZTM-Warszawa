@@ -14,48 +14,46 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::search], "Nowy przew
 ?>
     <div id="content">
         <h1><a href="<?php echo PathBuilder::action("/carriers") ?>">&#8617;</a> Nowy przewoźnik</h1>
+<?php
+
+        if (isset($showMessage) && $showMessage):
+
+?>
+        <p class="message <?php echo $messageType ?>"><?php echo $message ?></p>
+<?php
+
+        endif;
+
+?>
         <form action="<?php echo PathBuilder::action("/carriers/new") ?>" method="POST">
             <div class="sectionContainer">
                 <div class="section wide">
                     <h2>Dane podstawowe</h2>
                     <label for="fullName" class="required">Nazwa pełna:</label>
-                    <input type="text" id="fullName" name="fullName" value="">
+                    <input type="text" id="fullName" name="fullName" value="<?php echo $fullName ?>">
                     <label for="shortName" class="required">Nazwa skrócona:</label>
-                    <input type="text" id="shortName" name="shortName" value="">
+                    <input type="text" id="shortName" name="shortName" value="<?php echo $shortName ?>">
                     <p class="message info">Informacje dotyczące utworzenia przewoźnika (data i czas, twórca) są zapisywane automatycznie.</p>
                 </div>
                 <div class="sectionContainer column narrow">
                     <div class="section">
                         <h2>Konfiguracja</h2>
                         <label for="numberOfTrialTasks" class="required">Liczba zadań do wykonania w trakcie okresu próbnego:</label>
-                        <input type="text" id="numberOfTrialTasks" name="numberOfTrialTasks" value="">
+                        <input type="text" id="numberOfTrialTasks" name="numberOfTrialTasks" value="<?php echo $numberOfTrialTasks ?>">
                         <label for="numberOfPenaltyTasks" class="required">Liczba zadań do wykonania w trakcie okresu karnego:</label>
-                        <input type="text" id="numberOfPenaltyTasks" name="numberOfPenaltyTasks" value="">
+                        <input type="text" id="numberOfPenaltyTasks" name="numberOfPenaltyTasks" value="<?php echo $numberOfPenaltyTasks ?>">
                     </div>
                     <div class="section">
                         <h2>Kierownicy</h2>
-<?php
-
-                        $supervisors = [];
-                        usort($supervisors, fn($a, $b) => $a->getLogin() <=> $b->getLogin());
-                        $supervisorLoginsString = join(
-                            ";",
-                            array_map(
-                                fn($supervisor) => $supervisor->getLogin(),
-                                $supervisors
-                            )
-                        );
-
-?>
                         <div class="searchContainer" data-source="<?php echo PathBuilder::action("/users/search") ?>">
                             <div class="selectionContainer">
 <?php
 
-                                foreach ($supervisors as $supervisor):
+                                foreach ($supervisorSelections as $supervisorSelection):
 
 ?>
-                                <div class="selection" data-key="<?php echo $supervisor->getLogin() ?>">
-                                    <span><?php echo $supervisor->getFormattedLoginAndUsername() ?></span>&nbsp;<a href="#">[&times;]</a>
+                                <div class="selection" data-key="<?php echo $supervisorSelection["key"] ?>">
+                                    <span><?php echo $supervisorSelection["value"] ?></span>&nbsp;<a href="#">[&times;]</a>
                                 </div>
 <?php
 
@@ -63,7 +61,7 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::search], "Nowy przew
 
 ?>
                             </div>
-                            <input type="hidden" name="supervisorLogins" value="<?php echo $supervisorLoginsString ?>">
+                            <input type="hidden" name="supervisorLoginsString" value="<?php echo $supervisorLoginsString ?>">
                             <label for="supervisorSearchBox">Dodaj kierownika:</label>
                             <div class="inputWithLoader noBottomMargin">
                                 <input type="text" id="supervisorSearchBox" placeholder="ID lub nazwa...">

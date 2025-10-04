@@ -14,8 +14,8 @@ final class Logger {
         $this->logs[] = $initialLog;
     }
 
-    public static function log(LogLevel $level, string $message): void {
-        $log = new Log(SystemDateTime::now(), $level, $message);
+    public static function log(LogLevel $level, string $message, ?string $logID = null): void {
+        $log = new Log(SystemDateTime::now(), $level, $message, $logID);
 
         if (is_null(self::$sharedInstance)) {
             self::$sharedInstance = new Logger($log);

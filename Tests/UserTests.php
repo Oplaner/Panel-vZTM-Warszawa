@@ -49,6 +49,21 @@ final class UserTests {
         return true;
     }
 
+    public static function getExistingUserByLogin(): bool|string {
+        $user = User::createNew(TestHelpers::EXISTING_TEST_USER_LOGIN);
+        $user = User::withLogin($user->getLogin());
+
+        TestHelpers::deleteTestUser($user->getID());
+
+        if (!is_a($user, User::class)) {
+            return "Expected a ".User::class." object. Found: ".gettype($user).".";
+        } elseif ($user->getUsername() != TestHelpers::EXISTING_TEST_USER_USERNAME) {
+            return "User's username is incorrect. Expected: \"".TestHelpers::EXISTING_TEST_USER_USERNAME."\", found: \"{$user->getUsername()}\".";
+        }
+
+        return true;
+    }
+
     public static function getNotExistingUser(): bool|string {
         $user = User::withID(User::generateUUIDv4());
 

@@ -57,10 +57,10 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Przewoź
             foreach ($carriers as $carrier):
             $statusClass = $carrier->isActive() ? "active" : "inactive";
             $statusText = $carrier->isActive() ? "aktywny" : "zamknięty";
-            $supervisors = join(
+            $supervisors = implode(
                 "<br>",
                 array_map(
-                    fn ($supervisor) => $supervisor->getUsername(),
+                    fn($supervisor) => $supervisor->getUsername(),
                     $carrier->getSupervisors()
                 )
             );

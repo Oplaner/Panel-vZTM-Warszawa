@@ -45,7 +45,7 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::search], $carrier->g
 
                         $supervisors = $carrier->getSupervisors();
                         usort($supervisors, fn($a, $b) => $a->getLogin() <=> $b->getLogin());
-                        $supervisorLoginsString = join(
+                        $supervisorLoginsString = implode(
                             ";",
                             array_map(
                                 fn($supervisor) => $supervisor->getLogin(),

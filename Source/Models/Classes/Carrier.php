@@ -67,20 +67,20 @@ final class Carrier extends DatabaseEntity {
         return new Carrier($id, $fullName, $shortName, $numberOfTrialTasks, $numberOfPenaltyTasks, $createdAt, $createdBy, $closedAt, $closedBy);
     }
 
-    public static function getAll(): array {
+    public static function getAll(string $sortColumn = "created_at", string $sortDirection = "ASC"): array {
         $query =
         "SELECT c.id
         FROM carriers AS c
-        ORDER BY c.created_at ASC";
+        ORDER BY c.$sortColumn $sortDirection";
         return self::getWithQuery($query);
     }
     
-    public static function getAllActive(): array {
+    public static function getAllActive(string $sortColumn = "created_at", string $sortDirection = "ASC"): array {
         $query =
         "SELECT c.id
         FROM carriers AS c
         WHERE closed_at IS NULL
-        ORDER BY c.created_at ASC";
+        ORDER BY c.$sortColumn $sortDirection";
         return self::getWithQuery($query);
     }
 
@@ -88,8 +88,7 @@ final class Carrier extends DatabaseEntity {
         $result = DatabaseConnector::shared()->execute_query($query, $parameters);
         $carriers = [];
 
-        while ($data = $result->fetch_assoc()) {
-            $carrierID = $data["id"];
+        while ($carrierID = $result->fetch_column()) {
             $carriers[] = self::withID($carrierID);
         }
 

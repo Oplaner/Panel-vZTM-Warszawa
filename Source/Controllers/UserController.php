@@ -6,16 +6,20 @@ final class UserController extends Controller {
         group: AccessGroup::anyProfile     
     )]
     public function handleUserSearch(array $input): void {
-        $post = $input[Router::POST_DATA_KEY];
-        $substring = $post["substring"];
+        $substringFieldName = "ID lub nazwa użytkownika";
 
-        // TODO: Add more validation.
-        if (mb_strlen($substring) < 3) {
+        $post = $input[Router::POST_DATA_KEY];
+        $substring = InputValidator::clean($post["substring"]);
+
+        try {
+            InputValidator::checkNonEmpty($substringFieldName, $substring);
+            InputValidator::checkLength($substringFieldName, $substring, 3, 120);
+        } catch (ValidationException) {
             http_response_code(400);
             return;
         }
 
-        $users = User::getAllLoginAndUsernamePairsContaining($substring);
+        $users = User::getAllLoginAndUsernamePairsContainingSubstring($substring);
         self::renderJSON($users);
     }
 }

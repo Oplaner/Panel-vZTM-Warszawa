@@ -279,6 +279,11 @@ input[type=submit]:hover {
     border-radius: 5px;
 }
 
+.message span {
+    font-weight: inherit;
+    color: inherit;
+}
+
 .message.success:before {
     content: "\2714\00A0";
 }

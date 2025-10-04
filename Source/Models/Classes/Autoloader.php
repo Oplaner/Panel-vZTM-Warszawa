@@ -18,7 +18,7 @@ final class Autoloader {
             $this->scanDirectory(self::TESTS_DIRECTORY);
         }
 
-        spl_autoload_register(fn ($entityName) => $this->loadEntity($entityName));
+        spl_autoload_register(fn($entityName) => $this->loadEntity($entityName));
     }
 
     public static function scanSourceDirectory(): void {

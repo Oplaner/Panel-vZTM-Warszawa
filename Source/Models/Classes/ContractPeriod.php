@@ -66,8 +66,7 @@ final class ContractPeriod extends DatabaseEntity {
         );
         $periods = [];
 
-        while ($data = $result->fetch_assoc()) {
-            $periodID = $data["id"];
+        while ($periodID = $result->fetch_column()) {
             $periods[] = self::withID($periodID);
         }
 

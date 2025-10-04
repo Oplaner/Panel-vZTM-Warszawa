@@ -40,29 +40,40 @@ final class MainController extends Controller {
         group: AccessGroup::guestsOnly
     )]
     public function handleLogin(array $input): void {
+        $loginFieldName = "Login";
+        $passwordFieldName = "Hasło";
+
         $post = $input[Router::POST_DATA_KEY];
         $login = InputValidator::clean($post["login"]);
         $password = InputValidator::clean($post["password"]);
+
         $authenticatorProperties = PropertiesReader::getProperties("authenticator");
         $minPasswordLength = $authenticatorProperties["minPasswordLength"];
-        $authentication = AuthenticationResult::invalidCredentials;
+        $isValidationSuccessful = true;
+        $authenticationResult = null;
 
-        if (InputValidator::nonEmpty($login)
-        && InputValidator::nonEmpty($password)
-        && InputValidator::length($login, 1, 10)
-        && InputValidator::length($password, $minPasswordLength, 255)) {
-            $authentication = Authenticator::authenticateUser($login, $password);
+        try {
+            InputValidator::checkNonEmpty($loginFieldName, $login);
+            InputValidator::checkNonEmpty($passwordFieldName, $password);
+            InputValidator::checkLength($loginFieldName, $login, 1, 10);
+            InputValidator::checkLength($passwordFieldName, $password, $minPasswordLength, 255);
+        } catch (ValidationException) {
+            $isValidationSuccessful = false;
+            $authenticationResult = AuthenticationResult::invalidCredentials;
+        }
 
-            if ($authentication == AuthenticationResult::success) {
+        if ($isValidationSuccessful) {
+            $authenticationResult = Authenticator::authenticateUser($login, $password);
+
+            if ($authenticationResult == AuthenticationResult::success) {
                 Router::redirectToHome();
                 return;
             }
         }
 
         $viewParameters = [
-            "authenticationResult" => $authentication
+            "authenticationResult" => $authenticationResult
         ];
-
         self::renderView(View::login, $viewParameters);
     }
 
@@ -75,7 +86,6 @@ final class MainController extends Controller {
         $viewParameters = [
             "showLogoutMessage" => true
         ];
-
         self::renderView(View::login, $viewParameters);
     }
 }

@@ -93,7 +93,7 @@ final class Contract extends DatabaseEntity {
             INNER JOIN contract_periods AS cp
             ON c.id = cp.contract_id
             WHERE c.carrier_id = ?
-            AND c.current_state NOT IN (".join(", ", $finalStateQuotedStrings).")
+            AND c.current_state NOT IN (".implode(", ", $finalStateQuotedStrings).")
             GROUP BY c.id
             ORDER BY MIN(cp.valid_from) ASC";
         $parameters = [
@@ -125,7 +125,7 @@ final class Contract extends DatabaseEntity {
             INNER JOIN contract_periods AS cp
             ON c.id = cp.contract_id
             WHERE c.driver_id = ?
-            AND c.current_state NOT IN (".join(", ", $finalStateQuotedStrings).")
+            AND c.current_state NOT IN (".implode(", ", $finalStateQuotedStrings).")
             GROUP BY c.id
             ORDER BY MIN(cp.valid_from) ASC";
         $parameters = [
@@ -138,8 +138,7 @@ final class Contract extends DatabaseEntity {
         $result = DatabaseConnector::shared()->execute_query($query, $parameters);
         $contracts = [];
 
-        while ($data = $result->fetch_assoc()) {
-            $contractID = $data["id"];
+        while ($contractID = $result->fetch_column()) {
             $contracts[] = self::withID($contractID);
         }
 

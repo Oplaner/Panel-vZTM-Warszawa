@@ -41,7 +41,7 @@ final class PathBuilder {
             ),
             fn($component) => $component != ""
         );
-        return self::FORWARD_SLASH.join(self::FORWARD_SLASH, $components);
+        return self::FORWARD_SLASH.implode(self::FORWARD_SLASH, $components);
     }
 }
 
