@@ -80,7 +80,6 @@ final class User extends DatabaseEntity {
         );
 
         if ($result->num_rows == 0) {
-            Logger::log(LogLevel::info, "Could not find user with login $login.");
             $result->free();
             return null;
         }

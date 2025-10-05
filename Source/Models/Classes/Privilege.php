@@ -62,8 +62,6 @@ final class Privilege extends DatabaseEntity {
         );
 
         if ($result->num_rows == 0) {
-            $associatedEntityIDString = is_null($associatedEntityID) ? "null" : "\"$associatedEntityID\"";
-            Logger::log(LogLevel::info, "Could not find privilege with scope \"{$scope->value}\" and associated entity ID $associatedEntityIDString.");
             $result->free();
             return null;
         }

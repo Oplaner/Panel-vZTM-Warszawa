@@ -32,7 +32,7 @@ final class ViewBuilder {
     }
 
     private static function printNewLine(): void {
-        echo "\n"; // For clean HTML formatting.
+        echo PHP_EOL; // For clean HTML formatting.
     }
 }
 

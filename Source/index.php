@@ -14,7 +14,7 @@ try {
     $method = RequestMethod::from($_SERVER["REQUEST_METHOD"]);
     $router->dispatchRequest($path, $method);
 } catch (Exception $exception) {
-    Logger::log(LogLevel::error, $exception->getMessage()."\n----- STACK TRACE -----\n".$exception->getTraceAsString());
+    Logger::log(LogLevel::error, $exception->getMessage().PHP_EOL."----- STACK TRACE -----".PHP_EOL.$exception->getTraceAsString());
     // TODO: Redirect to an error page using the Router.
 } finally {
     DatabaseConnector::closeConnection();

@@ -9,6 +9,30 @@ final class Carrier extends DatabaseEntity {
     private User $createdBy;
     private ?SystemDateTime $closedAt;
     private ?User $closedBy;
+    private ?array $supervisorPrivileges = null;
+
+    private static array $supervisorPrivilegeDefinitions = [
+        [
+            "scope" => PrivilegeScope::canManageDriversOfDepot,
+            "requiresEntityID" => true
+        ],
+        [
+            "scope" => PrivilegeScope::canViewVehiclesOfDepot,
+            "requiresEntityID" => true
+        ],
+        [
+            "scope" => PrivilegeScope::canManageVehiclesOfDepot,
+            "requiresEntityID" => true
+        ],
+        [
+            "scope" => PrivilegeScope::canViewTimetableOfDepot,
+            "requiresEntityID" => true
+        ],
+        [
+            "scope" => PrivilegeScope::canEditTimetableOfDepot,
+            "requiresEntityID" => true
+        ]
+    ];
 
     protected function __construct(?string $id, string $fullName, string $shortName, int $numberOfTrialTasks, int $numberOfPenaltyTasks, SystemDateTime $createdAt, User $createdBy, ?SystemDateTime $closedAt, ?User $closedBy) {
         parent::__construct($id);
@@ -28,7 +52,7 @@ final class Carrier extends DatabaseEntity {
         self::validateNumberOfTrialTasksIsNotLessThanZero($numberOfTrialTasks);
         self::validateNumberOfPenaltyTasksIsNotLessThanZero($numberOfPenaltyTasks);
         $carrier = new Carrier(null, $fullName, $shortName, $numberOfTrialTasks, $numberOfPenaltyTasks, SystemDateTime::now(), $creator, null, null);
-        array_walk($supervisors, fn($supervisor) => $carrier->addSupervisor($supervisor));
+        array_walk($supervisors, fn($supervisor) => $carrier->addSupervisor($supervisor, $creator));
         return $carrier;
     }
 
@@ -147,11 +171,14 @@ final class Carrier extends DatabaseEntity {
         return $supervisors;
     }
 
-    public function addSupervisor(User $supervisor): void {
+    public function addSupervisor(User $supervisor, User $personnelProfileActivator): void {
         $supervisors = $this->getSupervisors();
+        $supervisorDescription = "Kierownik zakładu {$this->fullName}";
+        $supervisorPrivileges = $this->getSupervisorPrivileges();
 
         if (!in_array($supervisor, $supervisors)) {
             Logger::log(LogLevel::info, "Adding user with ID \"{$supervisor->getID()}\" as supervisor of carrier with ID \"$this->id\".");
+
             DatabaseConnector::shared()->execute_query(
                 "INSERT INTO carrier_supervisors
                 (carrier_id, supervisor_id)
@@ -161,6 +188,35 @@ final class Carrier extends DatabaseEntity {
                     $supervisor->getID()
                 ]
             );
+
+            $personnelProfile = array_find(
+                $supervisor->getActiveProfiles(),
+                fn($profile) => is_a($profile, PersonnelProfile::class)
+            );
+
+            if (is_null($personnelProfile)) {
+                PersonnelProfile::createNew($supervisor, $personnelProfileActivator, $supervisorDescription, $supervisorPrivileges);
+                return;
+            }
+
+            $currentPersonnelProfileDescription = $personnelProfile->getDescription();
+            $currentPersonnelProfilePrivileges = $personnelProfile->getPrivileges();
+            $personnelProfile->deactivate($personnelProfileActivator);
+            $newPersonnelProfileDescription = $currentPersonnelProfileDescription.PHP_EOL.$supervisorDescription;
+            $newPersonnelProfilePrivileges = $currentPersonnelProfilePrivileges;
+
+            foreach ($supervisorPrivileges as $supervisorPrivilege) {
+                $isNewPrivilege = !array_any(
+                    $newPersonnelProfilePrivileges,
+                    fn($privilege) => $privilege->getID() == $supervisorPrivilege->getID()
+                );
+
+                if ($isNewPrivilege) {
+                    $newPersonnelProfilePrivileges[] = $supervisorPrivilege;
+                }
+            }
+
+            PersonnelProfile::createNew($supervisor, $personnelProfileActivator, $newPersonnelProfileDescription, $newPersonnelProfilePrivileges);
         }
     }
 
@@ -291,6 +347,20 @@ final class Carrier extends DatabaseEntity {
             );
             $this->wasModified = false;
         }
+    }
+
+    private function getSupervisorPrivileges(): array {
+        if (is_null($this->supervisorPrivileges)) {
+            $this->supervisorPrivileges = [];
+
+            foreach (self::$supervisorPrivilegeDefinitions as $definition) {
+                $scope = $definition["scope"];
+                $associatedEntityID = $definition["requiresEntityID"] ? $this->getID() : null;
+                $this->supervisorPrivileges[] = Privilege::withScopeAndAssociatedEntityID($scope, $associatedEntityID) ?? Privilege::createNew($scope, $associatedEntityID);
+            }
+        }
+
+        return $this->supervisorPrivileges;
     }
 }
 

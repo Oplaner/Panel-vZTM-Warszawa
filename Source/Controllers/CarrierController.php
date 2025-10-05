@@ -111,11 +111,11 @@ final class CarrierController extends Controller {
             $supervisors = [];
 
             foreach ($supervisorLogins as $supervisorLogin) {
-                // TODO: Handle PersonnelProfile changes.
                 $supervisor = User::withLogin($supervisorLogin);
 
                 if (is_null($supervisor)) {
                     $supervisor = User::createNew($supervisorLogin);
+                    // TODO: Handle newly created User (myBB PM?).
                 }
 
                 $supervisors[] = $supervisor;
