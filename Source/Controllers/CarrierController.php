@@ -187,8 +187,30 @@ final class CarrierController extends Controller {
             Router::redirect("/carriers");
         }
 
+        $supervisors = $carrier->getSupervisors();
+        usort($supervisors, fn($a, $b) => $a->getLogin() <=> $b->getLogin());
+        $supervisorSelections = array_map(
+            fn($supervisor) => [
+                "key" => $supervisor->getLogin(),
+                "value" => $supervisor->getFormattedLoginAndUsername()
+            ],
+            $supervisors
+        );
+        $supervisorLoginsString = implode(
+            ";",
+            array_map(
+                fn($supervisorSelection) => $supervisorSelection["key"],
+                $supervisorSelections
+            )
+        );
         $viewParameters = [
-            "carrier" => $carrier
+            "carrier" => $carrier,
+            "fullName" => $carrier->getFullName(),
+            "shortName" => $carrier->getShortName(),
+            "numberOfTrialTasks" => $carrier->getNumberOfTrialTasks(),
+            "numberOfPenaltyTasks" => $carrier->getNumberOfPenaltyTasks(),
+            "supervisorSelections" => $supervisorSelections,
+            "supervisorLoginsString" => $supervisorLoginsString
         ];
         self::renderView(View::carrierEdit, $viewParameters);
     }

@@ -19,9 +19,9 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::search], $carrier->g
                 <div class="section wide">
                     <h2>Dane podstawowe</h2>
                     <label for="fullName" class="required">Nazwa pełna:</label>
-                    <input type="text" id="fullName" name="fullName" value="<?php echo $carrier->getFullName() ?>">
+                    <input type="text" id="fullName" name="fullName" value="<?php echo $fullName ?>">
                     <label for="shortName" class="required">Nazwa skrócona:</label>
-                    <input type="text" id="shortName" name="shortName" value="<?php echo $carrier->getShortName() ?>">
+                    <input type="text" id="shortName" name="shortName" value="<?php echo $shortName ?>">
 <?php
 
                     $createdAt = $carrier->getCreatedAt()->toLocalizedString(SystemDateTimeFormat::dateAndTimeWithoutSeconds);
@@ -35,34 +35,21 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::search], $carrier->g
                     <div class="section">
                         <h2>Konfiguracja</h2>
                         <label for="numberOfTrialTasks" class="required">Liczba zadań do wykonania w trakcie okresu próbnego:</label>
-                        <input type="text" id="numberOfTrialTasks" name="numberOfTrialTasks" value="<?php echo $carrier->getNumberOfTrialTasks() ?>">
+                        <input type="text" id="numberOfTrialTasks" name="numberOfTrialTasks" value="<?php echo $numberOfTrialTasks ?>">
                         <label for="numberOfPenaltyTasks" class="required">Liczba zadań do wykonania w trakcie okresu karnego:</label>
-                        <input type="text" id="numberOfPenaltyTasks" name="numberOfPenaltyTasks" value="<?php echo $carrier->getNumberOfPenaltyTasks() ?>">
+                        <input type="text" id="numberOfPenaltyTasks" name="numberOfPenaltyTasks" value="<?php echo $numberOfPenaltyTasks ?>">
                     </div>
                     <div class="section">
                         <h2>Kierownicy</h2>
-<?php
-
-                        $supervisors = $carrier->getSupervisors();
-                        usort($supervisors, fn($a, $b) => $a->getLogin() <=> $b->getLogin());
-                        $supervisorLoginsString = implode(
-                            ";",
-                            array_map(
-                                fn($supervisor) => $supervisor->getLogin(),
-                                $supervisors
-                            )
-                        );
-
-?>
                         <div class="searchContainer" data-source="<?php echo PathBuilder::action("/users/search") ?>">
                             <div class="selectionContainer">
 <?php
 
-                                foreach ($supervisors as $supervisor):
+                                foreach ($supervisorSelections as $supervisorSelection):
 
 ?>
-                                <div class="selection" data-key="<?php echo $supervisor->getLogin() ?>">
-                                    <span><?php echo $supervisor->getFormattedLoginAndUsername() ?></span>&nbsp;<a href="#">[&times;]</a>
+                                <div class="selection" data-key="<?php echo $supervisorSelection["key"] ?>">
+                                    <span><?php echo $supervisorSelection["value"] ?></span>&nbsp;<a href="#">[&times;]</a>
                                 </div>
 <?php
 
@@ -70,7 +57,7 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::search], $carrier->g
 
 ?>
                             </div>
-                            <input type="hidden" name="supervisorLogins" value="<?php echo $supervisorLoginsString ?>">
+                            <input type="hidden" name="supervisorLoginsString" value="<?php echo $supervisorLoginsString ?>">
                             <label for="supervisorSearchBox">Dodaj kierownika:</label>
                             <div class="inputWithLoader noBottomMargin">
                                 <input type="text" id="supervisorSearchBox" placeholder="ID lub nazwa...">
