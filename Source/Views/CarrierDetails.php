@@ -14,6 +14,17 @@ ViewBuilder::buildHead(Style::light, [Script::menu], $carrier->getFullName())
 ?>
     <div id="content">
         <h1><a href="<?php echo PathBuilder::action("/carriers") ?>">&#8617;</a> <?php echo $carrier->getFullName() ?></h1>
+<?php
+
+        if (isset($showMessage) && $showMessage):
+
+?>
+        <p class="message success"><?php echo $message ?></p>
+<?php
+
+        endif;
+
+?>
         <div class="sectionContainer">
             <div class="section wide">
                 <h2>Dane podstawowe</h2>

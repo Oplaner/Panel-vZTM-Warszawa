@@ -14,6 +14,17 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::search], $carrier->g
 ?>
     <div id="content">
         <h1><a href="<?php echo PathBuilder::action("/carriers") ?>">&#8617;</a> <?php echo $carrier->getFullName() ?></h1>
+<?php
+
+        if (isset($showMessage) && $showMessage):
+
+?>
+        <p class="message error"><?php echo $message ?></p>
+<?php
+
+        endif;
+
+?>
         <form action="<?php echo PathBuilder::action("/carriers/{$carrier->getID()}/edit") ?>" method="POST">
             <div class="sectionContainer">
                 <div class="section wide">

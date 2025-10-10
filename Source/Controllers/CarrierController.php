@@ -1,6 +1,12 @@
 <?php
 
 final class CarrierController extends Controller {
+    private const FULL_NAME_FIELD_NAME = "Nazwa pełna";
+    private const SHORT_NAME_FIELD_NAME = "Nazwa skrócona";
+    private const NUMBER_OF_TRIAL_TASKS_FIELD_NAME = "Liczba zadań do wykonania w trakcie okresu próbnego";
+    private const NUMBER_OF_PENALTY_TASKS_FIELD_NAME = "Liczba zadań do wykonania w trakcie okresu karnego";
+    private const SUPERVISORS_FIELD_NAME = "Kierownicy";
+
     #[Route("/carriers", RequestMethod::get)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
@@ -51,12 +57,6 @@ final class CarrierController extends Controller {
     public function addNewCarrier(array $input): void {
         global $_USER;
 
-        $fullNameFieldName = "Nazwa pełna";
-        $shortNameFieldName = "Nazwa skrócona";
-        $numberOfTrialTasksFieldName = "Liczba zadań do wykonania w trakcie okresu próbnego";
-        $numberOfPenaltyTasksFieldName = "Liczba zadań do wykonania w trakcie okresu karnego";
-        $supervisorsFieldName = "Kierownicy";
-
         $post = $input[Router::POST_DATA_KEY];
         $fullName = InputValidator::clean($post["fullName"]);
         $shortName = InputValidator::clean($post["shortName"]);
@@ -72,24 +72,24 @@ final class CarrierController extends Controller {
         $isValidationSuccessful = true;
 
         try {
-            InputValidator::checkNonEmpty($fullNameFieldName, $fullName);
-            InputValidator::checkNonEmpty($shortNameFieldName, $shortName);
-            InputValidator::checkNonEmpty($numberOfTrialTasksFieldName, $numberOfTrialTasks);
-            InputValidator::checkNonEmpty($numberOfPenaltyTasksFieldName, $numberOfPenaltyTasks);
-            InputValidator::checkLength($fullNameFieldName, $fullName, 1, 30);
-            InputValidator::checkLength($shortNameFieldName, $shortName, 1, 10);
-            InputValidator::checkInteger($numberOfTrialTasksFieldName, $numberOfTrialTasks, 0, 255);
-            InputValidator::checkInteger($numberOfPenaltyTasksFieldName, $numberOfPenaltyTasks, 0, 255);
+            InputValidator::checkNonEmpty(self::FULL_NAME_FIELD_NAME, $fullName);
+            InputValidator::checkNonEmpty(self::SHORT_NAME_FIELD_NAME, $shortName);
+            InputValidator::checkNonEmpty(self::NUMBER_OF_TRIAL_TASKS_FIELD_NAME, $numberOfTrialTasks);
+            InputValidator::checkNonEmpty(self::NUMBER_OF_PENALTY_TASKS_FIELD_NAME, $numberOfPenaltyTasks);
+            InputValidator::checkLength(self::FULL_NAME_FIELD_NAME, $fullName, 1, 30);
+            InputValidator::checkLength(self::SHORT_NAME_FIELD_NAME, $shortName, 1, 10);
+            InputValidator::checkInteger(self::NUMBER_OF_TRIAL_TASKS_FIELD_NAME, $numberOfTrialTasks, 0, 255);
+            InputValidator::checkInteger(self::NUMBER_OF_PENALTY_TASKS_FIELD_NAME, $numberOfPenaltyTasks, 0, 255);
 
             if ($supervisorLoginsString != "") {
                 $supervisorLogins = explode(";", $supervisorLoginsString);
 
                 foreach ($supervisorLogins as $supervisorLogin) {
                     try {
-                        InputValidator::checkInteger($supervisorsFieldName, $supervisorLogin, 0, 4294967295);
+                        InputValidator::checkInteger(self::SUPERVISORS_FIELD_NAME, $supervisorLogin, 0, 4294967295);
                     } catch (ValidationException) {
                         $supervisorLoginsString = "";
-                        throw new ValidationException(InputValidator::generateErrorMessage(InputValidator::MESSAGE_TEMPLATE_GENERIC, $supervisorsFieldName));
+                        throw new ValidationException(InputValidator::generateErrorMessage(InputValidator::MESSAGE_TEMPLATE_GENERIC, self::SUPERVISORS_FIELD_NAME));
                     }
                 }
 
@@ -123,22 +123,14 @@ final class CarrierController extends Controller {
     
             $carrier = Carrier::createNew($fullName, $shortName, $supervisors, $numberOfTrialTasks, $numberOfPenaltyTasks, $_USER);
             $showMessage = true;
-
-            if (is_null($carrier)) {
-                $errorID = DatabaseEntity::generateUUIDv4();
-                Logger::log(LogLevel::error, "Failed to create Carrier: $carrier.", $errorID);
-                $messageType = "error";
-                $message = "Podczas tworzenia przewoźnika pojawił się problem. Przekaż administratorowi kod błędu: \"$errorID\" i spróbuj ponownie.";
-            } else {
-                $messageType = "success";
-                $message = "<span>Przewoźnik został utworzony! Możesz podejrzeć jego szczegóły, <a href=\"".PathBuilder::action("/carriers/{$carrier->getID()}")."\">klikając tutaj</a>.</span>";
-                $fullName = "";
-                $shortName = "";
-                $numberOfTrialTasks = "";
-                $numberOfPenaltyTasks = "";
-                $supervisorSelections = [];
-                $supervisorLoginsString = "";
-            }
+            $messageType = "success";
+            $message = "<span>Przewoźnik został utworzony! Możesz podejrzeć jego szczegóły, <a href=\"".PathBuilder::action("/carriers/{$carrier->getID()}")."\">klikając tutaj</a>.</span>";
+            $fullName = "";
+            $shortName = "";
+            $numberOfTrialTasks = "";
+            $numberOfPenaltyTasks = "";
+            $supervisorSelections = [];
+            $supervisorLoginsString = "";
         }
 
         $viewParameters = [
@@ -213,6 +205,90 @@ final class CarrierController extends Controller {
             "supervisorLoginsString" => $supervisorLoginsString
         ];
         self::renderView(View::carrierEdit, $viewParameters);
+    }
+
+    #[Route("/carriers/{carrierID}/edit", RequestMethod::post)]
+    #[Access(
+        group: AccessGroup::oneOfProfiles,
+        profiles: [DirectorProfile::class]
+    )]
+    public function editCarrier(array $input): void {
+        extract($input[Router::PATH_DATA_KEY]);
+        $carrier = Carrier::withID($carrierID);
+
+        if (is_null($carrier)) {
+            Router::redirect("/carriers");
+        }
+
+        $post = $input[Router::POST_DATA_KEY];
+        $fullName = InputValidator::clean($post["fullName"]);
+        $shortName = InputValidator::clean($post["shortName"]);
+        $numberOfTrialTasks = InputValidator::clean($post["numberOfTrialTasks"]);
+        $numberOfPenaltyTasks = InputValidator::clean($post["numberOfPenaltyTasks"]);
+        $supervisorSelections = [];
+        $supervisorLoginsString = InputValidator::clean($post["supervisorLoginsString"]);
+        $supervisorLogins = [];
+
+        $message = null;
+        $isValidationSuccessful = true;
+
+        try {
+            InputValidator::checkNonEmpty(self::FULL_NAME_FIELD_NAME, $fullName);
+            InputValidator::checkNonEmpty(self::SHORT_NAME_FIELD_NAME, $shortName);
+            InputValidator::checkNonEmpty(self::NUMBER_OF_TRIAL_TASKS_FIELD_NAME, $numberOfTrialTasks);
+            InputValidator::checkNonEmpty(self::NUMBER_OF_PENALTY_TASKS_FIELD_NAME, $numberOfPenaltyTasks);
+            InputValidator::checkLength(self::FULL_NAME_FIELD_NAME, $fullName, 1, 30);
+            InputValidator::checkLength(self::SHORT_NAME_FIELD_NAME, $shortName, 1, 10);
+            InputValidator::checkInteger(self::NUMBER_OF_TRIAL_TASKS_FIELD_NAME, $numberOfTrialTasks, 0, 255);
+            InputValidator::checkInteger(self::NUMBER_OF_PENALTY_TASKS_FIELD_NAME, $numberOfPenaltyTasks, 0, 255);
+
+            if ($supervisorLoginsString != "") {
+                $supervisorLogins = explode(";", $supervisorLoginsString);
+
+                foreach ($supervisorLogins as $supervisorLogin) {
+                    try {
+                        InputValidator::checkInteger(self::SUPERVISORS_FIELD_NAME, $supervisorLogin, 0, 4294967295);
+                    } catch (ValidationException) {
+                        $supervisorLoginsString = "";
+                        throw new ValidationException(InputValidator::generateErrorMessage(InputValidator::MESSAGE_TEMPLATE_GENERIC, self::SUPERVISORS_FIELD_NAME));
+                    }
+                }
+
+                $supervisorSelections = User::getLoginAndUsernamePairsForAnyUsersWithLogins($supervisorLogins);
+                $supervisorLogins = array_map(
+                    fn($supervisorSelection) => $supervisorSelection["key"],
+                    $supervisorSelections
+                );
+                $supervisorLoginsString = implode(";", $supervisorLogins);
+            }
+        } catch (ValidationException $exception) {
+            $message = $exception->getMessage();
+            $isValidationSuccessful = false;
+        }
+
+        if ($isValidationSuccessful) {
+            // Do the processing.
+
+            $viewParameters = [
+                "carrier" => $carrier,
+                "showMessage" => true,
+                "message" => "Przewoźnik został pomyślnie zaktualizowany."
+            ];
+            self::renderView(View::carrierDetails, $viewParameters);
+        } else {
+            $viewParameters = [
+                "carrier" => $carrier,
+                "showMessage" => true,
+                "message" => $message,
+                "fullName" => $fullName,
+                "shortName" => $shortName,
+                "numberOfTrialTasks" => $numberOfTrialTasks,
+                "numberOfPenaltyTasks" => $numberOfPenaltyTasks,
+                "supervisorSelections" => $supervisorSelections,
+                "supervisorLoginsString" => $supervisorLoginsString
+            ];
+            self::renderView(View::carrierEdit, $viewParameters);
+        }
     }
 }
 
