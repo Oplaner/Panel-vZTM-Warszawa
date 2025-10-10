@@ -1,6 +1,8 @@
 <?php
 
 final class Carrier extends DatabaseEntity {
+    private const SUPERVISOR_PROFILE_DESCRIPTION = "Kierownik zakładu";
+
     private string $fullName;
     private string $shortName;
     private int $numberOfTrialTasks;
@@ -173,7 +175,7 @@ final class Carrier extends DatabaseEntity {
 
     public function addSupervisor(User $supervisor, User $personnelProfileActivator): void {
         $supervisors = $this->getSupervisors();
-        $supervisorDescription = "Kierownik zakładu {$this->fullName}";
+        $supervisorDescription = self::SUPERVISOR_PROFILE_DESCRIPTION;
         $supervisorPrivileges = $this->getSupervisorPrivileges();
 
         if (!in_array($supervisor, $supervisors)) {
