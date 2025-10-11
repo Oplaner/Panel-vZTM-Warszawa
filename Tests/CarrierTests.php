@@ -163,7 +163,7 @@ final class CarrierTests {
         $user = TestHelpers::createTestUser();
         $carrier = Carrier::createNew("Test Carrier", "Test", [$user], 0, 0, $user);
         $supervisorsBeforeChange = $carrier->getSupervisors();
-        $carrier->removeSupervisor($user);
+        $carrier->removeSupervisor($user, $user);
         $supervisorsAfterChange = $carrier->getSupervisors();
 
         TestHelpers::deleteTestCarrierData($carrier->getID());

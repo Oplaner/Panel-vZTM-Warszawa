@@ -222,8 +222,10 @@ final class Carrier extends DatabaseEntity {
         }
     }
 
-    public function removeSupervisor(User $supervisor): void {
+    public function removeSupervisor(User $supervisor, User $personnelProfileDeactivator): void {
         $supervisors = $this->getSupervisors();
+        $supervisorDescription = self::SUPERVISOR_PROFILE_DESCRIPTION;
+        $supervisorPrivileges = $this->getSupervisorPrivileges();
 
         if (in_array($supervisor, $supervisors)) {
             Logger::log(LogLevel::info, "Removing user with ID \"{$supervisor->getID()}\" from supervisors of carrier with ID \"$this->id\".");
@@ -235,6 +237,35 @@ final class Carrier extends DatabaseEntity {
                     $supervisor->getID()
                 ]
             );
+        }
+
+        $personnelProfile = array_find(
+            $supervisor->getActiveProfiles(),
+            fn($profile) => is_a($profile, PersonnelProfile::class)
+        );
+        $currentPersonnelProfileDescription = $personnelProfile->getDescription();
+        $currentPersonnelProfilePrivileges = $personnelProfile->getPrivileges();
+        $personnelProfile->deactivate($personnelProfileDeactivator);
+        $newPersonnelProfileDescription = preg_replace(
+            "/".preg_quote(self::SUPERVISOR_PROFILE_DESCRIPTION, "/")."\R?/u",
+            "",
+            $currentPersonnelProfileDescription
+        );
+        $newPersonnelProfilePrivileges = [];
+
+        foreach ($currentPersonnelProfilePrivileges as $currentPrivilege) {
+            $isAnotherPrivilege = !array_any(
+                $supervisorPrivileges,
+                fn($privilege) => $privilege->getID() == $currentPrivilege->getID()
+            );
+
+            if ($isAnotherPrivilege) {
+                $newPersonnelProfilePrivileges[] = $currentPrivilege;
+            }
+        }
+
+        if (count($newPersonnelProfilePrivileges) > 0) {
+            PersonnelProfile::createNew($supervisor, $personnelProfileDeactivator, $newPersonnelProfileDescription, $newPersonnelProfilePrivileges);
         }
     }
 

@@ -213,6 +213,8 @@ final class CarrierController extends Controller {
         profiles: [DirectorProfile::class]
     )]
     public function editCarrier(array $input): void {
+        global $_USER;
+
         extract($input[Router::PATH_DATA_KEY]);
         $carrier = Carrier::withID($carrierID);
 
@@ -267,7 +269,45 @@ final class CarrierController extends Controller {
         }
 
         if ($isValidationSuccessful) {
-            // Do the processing.
+            $currentSupervisorLogins = array_map(
+                fn($supervisor) => $supervisor->getLogin(),
+                $carrier->getSupervisors()
+            );
+            $supervisorLoginsToAdd = [];
+            $supervisorLoginsToRemove = [];
+
+            foreach ($supervisorLogins as $supervisorLogin) {
+                if (!in_array($supervisorLogin, $currentSupervisorLogins)) {
+                    $supervisorLoginsToAdd[] = $supervisorLogin;
+                }
+            }
+
+            foreach ($currentSupervisorLogins as $supervisorLogin) {
+                if (!in_array($supervisorLogin, $supervisorLogins)) {
+                    $supervisorLoginsToRemove[] = $supervisorLogin;
+                }
+            }
+
+            $carrier->setFullName($fullName);
+            $carrier->setShortName($shortName);
+            $carrier->setNumberOfTrialTasks($numberOfTrialTasks);
+            $carrier->setNumberOfPenaltyTasks($numberOfPenaltyTasks);
+
+            foreach ($supervisorLoginsToAdd as $supervisorLogin) {
+                $supervisor = User::withLogin($supervisorLogin);
+
+                if (is_null($supervisor)) {
+                    $supervisor = User::createNew($supervisorLogin);
+                    // TODO: Handle newly created User (myBB PM?).
+                }
+
+                $carrier->addSupervisor($supervisor, $_USER);
+            }
+
+            foreach ($supervisorLoginsToRemove as $supervisorLogin) {
+                $supervisor = User::withLogin($supervisorLogin);
+                $carrier->removeSupervisor($supervisor, $_USER);
+            }
 
             $viewParameters = [
                 "carrier" => $carrier,
