@@ -21,10 +21,10 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Przewoź
                 $checked = "";
                 $redirectURL = PathBuilder::action("/carriers/active");
 
-                if (isset($showingActiveOnly) && $showingActiveOnly) {
-                    $checked = " checked";
-                    $redirectURL = PathBuilder::action("/carriers");
-                }
+                if (isset($showingActiveOnly) && $showingActiveOnly):
+                $checked = " checked";
+                $redirectURL = PathBuilder::action("/carriers");
+                endif;
 
 ?>
                 <input type="checkbox" id="showActiveCarriersOnly" data-redirect="<?php echo $redirectURL ?>"<?php echo $checked ?>>

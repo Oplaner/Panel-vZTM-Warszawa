@@ -95,13 +95,13 @@ ViewBuilder::buildHead(Style::light, [Script::menu], $carrier->getFullName())
                     <ul>
 <?php
 
-                    foreach ($supervisors as $supervisor):
+                        foreach ($supervisors as $supervisor):
 
 ?>
                         <li><?php echo $supervisor->getUsername() ?></li>
 <?php
 
-                    endforeach;
+                        endforeach;
 
 ?>
                     </ul>
