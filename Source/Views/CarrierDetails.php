@@ -19,7 +19,7 @@ ViewBuilder::buildHead(Style::light, [Script::menu], $carrier->getFullName())
         if (isset($showMessage) && $showMessage):
 
 ?>
-        <p class="message success"><?php echo $message ?></p>
+        <p class="message <?php echo $messageType ?>"><?php echo $message ?></p>
 <?php
 
         endif;

@@ -312,6 +312,7 @@ final class CarrierController extends Controller {
             $viewParameters = [
                 "carrier" => $carrier,
                 "showMessage" => true,
+                "messageType" => "success",
                 "message" => "Przewoźnik został pomyślnie zaktualizowany."
             ];
             self::renderView(View::carrierDetails, $viewParameters);
@@ -329,6 +330,32 @@ final class CarrierController extends Controller {
             ];
             self::renderView(View::carrierEdit, $viewParameters);
         }
+    }
+
+    #[Route("/carriers/{carrierID}/close", RequestMethod::get)]
+    #[Access(
+        group: AccessGroup::oneOfProfiles,
+        profiles: [DirectorProfile::class]
+    )]
+    public function showCloseCarrierConfirmation(array $input): void {
+        extract($input[Router::PATH_DATA_KEY]);
+        $carrier = Carrier::withID($carrierID);
+
+        if (is_null($carrier)) {
+            Router::redirect("/carriers");
+        }
+
+        $viewParameters = [
+            "pageSubtitle" => $carrier->getFullName(),
+            "title" => $carrier->getFullName(),
+            "backAction" => "/carriers",
+            "formAction" => "/carriers/$carrierID/close",
+            "confirmationMessage" => "Czy na pewno chcesz zamknąć zakład? Tej czynności nie można cofnąć.",
+            "infoMessage" => "Wszystkie kontrakty z kierowcami muszą zostać uprzednio zakończone. Lista kierowników zakładu zostanie wyczyszczona.",
+            "cancelAction" => "/carriers/$carrierID",
+            "submitButton" => "Zamknij zakład"
+        ];
+        self::renderView(View::confirmation, $viewParameters);
     }
 }
 

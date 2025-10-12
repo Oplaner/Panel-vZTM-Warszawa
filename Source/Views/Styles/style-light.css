@@ -453,6 +453,10 @@ input[type=submit]:hover {
     padding: 1rem;
 }
 
+.section.full {
+    flex: 1;
+}
+
 .sectionContainer.wide, .section.wide {
     flex: 1.618 1 0;
 }
