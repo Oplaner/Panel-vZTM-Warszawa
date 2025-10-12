@@ -28,7 +28,7 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Zakłady
 
 ?>
                 <input type="checkbox" id="showActiveCarriersOnly" data-redirect="<?php echo $redirectURL ?>"<?php echo $checked ?>>
-                <label for="showActiveCarriersOnly">Pokaż tylko aktywnych</label>
+                <label for="showActiveCarriersOnly">Pokaż tylko aktywne</label>
             </div>
             <a href="<?php echo PathBuilder::action("/carriers/new") ?>" class="button">Utwórz nowy</a>
         </div>
