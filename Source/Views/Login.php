@@ -24,9 +24,13 @@ ViewBuilder::buildHead(Style::light, [], null)
                 endif;
 
                 if (isset($authenticationResult)):
-                    $authenticationError = $authenticationResult == AuthenticationResult::expiredPassword
-                        ? "Twoje hasło wygasło. Użyj opcji resetu hasła."
-                        : "Dane logowania są nieprawidłowe.";
+                $authenticationError = "Dane logowania są nieprawidłowe.";
+                
+                if ($authenticationResult == AuthenticationResult::accountInactive):
+                $authenticationError = "Twoje konto jest nieaktywne.";
+                elseif ($authenticationResult == AuthenticationResult::expiredPassword):
+                $authenticationError = "Twoje hasło wygasło. Użyj opcji resetu hasła.";
+                endif;
 
 ?>
                 <p class="message error"><?php echo $authenticationError ?></p>

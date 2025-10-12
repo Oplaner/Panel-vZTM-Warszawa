@@ -54,6 +54,13 @@ final class Authenticator {
 
                     self::extendSession($lastRefresh);
                     $_USER = User::withID($userID);
+
+                    if (!$_USER->isActive()) {
+                        Logger::log(LogLevel::info, "User with ID \"{$_USER->getID()}\" is inactive. Ending session.");
+                        $_USER = null;
+                        self::deleteSessionToken($token);
+                        self::endSession();
+                    }
                 }
             } else {
                 self::endSession();
@@ -91,8 +98,14 @@ final class Authenticator {
             if (password_verify($password, $passwordHash)) {
                 if (is_null($passwordValidTo)
                 || (new SystemDateTime($passwordValidTo))->isAfter(SystemDateTime::now())) {
-                    self::startUserSession($userID);
                     $_USER = User::withID($userID);
+
+                    if (!$_USER->isActive()) {
+                        Logger::log(LogLevel::info, "User with login \"$login\" is inactive. Rejecting authentication.");
+                        return AuthenticationResult::accountInactive;
+                    }
+
+                    self::startUserSession($userID);
                     Logger::log(LogLevel::info, "Successfully authenticated user: $_USER.");
                     return AuthenticationResult::success;
                 } else {
@@ -112,15 +125,7 @@ final class Authenticator {
         global $_USER;
         $_USER = null;
         $token = $_SESSION["token"];
-
-        DatabaseConnector::shared()->execute_query(
-            "DELETE FROM session_tokens
-            WHERE token = ?",
-            [
-                $token
-            ]
-        );
-
+        self::deleteSessionToken($token);
         self::endSession();
     }
 
@@ -179,6 +184,16 @@ final class Authenticator {
         }
 
         return true;
+    }
+
+    private static function deleteSessionToken(string $token): void {
+        DatabaseConnector::shared()->execute_query(
+            "DELETE FROM session_tokens
+            WHERE token = ?",
+            [
+                $token
+            ]
+        );
     }
 
     private static function deleteExpiredSessionTokens(): void {
