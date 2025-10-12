@@ -2,7 +2,7 @@
 <html lang="pl">
 <?php
 
-ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Przewoźnicy")
+ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Zakłady")
 
 ?>
 <body>
@@ -13,7 +13,7 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Przewoź
 
 ?>
     <div id="content">
-        <h1>Przewoźnicy</h1>
+        <h1>Zakłady</h1>
         <div class="toolbar">
             <div class="optionContainer">
 <?php
@@ -30,7 +30,7 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Przewoź
                 <input type="checkbox" id="showActiveCarriersOnly" data-redirect="<?php echo $redirectURL ?>"<?php echo $checked ?>>
                 <label for="showActiveCarriersOnly">Pokaż tylko aktywnych</label>
             </div>
-            <a href="<?php echo PathBuilder::action("/carriers/new") ?>" class="button">Utwórz nowego</a>
+            <a href="<?php echo PathBuilder::action("/carriers/new") ?>" class="button">Utwórz nowy</a>
         </div>
         <table>
             <tr>

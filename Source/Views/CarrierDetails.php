@@ -40,7 +40,7 @@ ViewBuilder::buildHead(Style::light, [Script::menu], $carrier->getFullName())
 
 ?>
                     <div>
-                        <p><span class="status <?php echo $statusClass ?>">przewoźnik&nbsp;<?php echo $statusText ?></span></p>
+                        <p><span class="status <?php echo $statusClass ?>">zakład&nbsp;<?php echo $statusText ?></span></p>
                     </div>
                 </div>
 <?php

@@ -124,7 +124,7 @@ final class CarrierController extends Controller {
             $carrier = Carrier::createNew($fullName, $shortName, $supervisors, $numberOfTrialTasks, $numberOfPenaltyTasks, $_USER);
             $showMessage = true;
             $messageType = "success";
-            $message = "<span>Przewoźnik został utworzony! Możesz podejrzeć jego szczegóły, <a href=\"".PathBuilder::action("/carriers/{$carrier->getID()}")."\">klikając tutaj</a>.</span>";
+            $message = "<span>Zakład został utworzony! Możesz podejrzeć jego szczegóły, <a href=\"".PathBuilder::action("/carriers/{$carrier->getID()}")."\">klikając tutaj</a>.</span>";
             $fullName = "";
             $shortName = "";
             $numberOfTrialTasks = "";
@@ -313,7 +313,7 @@ final class CarrierController extends Controller {
                 "carrier" => $carrier,
                 "showMessage" => true,
                 "messageType" => "success",
-                "message" => "Przewoźnik został pomyślnie zaktualizowany."
+                "message" => "Zakład został pomyślnie zaktualizowany."
             ];
             self::renderView(View::carrierDetails, $viewParameters);
         } else {
@@ -356,6 +356,43 @@ final class CarrierController extends Controller {
             "submitButton" => "Zamknij zakład"
         ];
         self::renderView(View::confirmation, $viewParameters);
+    }
+
+    #[Route("/carriers/{carrierID}/close", RequestMethod::post)]
+    #[Access(
+        group: AccessGroup::oneOfProfiles,
+        profiles: [DirectorProfile::class]
+    )]
+    public function closeCarrier(array $input): void {
+        global $_USER;
+
+        extract($input[Router::PATH_DATA_KEY]);
+        $carrier = Carrier::withID($carrierID);
+        $post = $input[Router::POST_DATA_KEY];
+
+        if (is_null($carrier) || !isset($post["confirmed"])) {
+            Router::redirect("/carriers");
+        }
+
+        $messageType = null;
+        $message = null;
+
+        try {
+            $carrier->close($_USER);
+            $messageType = "success";
+            $message = "Zakład został zamknięty.";
+        } catch (DomainException) {
+            $messageType = "error";
+            $message = "Warunki konieczne do zamknięcia zakładu nie zostały spełnione. Wszystkie kontrakty z kierowcami muszą zostać uprzednio zakończone.";
+        }
+
+        $viewParameters = [
+            "carrier" => $carrier,
+            "showMessage" => true,
+            "messageType" => $messageType,
+            "message" => $message
+        ];
+        self::renderView(View::carrierDetails, $viewParameters);
     }
 }
 

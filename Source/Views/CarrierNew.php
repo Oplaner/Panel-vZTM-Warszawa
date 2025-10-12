@@ -2,7 +2,7 @@
 <html lang="pl">
 <?php
 
-ViewBuilder::buildHead(Style::light, [Script::menu, Script::search], "Nowy przewoźnik")
+ViewBuilder::buildHead(Style::light, [Script::menu, Script::search], "Nowy zakład")
 
 ?>
 <body>
@@ -13,7 +13,7 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::search], "Nowy przew
 
 ?>
     <div id="content">
-        <h1><a href="<?php echo PathBuilder::action("/carriers") ?>">&#8617;</a> Nowy przewoźnik</h1>
+        <h1><a href="<?php echo PathBuilder::action("/carriers") ?>">&#8617;</a> Nowy zakład</h1>
 <?php
 
         if (isset($showMessage) && $showMessage):
@@ -33,7 +33,7 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::search], "Nowy przew
                     <input type="text" id="fullName" name="fullName" value="<?php echo $fullName ?>">
                     <label for="shortName" class="required">Nazwa skrócona:</label>
                     <input type="text" id="shortName" name="shortName" value="<?php echo $shortName ?>">
-                    <p class="message info">Informacje dotyczące utworzenia przewoźnika (data i czas, twórca) są zapisywane automatycznie.</p>
+                    <p class="message info">Informacje dotyczące utworzenia zakładu (data i czas, twórca) są zapisywane automatycznie.</p>
                 </div>
                 <div class="sectionContainer column narrow">
                     <div class="section">
