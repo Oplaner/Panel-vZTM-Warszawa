@@ -5,8 +5,6 @@ final class PrivilegeTests {
         $scope = PrivilegeScope::canViewAllTimetables;
         $privilege = Privilege::createNew($scope);
 
-        TestHelpers::deleteTestPrivilege($privilege->getID());
-
         if (!is_a($privilege, Privilege::class)) {
             return "Expected a ".Privilege::class." object. Found: ".gettype($privilege).".";
         } elseif ($privilege->getScope() != $scope) {
@@ -22,8 +20,6 @@ final class PrivilegeTests {
         $scope = PrivilegeScope::canViewTimetableOfDepot;
         $associatedEntityID = DatabaseEntity::generateUUIDv4();
         $privilege = Privilege::createNew($scope, $associatedEntityID);
-
-        TestHelpers::deleteTestPrivilege($privilege->getID());
 
         if (!is_a($privilege, Privilege::class)) {
             return "Expected a ".Privilege::class." object. Found: ".gettype($privilege).".";
@@ -43,8 +39,6 @@ final class PrivilegeTests {
         DatabaseEntity::removeFromCache($privilege);
         $privilege = Privilege::withID($privilege->getID());
 
-        TestHelpers::deleteTestPrivilege($privilege->getID());
-
         if (!is_a($privilege, Privilege::class)) {
             return "Expected a ".Privilege::class." object. Found: ".gettype($privilege).".";
         } elseif ($privilege->getScope() != $scope) {
@@ -62,8 +56,6 @@ final class PrivilegeTests {
         $privilegeID = $privilege->getID();
         $privilege = Privilege::withScopeAndAssociatedEntityID($scope, null);
 
-        TestHelpers::deleteTestPrivilege($privilege->getID());
-
         if (!is_a($privilege, Privilege::class)) {
             return "Expected a ".Privilege::class." object. Found: ".gettype($privilege).".";
         } elseif ($privilege->getID() != $privilegeID) {
@@ -79,8 +71,6 @@ final class PrivilegeTests {
         $privilege = Privilege::createNew($scope, $associatedEntityID);
         $privilegeID = $privilege->getID();
         $privilege = Privilege::withScopeAndAssociatedEntityID($scope, $associatedEntityID);
-
-        TestHelpers::deleteTestPrivilege($privilege->getID());
 
         if (!is_a($privilege, Privilege::class)) {
             return "Expected a ".Privilege::class." object. Found: ".gettype($privilege).".";

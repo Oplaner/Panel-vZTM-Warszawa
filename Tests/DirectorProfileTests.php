@@ -12,9 +12,6 @@ final class DirectorProfileTests {
             $didThrowException = true;
         }
 
-        TestHelpers::deleteTestDirectorProfileData($profile->getID());
-        TestHelpers::deleteTestUser($user->getID());
-
         if ($didThrowException) {
             return true;
         } else {
@@ -25,9 +22,6 @@ final class DirectorProfileTests {
     public static function createNewDirectorProfileAndCheckItIsNotProtected(): bool|string {
         $user = TestHelpers::createTestUser();
         $profile = DirectorProfile::createNew($user, $user);
-
-        TestHelpers::deleteTestDirectorProfileData($profile->getID());
-        TestHelpers::deleteTestUser($user->getID());
 
         if (!is_a($profile, DirectorProfile::class)) {
             return "Expected a ".DirectorProfile::class." object. Found: ".gettype($profile).".";
@@ -54,9 +48,6 @@ final class DirectorProfileTests {
         DatabaseEntity::removeFromCache($profile);
         $profile = DirectorProfile::withID($profile->getID());
 
-        TestHelpers::deleteTestDirectorProfileData($profile->getID());
-        TestHelpers::deleteTestUser($user->getID());
-
         if (!is_a($profile, DirectorProfile::class)) {
             return "Expected a ".DirectorProfile::class." object. Found: ".gettype($profile).".";
         } elseif (is_null($profile->getActivatedAt())) {
@@ -74,9 +65,6 @@ final class DirectorProfileTests {
         $user = TestHelpers::createTestUser();
         $profile = DirectorProfile::createNew($user, $user);
         $profile->deactivate($user);
-
-        TestHelpers::deleteTestDirectorProfileData($profile->getID());
-        TestHelpers::deleteTestUser($user->getID());
 
         if (is_null($profile->getDeactivatedAt())) {
             return "Deactivated director profile deactivatedAt value should not be null.";
@@ -98,9 +86,6 @@ final class DirectorProfileTests {
         DatabaseEntity::removeFromCache($profile);
         $profile = DirectorProfile::withID($profile->getID());
         $profile->deactivate($user);
-
-        TestHelpers::deleteTestDirectorProfileData($profile->getID());
-        TestHelpers::deleteTestUser($user->getID());
 
         if (!is_null($profile->getDeactivatedAt())) {
             return "The director profile deactivatedAt value should be null.";

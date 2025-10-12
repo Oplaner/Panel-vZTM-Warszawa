@@ -12,9 +12,6 @@ final class DriverProfileTests {
             $didThrowException = true;
         }
 
-        TestHelpers::deleteTestDriverProfile($profile->getID());
-        TestHelpers::deleteTestUser($user->getID());
-
         if ($didThrowException) {
             return true;
         } else {
@@ -25,9 +22,6 @@ final class DriverProfileTests {
     public static function createNewDriverProfileFirstForUser(): bool|string {
         $user = TestHelpers::createTestUser();
         $profile = DriverProfile::createNew($user, $user);
-
-        TestHelpers::deleteTestDriverProfile($profile->getID());
-        TestHelpers::deleteTestUser($user->getID());
 
         if (!is_a($profile, DriverProfile::class)) {
             return "Expected a ".DriverProfile::class." object. Found: ".gettype($profile).".";
@@ -55,10 +49,6 @@ final class DriverProfileTests {
         $profile1 = DriverProfile::createNew($user, $user);
         $profile1->deactivate($user);
         $profile2 = DriverProfile::createNew($user, $user);
-
-        TestHelpers::deleteTestDriverProfile($profile1->getID());
-        TestHelpers::deleteTestDriverProfile($profile2->getID());
-        TestHelpers::deleteTestUser($user->getID());
 
         if (!is_a($profile1, DriverProfile::class)) {
             return "Expected a ".DriverProfile::class." object. Found: ".gettype($profile1).".";
@@ -90,10 +80,6 @@ final class DriverProfileTests {
         $profile1->deactivate($user);
         $profile2 = DriverProfile::createNew($user, $user);
 
-        TestHelpers::deleteTestDriverProfile($profile1->getID());
-        TestHelpers::deleteTestDriverProfile($profile2->getID());
-        TestHelpers::deleteTestUser($user->getID());
-
         if (!is_a($profile1, DriverProfile::class)) {
             return "Expected a ".DriverProfile::class." object. Found: ".gettype($profile1).".";
         } elseif (is_null($profile2)) {
@@ -123,9 +109,6 @@ final class DriverProfileTests {
         DatabaseEntity::removeFromCache($profile);
         $profile = DriverProfile::withID($profile->getID());
 
-        TestHelpers::deleteTestDriverProfile($profile->getID());
-        TestHelpers::deleteTestUser($user->getID());
-
         if (!is_a($profile, DriverProfile::class)) {
             return "Expected a ".DriverProfile::class." object. Found: ".gettype($profile).".";
         } elseif ($profile->getInitialPenaltyMultiplier() != 0) {
@@ -147,9 +130,6 @@ final class DriverProfileTests {
         $profile->incrementPenaltyMultiplier();
         $valueAfterChange = $profile->getAcquiredPenaltyMultiplier();
 
-        TestHelpers::deleteTestDriverProfile($profile->getID());
-        TestHelpers::deleteTestUser($user->getID());
-
         if ($valueAfterChange != $valueBeforeChange) {
             return "Deactivated driver profile acquiredPenaltyMultiplier value should not change.";
         }
@@ -165,9 +145,6 @@ final class DriverProfileTests {
         $valueAfterChange = $profile->getAcquiredPenaltyMultiplier();
         $expectedValue = $profile->getInitialPenaltyMultiplier() + 1;
 
-        TestHelpers::deleteTestDriverProfile($profile->getID());
-        TestHelpers::deleteTestUser($user->getID());
-
         if ($valueAfterChange == $valueBeforeChange) {
             return "Active driver profile acquiredPenaltyMultiplier value should change.";
         } elseif ($valueAfterChange != $expectedValue) {
@@ -181,9 +158,6 @@ final class DriverProfileTests {
         $user = TestHelpers::createTestUser();
         $profile = DriverProfile::createNew($user, $user);
         $profile->deactivate($user);
-
-        TestHelpers::deleteTestDriverProfile($profile->getID());
-        TestHelpers::deleteTestUser($user->getID());
 
         if (is_null($profile->getDeactivatedAt())) {
             return "Deactivated driver profile deactivatedAt value should not be null.";

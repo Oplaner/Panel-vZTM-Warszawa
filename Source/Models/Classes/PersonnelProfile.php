@@ -2,12 +2,10 @@
 
 final class PersonnelProfile extends Profile {
     private string $description;
-    private array $privileges;
 
-    private function __construct(?string $id, string $userID, SystemDateTime $activatedAt, User $activatedBy, ?SystemDateTime $deactivatedAt, ?User $deactivatedBy, string $description, array $privileges) {
+    private function __construct(?string $id, string $userID, SystemDateTime $activatedAt, User $activatedBy, ?SystemDateTime $deactivatedAt, ?User $deactivatedBy, string $description) {
         parent::__construct($id, $userID, $activatedAt, $activatedBy, $deactivatedAt, $deactivatedBy);
         $this->description = $description;
-        $this->privileges = $privileges;
         $this->save();
     }
 
@@ -15,7 +13,9 @@ final class PersonnelProfile extends Profile {
         Logger::log(LogLevel::info, "User with ID \"{$activator->getID()}\" is creating new personnel profile with ".count($privileges)." privilege(s) for user with ID \"{$owner->getID()}\".");
         self::validatePrivilegesArrayIsNotEmpty($privileges);
         self::validateUserDoesNotHaveProfileOfType($owner);
-        return new PersonnelProfile(null, $owner->getID(), SystemDateTime::now(), $activator, null, null, $description, $privileges);
+        $personnelProfile = new PersonnelProfile(null, $owner->getID(), SystemDateTime::now(), $activator, null, null, $description);
+        $personnelProfile->setPrivileges($privileges);
+        return $personnelProfile;
     }
 
     public static function withID(string $id): ?PersonnelProfile {
@@ -26,12 +26,10 @@ final class PersonnelProfile extends Profile {
         }
 
         $result = DatabaseConnector::shared()->execute_query(
-            "SELECT p.user_id, p.activated_at, p.activated_by_user_id, p.deactivated_at, p.deactivated_by_user_id, pp.description, ppp.privilege_id
+            "SELECT p.user_id, p.activated_at, p.activated_by_user_id, p.deactivated_at, p.deactivated_by_user_id, pp.description
             FROM profiles AS p
             INNER JOIN profiles_personnel AS pp
             ON p.id = pp.profile_id
-            INNER JOIN personnel_profile_privileges AS ppp
-            ON pp.profile_id = ppp.personnel_profile_id
             WHERE p.id = ? AND p.type = ?",
             [
                 $id,
@@ -45,29 +43,15 @@ final class PersonnelProfile extends Profile {
             return null;
         }
 
-        $userID = null;
-        $activatedAt = null;
-        $activatedBy = null;
-        $deactivatedAt = null;
-        $deactivatedBy = null;
-        $description = null;
-        $privileges = [];
-
-        while ($data = $result->fetch_assoc()) {
-            if (is_null($userID)) {
-                $userID = $data["user_id"];
-                $activatedAt = new SystemDateTime($data["activated_at"]);
-                $activatedBy = User::withID($data["activated_by_user_id"]);
-                $deactivatedAt = is_null($data["deactivated_at"]) ? null : new SystemDateTime($data["deactivated_at"]);
-                $deactivatedBy = is_null($data["deactivated_by_user_id"]) ? null : User::withID($data["deactivated_by_user_id"]);
-                $description = $data["description"];
-            }
-
-            $privileges[] = Privilege::withID($data["privilege_id"]);
-        }
-        
+        $data = $result->fetch_assoc();
         $result->free();
-        return new PersonnelProfile($id, $userID, $activatedAt, $activatedBy, $deactivatedAt, $deactivatedBy, $description, $privileges);
+        $userID = $data["user_id"];
+        $activatedAt = new SystemDateTime($data["activated_at"]);
+        $activatedBy = User::withID($data["activated_by_user_id"]);
+        $deactivatedAt = is_null($data["deactivated_at"]) ? null : new SystemDateTime($data["deactivated_at"]);
+        $deactivatedBy = is_null($data["deactivated_by_user_id"]) ? null : User::withID($data["deactivated_by_user_id"]);
+        $description = $data["description"];
+        return new PersonnelProfile($id, $userID, $activatedAt, $activatedBy, $deactivatedAt, $deactivatedBy, $description);
     }
 
     private static function validatePrivilegesArrayIsNotEmpty($privileges): void {
@@ -81,7 +65,7 @@ final class PersonnelProfile extends Profile {
     }
 
     public function getPrivileges(): array {
-        return $this->privileges;
+        return Privilege::getAllByPersonnelProfile($this);
     }
 
     public function __toString() {
@@ -94,27 +78,13 @@ final class PersonnelProfile extends Profile {
             is_null($this->deactivatedAt) ? "null" : $this->deactivatedAt->toDatabaseString(),
             is_null($this->deactivatedBy) ? "null" : "\"{$this->deactivatedBy->getID()}\"",
             $this->description,
-            count($this->privileges)
+            count($this->getPrivileges())
         );
     }
 
     protected function save(): void {
-        $db = DatabaseConnector::shared();
-
         if ($this->isNew) {
-            foreach ($this->privileges as $privilege) {
-                $db->execute_query(
-                    "INSERT INTO personnel_profile_privileges
-                    (personnel_profile_id, privilege_id)
-                    VALUES (?, ?)",
-                    [
-                        $this->id,
-                        $privilege->getID()
-                    ]
-                );
-            }
-
-            $db->execute_query(
+            DatabaseConnector::shared()->execute_query(
                 "INSERT INTO profiles_personnel
                 (profile_id, description)
                 VALUES (?, ?)",
@@ -128,6 +98,20 @@ final class PersonnelProfile extends Profile {
         } elseif ($this->wasModified) {
             $this->saveExistingProfileToDatabase();
             $this->wasModified = false;
+        }
+    }
+
+    private function setPrivileges(array $privileges): void {
+        foreach ($privileges as $privilege) {
+            DatabaseConnector::shared()->execute_query(
+                "INSERT INTO personnel_profile_privileges
+                (personnel_profile_id, privilege_id)
+                VALUES (?, ?)",
+                [
+                    $this->id,
+                    $privilege->getID()
+                ]
+            );
         }
     }
 }

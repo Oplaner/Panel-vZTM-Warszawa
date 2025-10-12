@@ -4,8 +4,6 @@ final class CarrierTests {
     public static function throwExceptionWhenCreatingCarrierWithNegativeNumberOfTrialTasks(): bool|string {
         $user = TestHelpers::createTestUser();
 
-        TestHelpers::deleteTestUser($user->getID());
-
         try {
             Carrier::createNew("Test Carrier", "Test", [], -1, 0, $user);
         } catch (InvalidArgumentException) {
@@ -17,8 +15,6 @@ final class CarrierTests {
 
     public static function throwExceptionWhenCreatingCarrierWithNegativeNumberOfPenaltyTasks(): bool|string {
         $user = TestHelpers::createTestUser();
-
-        TestHelpers::deleteTestUser($user->getID());
 
         try {
             Carrier::createNew("Test Carrier", "Test", [], 0, -1, $user);
@@ -37,9 +33,6 @@ final class CarrierTests {
         $numberOfPenaltyTasks = 5;
         $carrier = Carrier::createNew($fullName, $shortName, [], $numberOfTrialTasks, $numberOfPenaltyTasks, $user);
         $supervisors = $carrier->getSupervisors();
-
-        TestHelpers::deleteTestCarrierData($carrier->getID());
-        TestHelpers::deleteTestUser($user->getID());
 
         if (!is_a($carrier, Carrier::class)) {
             return "Expected a ".Carrier::class." object. Found: ".gettype($carrier).".";
@@ -74,9 +67,6 @@ final class CarrierTests {
         $numberOfPenaltyTasks = 5;
         $carrier = Carrier::createNew($fullName, $shortName, [$user], $numberOfTrialTasks, $numberOfPenaltyTasks, $user);
         $supervisors = $carrier->getSupervisors();
-
-        TestHelpers::deleteTestCarrierData($carrier->getID());
-        TestHelpers::deleteTestUser($user->getID());
 
         if (!is_a($carrier, Carrier::class)) {
             return "Expected a ".Carrier::class." object. Found: ".gettype($carrier).".";
@@ -116,9 +106,6 @@ final class CarrierTests {
         $carrier = Carrier::withID($carrier->getID());
         $supervisors = $carrier->getSupervisors();
 
-        TestHelpers::deleteTestCarrierData($carrier->getID());
-        TestHelpers::deleteTestUser($user->getID());
-
         if (!is_a($carrier, Carrier::class)) {
             return "Expected a ".Carrier::class." object. Found: ".gettype($carrier).".";
         } elseif ($carrier->getFullName() != $fullName) {
@@ -145,15 +132,31 @@ final class CarrierTests {
         $carrier->addSupervisor($user, $user);
         $supervisorsAfterChange = $carrier->getSupervisors();
 
-        TestHelpers::deleteTestCarrierData($carrier->getID());
-        TestHelpers::deleteTestUser($user->getID());
-
         if (count($supervisorsBeforeChange) != 0) {
             return "The number of carrier supervisors before the change is incorrect. Expected: 0, found: ".count($supervisorsBeforeChange).".";
         } elseif (count($supervisorsAfterChange) != 1) {
             return "The number of carrier supervisors after the change is incorrect. Expected: 1, found: ".count($supervisorsAfterChange).".";
         } elseif ($supervisorsAfterChange[0]->getID() != $user->getID()) {
             return "The carrier supervisor user ID is incorrect. Expected: \"{$user->getID()}\", found: \"{$supervisorsAfterChange[0]->getID()}\".";
+        }
+
+        return true;
+    }
+
+    public static function extendPersonnelPrivilegesWhenAddingSupervisor(): bool|string {
+        $user = TestHelpers::createTestUser();
+        $personnelProfile1 = TestHelpers::createTestPersonnelProfile($user);
+        $carrier = Carrier::createNew("Test Carrier", "Test", [], 0, 0, $user);
+        $carrier->addSupervisor($user, $user);
+        $personnelProfile2 = array_find(
+            $user->getActiveProfiles(),
+            fn($profile) => is_a($profile, PersonnelProfile::class)
+        );
+        $numberOfPrivilegesBefore = count($personnelProfile1->getPrivileges());
+        $numberOfPrivilegesAfter = count($personnelProfile2->getPrivileges());
+
+        if ($numberOfPrivilegesAfter <= $numberOfPrivilegesBefore) {
+            return "The number of privileges after adding supervisor ($numberOfPrivilegesAfter) is not greater than the number of privileges before ($numberOfPrivilegesBefore).";
         }
 
         return true;
@@ -166,9 +169,6 @@ final class CarrierTests {
         $carrier->removeSupervisor($user, $user);
         $supervisorsAfterChange = $carrier->getSupervisors();
 
-        TestHelpers::deleteTestCarrierData($carrier->getID());
-        TestHelpers::deleteTestUser($user->getID());
-
         if (count($supervisorsBeforeChange) != 1) {
             return "The number of carrier supervisors before the change is incorrect. Expected: 1, found: ".count($supervisorsBeforeChange).".";
         } elseif ($supervisorsBeforeChange[0]->getID() != $user->getID()) {
@@ -180,12 +180,33 @@ final class CarrierTests {
         return true;
     }
 
+    public static function reducePersonnelPrivilegesWhenRemovingSupervisor(): bool|string {
+        $user = TestHelpers::createTestUser();
+        TestHelpers::createTestPersonnelProfile($user);
+        $carrier = Carrier::createNew("Test Carrier", "Test", [], 0, 0, $user);
+        $carrier->addSupervisor($user, $user);
+        $personnelProfile1 = array_find(
+            $user->getActiveProfiles(),
+            fn($profile) => is_a($profile, PersonnelProfile::class)
+        );
+        $carrier->removeSupervisor($user, $user);
+        $personnelProfile2 = array_find(
+            $user->getActiveProfiles(),
+            fn($profile) => is_a($profile, PersonnelProfile::class)
+        );
+        $numberOfPrivilegesBefore = count($personnelProfile1->getPrivileges());
+        $numberOfPrivilegesAfter = count($personnelProfile2->getPrivileges());
+
+        if ($numberOfPrivilegesAfter >= $numberOfPrivilegesBefore) {
+            return "The number of privileges after removing supervisor ($numberOfPrivilegesAfter) is not less than the number of privileges before ($numberOfPrivilegesBefore).";
+        }
+
+        return true;
+    }
+
     public static function throwExceptionWhenSettingNegativeNumberOfTrialTasks(): bool|string {
         $user = TestHelpers::createTestUser();
         $carrier = Carrier::createNew("Test Carrier", "Test", [], 0, 0, $user);
-
-        TestHelpers::deleteTestCarrierData($carrier->getID());
-        TestHelpers::deleteTestUser($user->getID());
 
         try {
             $carrier->setNumberOfTrialTasks(-1);
@@ -200,9 +221,6 @@ final class CarrierTests {
         $user = TestHelpers::createTestUser();
         $carrier = Carrier::createNew("Test Carrier", "Test", [], 0, 0, $user);
 
-        TestHelpers::deleteTestCarrierData($carrier->getID());
-        TestHelpers::deleteTestUser($user->getID());
-
         try {
             $carrier->setNumberOfPenaltyTasks(-1);
         } catch (InvalidArgumentException) {
@@ -216,9 +234,6 @@ final class CarrierTests {
         $user = TestHelpers::createTestUser();
         $carrier = Carrier::createNew("Test Carrier", "Test", [], 0, 0, $user);
         $carrier->close($user);
-
-        TestHelpers::deleteTestCarrierData($carrier->getID());
-        TestHelpers::deleteTestUser($user->getID());
 
         if (is_null($carrier->getClosedAt())) {
             return "The carrier closedAt value should not be null.";

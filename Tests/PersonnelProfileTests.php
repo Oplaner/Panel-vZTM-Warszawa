@@ -11,8 +11,6 @@ final class PersonnelProfileTests {
             $didThrowException = true;
         }
 
-        TestHelpers::deleteTestUser($user->getID());
-
         if ($didThrowException) {
             return true;
         } else {
@@ -33,10 +31,6 @@ final class PersonnelProfileTests {
             $didThrowException = true;
         }
 
-        TestHelpers::deleteTestPersonnelProfileData($profile->getID());
-        TestHelpers::deleteTestPrivilege($privilege->getID());
-        TestHelpers::deleteTestUser($user->getID());
-
         if ($didThrowException) {
             return true;
         } else {
@@ -52,11 +46,6 @@ final class PersonnelProfileTests {
             TestHelpers::createTestPrivilegeWithAssociatedEntity()
         ];
         $profile = PersonnelProfile::createNew($user, $user, $description, $privileges);
-
-        TestHelpers::deleteTestPersonnelProfileData($profile->getID());
-        TestHelpers::deleteTestPrivilege($privileges[0]->getID());
-        TestHelpers::deleteTestPrivilege($privileges[1]->getID());
-        TestHelpers::deleteTestUser($user->getID());
 
         if (!is_a($profile, PersonnelProfile::class)) {
             return "Expected a ".PersonnelProfile::class." object. Found: ".gettype($profile).".";
@@ -83,10 +72,6 @@ final class PersonnelProfileTests {
         DatabaseEntity::removeFromCache($profile);
         $profile = PersonnelProfile::withID($profile->getID());
 
-        TestHelpers::deleteTestPersonnelProfileData($profile->getID());
-        TestHelpers::deleteTestPrivilege($privilege->getID());
-        TestHelpers::deleteTestUser($user->getID());
-
         if (!is_a($profile, PersonnelProfile::class)) {
             return "Expected a ".PersonnelProfile::class." object. Found: ".gettype($profile).".";
         } elseif ($profile->getDescription() != $description) {
@@ -108,10 +93,6 @@ final class PersonnelProfileTests {
         $privilege = TestHelpers::createTestPrivilege();
         $profile = PersonnelProfile::createNew($user, $user, $description, [$privilege]);
         $profile->deactivate($user);
-
-        TestHelpers::deleteTestPersonnelProfileData($profile->getID());
-        TestHelpers::deleteTestPrivilege($privilege->getID());
-        TestHelpers::deleteTestUser($user->getID());
 
         if (is_null($profile->getDeactivatedAt())) {
             return "Deactivated personnel profile deactivatedAt value should not be null.";

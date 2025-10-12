@@ -73,6 +73,7 @@ Autoloader::scanSourceAndTestsDirectory();
     <h1>Panel vZTM Warszawa Tests</h1>
 <?php
 
+TestHelpers::cleanDatabase();
 $testClasses = array_map(
     fn($file) => preg_replace("/^(\S+)\.php$/", "$1", $file),
     array_filter(
@@ -92,7 +93,15 @@ foreach ($testClasses as $class):
 <?php
 
     foreach (get_class_methods($class) as $method):
-        $result = $class::$method();
+        $result = null;
+
+        try {
+            $result = $class::$method();
+        } catch (Exception $exception) {
+            $result = $exception->getMessage();
+        } finally {
+            TestHelpers::cleanDatabase();
+        }
 
         if ($result === true):
 

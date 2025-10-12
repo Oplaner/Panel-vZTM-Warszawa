@@ -4,8 +4,6 @@ final class UserTests {
     public static function createNewExistingUser(): bool|string {
         $user = User::createNew(TestHelpers::EXISTING_TEST_USER_LOGIN);
 
-        TestHelpers::deleteTestUser($user->getID());
-
         if (!is_a($user, User::class)) {
             return "Expected a ".User::class." object. Found: ".gettype($user).".";
         } elseif ($user->getLogin() != TestHelpers::EXISTING_TEST_USER_LOGIN) {
@@ -36,8 +34,6 @@ final class UserTests {
         DatabaseEntity::removeFromCache($user);
         $user = User::withID($user->getID());
 
-        TestHelpers::deleteTestUser($user->getID());
-
         if (!is_a($user, User::class)) {
             return "Expected a ".User::class." object. Found: ".gettype($user).".";
         } elseif ($user->getLogin() != TestHelpers::EXISTING_TEST_USER_LOGIN) {
@@ -52,8 +48,6 @@ final class UserTests {
     public static function getExistingUserByLogin(): bool|string {
         $user = User::createNew(TestHelpers::EXISTING_TEST_USER_LOGIN);
         $user = User::withLogin($user->getLogin());
-
-        TestHelpers::deleteTestUser($user->getID());
 
         if (!is_a($user, User::class)) {
             return "Expected a ".User::class." object. Found: ".gettype($user).".";
@@ -82,8 +76,6 @@ final class UserTests {
         $username2 = $user->getUsername();
         self::updateUsername($user->getLogin(), $username1);
 
-        TestHelpers::deleteTestUser($user->getID());
-
         if ($username1 == $username2) {
             return "Expected the username versions to be different after update. Before: \"$username1\", after: \"$username2\".";
         }
@@ -94,11 +86,8 @@ final class UserTests {
     public static function checkUserBecomesActiveWhenTheyGetActiveProfile(): bool|string {
         $user = User::createNew(TestHelpers::EXISTING_TEST_USER_LOGIN);
         $valueBeforeChange = $user->isActive();
-        $profile = TestHelpers::createTestDirectorProfile($user);
+        TestHelpers::createTestDirectorProfile($user);
         $valueAfterChange = $user->isActive();
-
-        TestHelpers::deleteTestDirectorProfileData($profile->getID());
-        TestHelpers::deleteTestUser($user->getID());
 
         if ($valueBeforeChange == true) {
             return "User should be inactive before getting active profile.";
@@ -111,16 +100,11 @@ final class UserTests {
 
     public static function checkUserRemainsActiveWhenTheyLoseOneOfTwoActiveProfiles(): bool|string {
         $user = User::createNew(TestHelpers::EXISTING_TEST_USER_LOGIN);
-        $profile1 = TestHelpers::createTestPersonnelProfile($user);
-        $profile2 = TestHelpers::createTestDirectorProfile($user);
+        $personnelProfile = TestHelpers::createTestPersonnelProfile($user);
+        TestHelpers::createTestDirectorProfile($user);
         $valueBeforeChange = $user->isActive();
-        $profile1->deactivate($user);
+        $personnelProfile->deactivate($user);
         $valueAfterChange = $user->isActive();
-
-        TestHelpers::deleteTestPrivilege($profile1->getPrivileges()[0]->getID());
-        TestHelpers::deleteTestPersonnelProfileData($profile1->getID());
-        TestHelpers::deleteTestDirectorProfileData($profile2->getID());
-        TestHelpers::deleteTestUser($user->getID());
 
         if ($valueBeforeChange == false) {
             return "User should be active before losing one active profile.";
@@ -137,9 +121,6 @@ final class UserTests {
         $valueBeforeChange = $user->isActive();
         $profile->deactivate($user);
         $valueAfterChange = $user->isActive();
-
-        TestHelpers::deleteTestDirectorProfileData($profile->getID());
-        TestHelpers::deleteTestUser($user->getID());
 
         if ($valueBeforeChange == false) {
             return "User should be active before losing last active profile.";

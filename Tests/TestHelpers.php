@@ -37,132 +37,28 @@ final class TestHelpers {
         return $profile;
     }
 
-    public static function deleteTestUser(string $userID): void {
-        DatabaseConnector::shared()->execute_query(
-            "DELETE FROM users
-            WHERE id = ?",
-            [
-                $userID
-            ]
+    public static function cleanDatabase(): void {
+        $tables = [
+            "carriers",
+            "carrier_supervisors",
+            "contracts",
+            "contract_periods",
+            "personnel_profile_privileges",
+            "privileges",
+            "profiles",
+            "profiles_director",
+            "profiles_driver",
+            "profiles_personnel",
+            "session_tokens",
+            "users"
+        ];
+        $queries = array_map(
+            fn($table) => "TRUNCATE TABLE $table",
+            $tables
         );
-    }
-
-    public static function deleteTestCarrierData(string $carrierID): void {
-        $db = DatabaseConnector::shared();
-        $db->execute_query(
-            "DELETE FROM carrier_supervisors
-            WHERE carrier_id = ?",
-            [
-                $carrierID
-            ]
-        );
-        $db->execute_query(
-            "DELETE FROM carriers
-            WHERE id = ?",
-            [
-                $carrierID
-            ]
-        );
-    }
-
-    public static function deleteTestPrivilege(string $privilegeID): void {
-        DatabaseConnector::shared()->execute_query(
-            "DELETE FROM privileges
-            WHERE id = ?",
-            [
-                $privilegeID
-            ]
-        );
-    }
-
-    public static function deleteTestPersonnelProfileData(string $profileID): void {
-        $db = DatabaseConnector::shared();
-        $db->execute_query(
-            "DELETE FROM personnel_profile_privileges
-            WHERE personnel_profile_id = ?",
-            [
-                $profileID
-            ]
-        );
-        $db->execute_query(
-            "DELETE FROM profiles_personnel
-            WHERE profile_id = ?",
-            [
-                $profileID
-            ]
-        );
-        $db->execute_query(
-            "DELETE FROM profiles
-            WHERE id = ?",
-            [
-                $profileID
-            ]
-        );
-    }
-
-    public static function deleteTestDirectorProfileData(string $profileID): void {
-        $db = DatabaseConnector::shared();
-        $db->execute_query(
-            "DELETE FROM profiles_director
-            WHERE profile_id = ?",
-            [
-                $profileID
-            ]
-        );
-        $db->execute_query(
-            "DELETE FROM profiles
-            WHERE id = ?",
-            [
-                $profileID
-            ]
-        );
-    }
-
-    public static function deleteTestDriverProfile(string $profileID): void {
-        $db = DatabaseConnector::shared();
-        $db->execute_query(
-            "DELETE FROM profiles_driver
-            WHERE profile_id = ?",
-            [
-                $profileID
-            ]
-        );
-        $db->execute_query(
-            "DELETE FROM profiles
-            WHERE id = ?",
-            [
-                $profileID
-            ]
-        );
-    }
-
-    public static function deleteAllTestDriverProfiles(): void {
-        $db = DatabaseConnector::shared();
-        $db->execute_query("TRUNCATE TABLE profiles_driver");
-        $db->execute_query(
-            "DELETE FROM profiles
-            WHERE type = ?",
-            [
-                "DRIVER"
-            ]
-        );
-    }
-
-    public static function deleteTestContractData(string $contractID): void {
-        $db = DatabaseConnector::shared();
-        $db->execute_query(
-            "DELETE FROM contract_periods
-            WHERE contract_id = ?",
-            [
-                $contractID
-            ]
-        );
-        $db->execute_query(
-            "DELETE FROM contracts
-            WHERE id = ?",
-            [
-                $contractID
-            ]
+        array_walk(
+            $queries,
+            fn($query) => DatabaseConnector::shared()->query($query)
         );
     }
 }

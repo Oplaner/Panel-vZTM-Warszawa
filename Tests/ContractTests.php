@@ -13,11 +13,6 @@ final class ContractTests {
             $didThrowException = true;
         }
 
-        TestHelpers::deleteAllTestDriverProfiles();
-        TestHelpers::deleteTestContractData($contract->getID());
-        TestHelpers::deleteTestCarrierData($carrier->getID());
-        TestHelpers::deleteTestUser($user->getID());
-
         if ($didThrowException) {
             return true;
         } else {
@@ -28,9 +23,6 @@ final class ContractTests {
     public static function throwExceptionWhenCreatingContractWithFinalState(): bool|string {
         $user = TestHelpers::createTestUser();
         $carrier = TestHelpers::createTestCarrier($user);
-
-        TestHelpers::deleteTestCarrierData($carrier->getID());
-        TestHelpers::deleteTestUser($user->getID());
 
         try {
             Contract::createNew($carrier, $user, $user, ContractState::terminated);
@@ -47,11 +39,6 @@ final class ContractTests {
         $contractState = ContractState::active;
         $contract = Contract::createNew($carrier, $user, $user, $contractState);
         $periods = $contract->getPeriods();
-
-        TestHelpers::deleteAllTestDriverProfiles();
-        TestHelpers::deleteTestContractData($contract->getID());
-        TestHelpers::deleteTestCarrierData($carrier->getID());
-        TestHelpers::deleteTestUser($user->getID());
 
         if (!is_a($contract, Contract::class)) {
             return "Expected a ".Contract::class." object. Found: ".gettype($contract).".";
@@ -86,11 +73,6 @@ final class ContractTests {
         $contract = Contract::createNew($carrier, $user, $user, $contractState);
         $periods = $contract->getPeriods();
         $expectedPenaltyTasks = $profile->getAcquiredPenaltyMultiplier() * $carrier->getNumberOfPenaltyTasks();
-
-        TestHelpers::deleteAllTestDriverProfiles();
-        TestHelpers::deleteTestContractData($contract->getID());
-        TestHelpers::deleteTestCarrierData($carrier->getID());
-        TestHelpers::deleteTestUser($user->getID());
 
         if (!is_a($contract, Contract::class)) {
             return "Expected a ".Contract::class." object. Found: ".gettype($contract).".";
@@ -130,11 +112,6 @@ final class ContractTests {
         $contract = Contract::withID($contract->getID());
         $periods = $contract->getPeriods();
 
-        TestHelpers::deleteAllTestDriverProfiles();
-        TestHelpers::deleteTestContractData($contract->getID());
-        TestHelpers::deleteTestCarrierData($carrier->getID());
-        TestHelpers::deleteTestUser($user->getID());
-
         if (!is_a($contract, Contract::class)) {
             return "Expected a ".Contract::class." object. Found: ".gettype($contract).".";
         } elseif ($contract->getCarrier()->getID() != $carrier->getID()) {
@@ -156,11 +133,6 @@ final class ContractTests {
         $contract = Contract::createNew($carrier, $user, $user, ContractState::active);
         $contract->addPeriod(ContractState::terminatedDisciplinarily, $user);
 
-        TestHelpers::deleteAllTestDriverProfiles();
-        TestHelpers::deleteTestContractData($contract->getID());
-        TestHelpers::deleteTestCarrierData($carrier->getID());
-        TestHelpers::deleteTestUser($user->getID());
-
         try {
             $contract->addPeriod(ContractState::active, $user);
         } catch (DomainException) {
@@ -177,11 +149,6 @@ final class ContractTests {
         $newState = ContractState::terminated;
         $contract->addPeriod($newState, $user);
         $periods = $contract->getPeriods();
-
-        TestHelpers::deleteAllTestDriverProfiles();
-        TestHelpers::deleteTestContractData($contract->getID());
-        TestHelpers::deleteTestCarrierData($carrier->getID());
-        TestHelpers::deleteTestUser($user->getID());
 
         if (count($periods) != 2) {
             return "The number of contract periods is incorrect. Expected: 2, found: ".count($periods).".";
@@ -212,13 +179,6 @@ final class ContractTests {
         $contract2->addPeriod(ContractState::terminated, $user);
         $valueAfterChange = $profile->isActive();
 
-        TestHelpers::deleteTestDriverProfile($profile->getID());
-        TestHelpers::deleteTestContractData($contract1->getID());
-        TestHelpers::deleteTestContractData($contract2->getID());
-        TestHelpers::deleteTestCarrierData($carrier1->getID());
-        TestHelpers::deleteTestCarrierData($carrier2->getID());
-        TestHelpers::deleteTestUser($user->getID());
-
         if ($valueAfterChange != $valueBeforeChange) {
             return "The driver profile activity state should not change.";
         } elseif ($valueAfterChange == false) {
@@ -240,11 +200,6 @@ final class ContractTests {
         $contract->addPeriod(ContractState::terminated, $user);
         $valueAfterChange = $profile->isActive();
 
-        TestHelpers::deleteTestDriverProfile($profile->getID());
-        TestHelpers::deleteTestContractData($contract->getID());
-        TestHelpers::deleteTestCarrierData($carrier->getID());
-        TestHelpers::deleteTestUser($user->getID());
-
         if ($valueAfterChange == $valueBeforeChange) {
             return "The driver profile activity state should change.";
         } elseif ($valueAfterChange == true) {
@@ -265,13 +220,6 @@ final class ContractTests {
             fn($profile) => is_a($profile, DriverProfile::class)
         );
         $contract2->addPeriod(ContractState::terminatedDisciplinarily, $user);
-
-        TestHelpers::deleteTestDriverProfile($profile->getID());
-        TestHelpers::deleteTestContractData($contract1->getID());
-        TestHelpers::deleteTestContractData($contract2->getID());
-        TestHelpers::deleteTestCarrierData($carrier1->getID());
-        TestHelpers::deleteTestCarrierData($carrier2->getID());
-        TestHelpers::deleteTestUser($user->getID());
 
         if ($contract2->getCurrentState() != ContractState::terminatedDisciplinarily) {
             return "The terminated contract state is incorrect. Expected: ".ContractState::terminatedDisciplinarily->name.", found: {$contract2->getCurrentState()->name}.";
@@ -295,11 +243,6 @@ final class ContractTests {
         $contract->decrementRemainingPenaltyTasks();
         $valueAfterChange = $contract->getRemainingPenaltyTasks();
 
-        TestHelpers::deleteAllTestDriverProfiles();
-        TestHelpers::deleteTestContractData($contract->getID());
-        TestHelpers::deleteTestCarrierData($carrier->getID());
-        TestHelpers::deleteTestUser($user->getID());
-
         if ($valueAfterChange == $valueBeforeChange) {
             return "Contract remainingPenaltyTasks value did not change.";
         } elseif ($valueAfterChange != $valueBeforeChange - 1) {
@@ -316,11 +259,6 @@ final class ContractTests {
         $valueBeforeChange = $contract->getRemainingPenaltyTasks();
         $contract->decrementRemainingPenaltyTasks();
         $valueAfterChange = $contract->getRemainingPenaltyTasks();
-
-        TestHelpers::deleteAllTestDriverProfiles();
-        TestHelpers::deleteTestContractData($contract->getID());
-        TestHelpers::deleteTestCarrierData($carrier->getID());
-        TestHelpers::deleteTestUser($user->getID());
 
         if ($valueAfterChange != $valueBeforeChange) {
             return "Contract remainingPenaltyTasks value should not have changed.";
