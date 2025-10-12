@@ -247,7 +247,7 @@ final class Carrier extends DatabaseEntity {
         $currentPersonnelProfilePrivileges = $personnelProfile->getPrivileges();
         $personnelProfile->deactivate($personnelProfileDeactivator);
         $newPersonnelProfileDescription = preg_replace(
-            "/".preg_quote(self::SUPERVISOR_PROFILE_DESCRIPTION, "/")."\R?/u",
+            "/".preg_quote($supervisorDescription, "/")."\R?/u",
             "",
             $currentPersonnelProfileDescription
         );
