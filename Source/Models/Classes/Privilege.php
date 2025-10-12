@@ -71,25 +71,6 @@ final class Privilege extends DatabaseEntity {
         return self::withID($id);
     }
 
-    public static function getAllByPersonnelProfile(PersonnelProfile $personnelProfile): array {
-        $result = DatabaseConnector::shared()->execute_query(
-            "SELECT privilege_id
-            FROM personnel_profile_privileges
-            WHERE personnel_profile_id = ?",
-            [
-                $personnelProfile->getID()
-            ]
-        );
-        $privileges = [];
-
-        while ($id = $result->fetch_column()) {
-            $privileges[] = self::withID($id);
-        }
-
-        $result->free();
-        return $privileges;
-    }
-
     public function getScope(): PrivilegeScope {
         return $this->scope;
     }
