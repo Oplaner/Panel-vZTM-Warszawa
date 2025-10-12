@@ -321,6 +321,12 @@ final class Carrier extends DatabaseEntity {
 
     public function close(User $authorizer): void {
         Logger::log(LogLevel::info, "User with ID \"{$authorizer->getID()}\" is closing carrier with ID \"$this->id\".");
+        $this->validateNoContractsAreActiveBeforeClosing();
+
+        foreach ($this->getSupervisors() as $supervisor) {
+            $this->removeSupervisor($supervisor, $authorizer);
+        }
+
         $this->closedAt = SystemDateTime::now();
         $this->closedBy = $authorizer;
         $this->wasModified = true;
@@ -394,6 +400,12 @@ final class Carrier extends DatabaseEntity {
         }
 
         return $this->supervisorPrivileges;
+    }
+
+    private function validateNoContractsAreActiveBeforeClosing(): void {
+        if (count(Contract::getActiveByCarrier($this)) > 0) {
+            throw new DomainException("All contracts with the carrier must be terminated before closing it.");
+        }
     }
 }
 

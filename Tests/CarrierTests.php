@@ -230,10 +230,25 @@ final class CarrierTests {
         return "No exception was thrown when setting negative number of penalty tasks.";
     }
 
-    public static function closeCarrier(): bool|string {
+    public static function throwExceptionWhenClosingCarrierWithActiveContract(): bool|string {
         $user = TestHelpers::createTestUser();
         $carrier = Carrier::createNew("Test Carrier", "Test", [], 0, 0, $user);
+        Contract::createNew($carrier, $user, $user, ContractState::active);
+
+        try {
+            $carrier->close($user);
+        } catch (DomainException) {
+            return true;
+        }
+
+        return "No exception was thrown when closing carrier with active contract.";
+    }
+
+    public static function closeCarrier(): bool|string {
+        $user = TestHelpers::createTestUser();
+        $carrier = Carrier::createNew("Test Carrier", "Test", [$user], 0, 0, $user);
         $carrier->close($user);
+        $supervisorsAfterClosing = $carrier->getSupervisors();
 
         if (is_null($carrier->getClosedAt())) {
             return "The carrier closedAt value should not be null.";
@@ -243,6 +258,8 @@ final class CarrierTests {
             return "The carrier closedBy user ID value is incorrect. Expected: \"{$user->getID()}\", found: \"{$carrier->getClosedBy()->getID()}\".";
         } elseif ($carrier->isActive()) {
             return "The carrier should be inactive.";
+        } elseif (count($supervisorsAfterClosing) > 0) {
+            return "The carrier should have no supervisors.";
         }
 
         return true;
