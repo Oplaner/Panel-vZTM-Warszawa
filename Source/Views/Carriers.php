@@ -15,7 +15,7 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Zakłady
     <div id="content">
         <h1>Zakłady</h1>
         <div class="toolbar">
-            <div class="optionContainer">
+            <div class="inputContainer">
 <?php
 
                 $checked = "";

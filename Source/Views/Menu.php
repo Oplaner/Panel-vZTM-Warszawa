@@ -33,7 +33,7 @@
         <div>
             <h2>Dyrektor</h2>
             <ul>
-                <li><a href="#">Personel</a></li>
+                <li><a href="<?php echo PathBuilder::action("/personnel") ?>">Personel</a></li>
                 <li><a href="<?php echo PathBuilder::action("/carriers") ?>">Zakłady</a></li>
                 <li><a href="#">Ustawienia</a></li>
             </ul>
