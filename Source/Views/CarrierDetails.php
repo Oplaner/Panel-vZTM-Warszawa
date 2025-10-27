@@ -13,7 +13,12 @@ ViewBuilder::buildHead(Style::light, [Script::menu], $carrier->getFullName())
 
 ?>
     <div id="content">
-        <h1><a href="<?php echo PathBuilder::action("/carriers") ?>">&#8617;</a> <?php echo $carrier->getFullName() ?></h1>
+<?php
+
+        $backAction = $carrier->isActive() ? "/carriers" : "/carriers/all";
+
+?>
+        <h1><a href="<?php echo PathBuilder::action($backAction) ?>">&#8617;</a> <?php echo $carrier->getFullName() ?></h1>
 <?php
 
         if (isset($showMessage) && $showMessage):

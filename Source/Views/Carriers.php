@@ -19,10 +19,10 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Zakłady
 <?php
 
                 $checked = $showingActiveOnly ? " checked" : "";
-                $redirectURL = $showingActiveOnly ? PathBuilder::action("/carriers/all") : PathBuilder::action("/carriers");
+                $redirectAction = $showingActiveOnly ? "/carriers/all" : "/carriers";
 
 ?>
-                <input type="checkbox" id="showActiveCarriersOnly" data-redirect="<?php echo $redirectURL ?>"<?php echo $checked ?>>
+                <input type="checkbox" id="showActiveCarriersOnly" data-redirect="<?php echo PathBuilder::action($redirectAction) ?>"<?php echo $checked ?>>
                 <label for="showActiveCarriersOnly">Pokaż tylko aktywne</label>
             </div>
             <a href="<?php echo PathBuilder::action("/carriers/new") ?>" class="button">Utwórz nowy</a>
