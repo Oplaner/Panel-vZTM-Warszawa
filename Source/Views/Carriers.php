@@ -18,13 +18,8 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Zakłady
             <div class="inputContainer">
 <?php
 
-                $checked = "";
-                $redirectURL = PathBuilder::action("/carriers/active");
-
-                if (isset($showingActiveOnly) && $showingActiveOnly):
-                $checked = " checked";
-                $redirectURL = PathBuilder::action("/carriers");
-                endif;
+                $checked = $showingActiveOnly ? " checked" : "";
+                $redirectURL = $showingActiveOnly ? PathBuilder::action("/carriers/all") : PathBuilder::action("/carriers");
 
 ?>
                 <input type="checkbox" id="showActiveCarriersOnly" data-redirect="<?php echo $redirectURL ?>"<?php echo $checked ?>>
@@ -39,17 +34,28 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Zakłady
                 <th>Kierownicy</th>
                 <th class="optional">Liczba kierowców</th>
                 <th class="optional">Data utworzenia</th>
+<?php
+
+                if (!$showingActiveOnly):
+
+?>
                 <th class="optional">Data zamknięcia</th>
+<?php
+
+                endif;
+
+?>
                 <th>&nbsp;</th>
                 <th class="summary">&nbsp;</th>
             </tr>
 <?php
 
             if (count($carriers) == 0):
+            $colspan = $showingActiveOnly ? 7 : 8;
 
 ?>
             <tr>
-                <td colspan="8">Brak danych do wyświetlenia.</td>
+                <td colspan="<?php echo $colspan ?>">Brak danych do wyświetlenia.</td>
             </tr>
 <?php
 
@@ -74,7 +80,17 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Zakłady
                 <td><?php echo $supervisors ?></td>
                 <td class="optional"><?php echo count($carrier->getActiveContracts()) ?></td>
                 <td class="optional"><?php echo $createdAt ?></td>
+<?php
+
+                if (!$showingActiveOnly):
+
+?>
                 <td class="optional"><?php echo $closedAt ?></td>
+<?php
+
+                endif;
+
+?>
                 <td class="action"><a href="<?php echo PathBuilder::action("/carriers/{$carrier->getID()}") ?>">Pokaż szczegóły</a></td>
                 <td class="summary">
                     <div class="statusContainer">

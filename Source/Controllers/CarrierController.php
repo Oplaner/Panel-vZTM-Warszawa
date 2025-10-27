@@ -10,24 +10,25 @@ final class CarrierController extends Controller {
     #[Route("/carriers", RequestMethod::get)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]        
+        profiles: [DirectorProfile::class]
     )]
-    public function showAllCarriersList(): void {
+    public function showActiveCarriersList(): void {
         $viewParameters = [
-            "carriers" => Carrier::getAll("created_at", "DESC")
+            "carriers" => Carrier::getActive("created_at DESC"),
+            "showingActiveOnly" => true
         ];
         self::renderView(View::carriers, $viewParameters);
     }
 
-    #[Route("/carriers/active", RequestMethod::get)]
+    #[Route("/carriers/all", RequestMethod::get)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]        
+        profiles: [DirectorProfile::class]
     )]
-    public function showActiveCarriersList(): void {
+    public function showAllCarriersList(): void {
         $viewParameters = [
-            "carriers" => Carrier::getAllActive("created_at", "DESC"),
-            "showingActiveOnly" => true
+            "carriers" => Carrier::getAll("(closed_at IS NULL) DESC, created_at DESC"),
+            "showingActiveOnly" => false
         ];
         self::renderView(View::carriers, $viewParameters);
     }
@@ -35,7 +36,7 @@ final class CarrierController extends Controller {
     #[Route("/carriers/new", RequestMethod::get)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]        
+        profiles: [DirectorProfile::class]
     )]
     public function showNewCarrierForm(): void {
         $viewParameters = [
@@ -52,7 +53,7 @@ final class CarrierController extends Controller {
     #[Route("/carriers/new", RequestMethod::post)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]        
+        profiles: [DirectorProfile::class]
     )]
     public function addNewCarrier(array $input): void {
         global $_USER;

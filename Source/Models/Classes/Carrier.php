@@ -93,20 +93,20 @@ final class Carrier extends DatabaseEntity {
         return new Carrier($id, $fullName, $shortName, $numberOfTrialTasks, $numberOfPenaltyTasks, $createdAt, $createdBy, $closedAt, $closedBy);
     }
 
-    public static function getAll(string $sortColumn = "created_at", string $sortDirection = "ASC"): array {
+    public static function getAll(string $sortSubstring = "created_at ASC"): array {
         $query =
-        "SELECT c.id
-        FROM carriers AS c
-        ORDER BY c.$sortColumn $sortDirection";
+        "SELECT id
+        FROM carriers
+        ORDER BY $sortSubstring";
         return self::getWithQuery($query);
     }
     
-    public static function getAllActive(string $sortColumn = "created_at", string $sortDirection = "ASC"): array {
+    public static function getActive(string $sortSubstring = "created_at ASC"): array {
         $query =
-        "SELECT c.id
-        FROM carriers AS c
+        "SELECT id
+        FROM carriers
         WHERE closed_at IS NULL
-        ORDER BY c.$sortColumn $sortDirection";
+        ORDER BY $sortSubstring";
         return self::getWithQuery($query);
     }
 
