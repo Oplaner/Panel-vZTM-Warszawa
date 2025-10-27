@@ -4,7 +4,7 @@
         if ($_USER->hasActiveProfileOfType(PersonnelProfile::class)):
         $supervisedCarriers = [];
 
-        foreach (Carrier::getAllActive() as $carrier):
+        foreach (Carrier::getActive() as $carrier):
         foreach ($carrier->getSupervisors() as $supervisor):
         if ($supervisor->getID() == $_USER->getID()):
         $supervisedCarriers[] = $carrier;
