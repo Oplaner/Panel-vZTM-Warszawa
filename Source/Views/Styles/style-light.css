@@ -454,6 +454,12 @@ input[type=submit]:hover {
     cursor: pointer;
 }
 
+.inputSeparator {
+    height: 1px;
+    margin: 0.5rem 0;
+    background: #DADFE3;
+}
+
 .sectionContainer {
     display: flex;
     gap: 1rem;

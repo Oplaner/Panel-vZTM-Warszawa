@@ -1,15 +1,15 @@
 <?php
 
 abstract class Profile extends DatabaseEntity {
-    protected string $userID;
+    protected string $ownerID;
     protected SystemDateTime $activatedAt;
     protected User $activatedBy;
     protected ?SystemDateTime $deactivatedAt;
     protected ?User $deactivatedBy;
 
-    protected function __construct(?string $id, string $userID, SystemDateTime $activatedAt, User $activatedBy, ?SystemDateTime $deactivatedAt, ?User $deactivatedBy) {
+    protected function __construct(?string $id, string $ownerID, SystemDateTime $activatedAt, User $activatedBy, ?SystemDateTime $deactivatedAt, ?User $deactivatedBy) {
         parent::__construct($id);
-        $this->userID = $userID;
+        $this->ownerID = $ownerID;
         $this->activatedAt = $activatedAt;
         $this->activatedBy = $activatedBy;
         $this->deactivatedAt = $deactivatedAt;
@@ -88,6 +88,10 @@ abstract class Profile extends DatabaseEntity {
         return $profiles;
     }
 
+    public function getOwner(): User {
+        return User::withID($this->ownerID);
+    }
+
     public function getActivatedAt(): SystemDateTime {
         return $this->activatedAt;
     }
@@ -123,7 +127,7 @@ abstract class Profile extends DatabaseEntity {
             VALUES (?, ?, ?, ?, ?, ?, ?)",
             [
                 $this->id,
-                $this->userID,
+                $this->ownerID,
                 $type->value,
                 $this->activatedAt->toDatabaseString(),
                 $this->activatedBy->getID(),

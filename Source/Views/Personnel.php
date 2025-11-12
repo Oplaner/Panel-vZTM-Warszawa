@@ -2,7 +2,7 @@
 <html lang="pl">
 <?php
 
-ViewBuilder::buildHead(Style::light, [Script::menu], "Personel")
+ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Personel")
 
 ?>
 <body>
@@ -17,16 +17,101 @@ ViewBuilder::buildHead(Style::light, [Script::menu], "Personel")
         <div class="toolbar">
             <div>
                 <div class="inputContainer">
-                    <input type="radio" id="showUsersWithPersonnelProfile" name="personnelType">
-                    <label for="showUsersWithPersonnelProfile">Pracownicy funkcyjni</label>
+                    <input type="radio" id="showPersonnelProfiles" name="personnelType" checked>
+                    <label for="showPersonnelProfiles">Pracownicy funkcyjni</label>
                 </div>
                 <div class="inputContainer">
-                    <input type="radio" id="showUsersWithDirectorProfile" name="personnelType">
-                    <label for="showUsersWithDirectorProfile">Dyrektorzy</label>
+                    <input type="radio" id="showDirectorProfiles" name="personnelType" data-redirect="<?php echo PathBuilder::action("/personnel/directors") ?>">
+                    <label for="showDirectorProfiles">Dyrektorzy</label>
                 </div>
+                <div class="inputSeparator"></div>
+                <div class="inputContainer">
+<?php
+
+                $checked = $showingActiveOnly ? " checked" : "";
+                $redirectAction = $showingActiveOnly ? "/personnel/all" : "/personnel";
+
+?>
+                <input type="checkbox" id="showActiveProfilesOnly" data-redirect="<?php echo PathBuilder::action($redirectAction) ?>"<?php echo $checked ?>>
+                <label for="showActiveProfilesOnly">Pokaż tylko aktywne profile</label>
             </div>
-            <a href="#" class="button">TODO</a>
+            </div>
+            <a href="#" class="button">Nadaj uprawnienia</a>
         </div>
+        <table>
+            <tr>
+                <th>Status</th>
+                <th>Pracownik</th>
+                <th>Funkcja</th>
+                <th class="optional">Liczba uprawnień</th>
+                <th class="optional">Ważny od</th>
+<?php
+
+                if (!$showingActiveOnly):
+
+?>
+                <th class="optional">Ważny do</th>
+<?php
+
+                endif;
+
+?>
+                <th>&nbsp;</th>
+                <th class="summary">&nbsp;</th>
+            </tr>
+<?php
+
+            if (count($profiles) == 0):
+            $colspan = $showingActiveOnly ? 7 : 8;
+
+?>
+            <tr>
+                <td colspan="<?php echo $colspan ?>">Brak danych do wyświetlenia.</td>
+            </tr>
+<?php
+
+            else:
+            foreach ($profiles as $profile):
+            $statusClass = $profile->isActive() ? "active" : "inactive";
+            $statusText = $profile->isActive() ? "aktywny" : "nieaktywny";
+            $activatedAt = $profile->getActivatedAt()->toLocalizedString(SystemDateTimeFormat::dateAndTimeWithSeconds);
+            $deactivatedAt = $profile->getDeactivatedAt()?->toLocalizedString(SystemDateTimeFormat::dateAndTimeWithSeconds);
+
+?>
+            <tr>
+                <td><span class="status <?php echo $statusClass ?>"><?php echo $statusText ?></span></td>
+                <td><?php echo $profile->getOwner()->getFormattedLoginAndUsername() ?></td>
+                <td><?php echo $profile->getDescription() ?></td>
+                <td class="optional"><?php echo count($profile->getPrivileges()) ?></td>
+                <td class="optional"><?php echo $activatedAt ?></td>
+<?php
+
+                if (!$showingActiveOnly):
+
+?>
+                <td class="optional"><?php echo $deactivatedAt ?></td>
+<?php
+
+                endif;
+
+?>
+                <td class="action"><a href="#">Pokaż więcej</a></td>
+                <td class="summary">
+                    <div class="statusContainer">
+                        <span class="status <?php echo $statusClass ?>"><?php echo $statusText ?></span>
+                    </div>
+                    <?php echo $profile->getOwner()->getFormattedLoginAndUsername() ?><br>
+                    <?php echo $profile->getDescription() ?><br>
+                    <a href="#">Pokaż więcej</a>
+                </td>
+            </tr>
+<?php
+
+            endforeach;
+            endif;
+
+?>
+        </table>
     </div>
 </body>
 </html>
