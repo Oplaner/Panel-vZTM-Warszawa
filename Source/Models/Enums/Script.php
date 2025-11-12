@@ -2,7 +2,7 @@
 
 enum Script: string {
     case menu = "menu";
-    case redirect = "checkbox-redirect";
+    case redirect = "checkbox-radio-redirect";
     case search = "search";
 }
 
