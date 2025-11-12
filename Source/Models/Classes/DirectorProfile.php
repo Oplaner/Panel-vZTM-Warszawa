@@ -30,7 +30,7 @@ final class DirectorProfile extends Profile {
             WHERE p.id = ? AND p.type = ?",
             [
                 $id,
-                self::DATABASE_PROFILE_TYPE_DIRECTOR
+                ProfileType::director->value
             ]
         );
 
@@ -88,7 +88,7 @@ final class DirectorProfile extends Profile {
                     (int) $this->isProtected
                 ]
             );
-            $this->saveNewProfileToDatabase(self::DATABASE_PROFILE_TYPE_DIRECTOR);
+            $this->saveNewProfileToDatabase(ProfileType::director);
             $this->isNew = false;
         } elseif ($this->wasModified) {
             $this->saveExistingProfileToDatabase();

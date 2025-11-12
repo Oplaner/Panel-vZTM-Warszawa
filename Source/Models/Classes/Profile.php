@@ -1,10 +1,6 @@
 <?php
 
 abstract class Profile extends DatabaseEntity {
-    protected const DATABASE_PROFILE_TYPE_DIRECTOR = "DIRECTOR";
-    protected const DATABASE_PROFILE_TYPE_DRIVER = "DRIVER";
-    protected const DATABASE_PROFILE_TYPE_PERSONNEL = "PERSONNEL";
-
     protected string $userID;
     protected SystemDateTime $activatedAt;
     protected User $activatedBy;
@@ -45,6 +41,31 @@ abstract class Profile extends DatabaseEntity {
         return self::getWithQuery($query, $parameters);
     }
 
+    public static function getAllByType(ProfileType $type, string $sortSubstring = "activated_at ASC"): array {
+        $query =
+            "SELECT id, type
+            FROM profiles
+            WHERE type = ?
+            ORDER BY $sortSubstring";
+        $parameters = [
+            $type->value
+        ];
+        return self::getWithQuery($query, $parameters);
+    }
+
+    public static function getActiveByType(ProfileType $type, string $sortSubstring = "activated_at ASC"): array {
+        $query =
+            "SELECT id, type
+            FROM profiles
+            WHERE type = ?
+            AND deactivated_at IS NULL
+            ORDER BY $sortSubstring";
+        $parameters = [
+            $type->value
+        ];
+        return self::getWithQuery($query, $parameters);
+    }
+
     protected static function validateUserDoesNotHaveProfileOfType(User $user): void {
         $profileType = static::class;
 
@@ -59,20 +80,12 @@ abstract class Profile extends DatabaseEntity {
 
         while ($data = $result->fetch_assoc()) {
             $profileID = $data["id"];
-            $profileType = $data["type"];
-            $profiles[] = self::getProfileWithIDAndType($profileID, $profileType);
+            $profileTypeClass = ProfileType::from($data["type"])->getClass();
+            $profiles[] = $profileTypeClass::withID($profileID);
         }
 
         $result->free();
         return $profiles;
-    }
-
-    private static function getProfileWithIDAndType(string $profileID, string $profileType): ?Profile {
-        return match ($profileType) {
-            self::DATABASE_PROFILE_TYPE_DIRECTOR => DirectorProfile::withID($profileID),
-            self::DATABASE_PROFILE_TYPE_DRIVER => DriverProfile::withID($profileID),
-            self::DATABASE_PROFILE_TYPE_PERSONNEL => PersonnelProfile::withID($profileID)
-        };
     }
 
     public function getActivatedAt(): SystemDateTime {
@@ -103,7 +116,7 @@ abstract class Profile extends DatabaseEntity {
         $this->save();
     }
 
-    protected function saveNewProfileToDatabase(string $profileType): void {
+    protected function saveNewProfileToDatabase(ProfileType $type): void {
         DatabaseConnector::shared()->execute_query(
             "INSERT INTO profiles
             (id, user_id, type, activated_at, activated_by_user_id, deactivated_at, deactivated_by_user_id)
@@ -111,7 +124,7 @@ abstract class Profile extends DatabaseEntity {
             [
                 $this->id,
                 $this->userID,
-                $profileType,
+                $type->value,
                 $this->activatedAt->toDatabaseString(),
                 $this->activatedBy->getID(),
                 null,

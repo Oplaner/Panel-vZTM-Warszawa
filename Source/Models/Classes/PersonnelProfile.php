@@ -35,7 +35,7 @@ final class PersonnelProfile extends Profile {
             WHERE p.id = ? AND p.type = ?",
             [
                 $id,
-                self::DATABASE_PROFILE_TYPE_PERSONNEL
+                ProfileType::personnel->value
             ]
         );
 
@@ -123,7 +123,7 @@ final class PersonnelProfile extends Profile {
                     $this->description
                 ]
             );
-            $this->saveNewProfileToDatabase(self::DATABASE_PROFILE_TYPE_PERSONNEL);
+            $this->saveNewProfileToDatabase(ProfileType::personnel);
             $this->isNew = false;
         } elseif ($this->wasModified) {
             $this->saveExistingProfileToDatabase();

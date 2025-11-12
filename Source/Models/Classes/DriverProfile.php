@@ -33,7 +33,7 @@ final class DriverProfile extends Profile {
             WHERE p.id = ? AND p.type = ?",
             [
                 $id,
-                self::DATABASE_PROFILE_TYPE_DRIVER
+                ProfileType::driver->value
             ]
         );
 
@@ -66,7 +66,7 @@ final class DriverProfile extends Profile {
             LIMIT 1",
             [
                 $user->getID(),
-                self::DATABASE_PROFILE_TYPE_DRIVER
+                ProfileType::driver->value
             ]
         );
 
@@ -132,7 +132,7 @@ final class DriverProfile extends Profile {
                     $this->acquiredPenaltyMultiplier
                 ]
             );
-            $this->saveNewProfileToDatabase(self::DATABASE_PROFILE_TYPE_DRIVER);
+            $this->saveNewProfileToDatabase(ProfileType::driver);
             $this->isNew = false;
         } elseif ($this->wasModified) {
             DatabaseConnector::shared()->execute_query(
