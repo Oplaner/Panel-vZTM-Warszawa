@@ -10,7 +10,8 @@ enum View: string {
     case login = "Login";
     case main = "Main";
     case menu = "Menu";
-    case personnel = "Personnel";
+    case personnelProfiles = "PersonnelProfiles";
+    case directorProfiles = "DirectorProfiles";
     case topBar = "TopBar";
 }
 

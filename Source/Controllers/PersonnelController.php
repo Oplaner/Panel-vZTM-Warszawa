@@ -11,7 +11,7 @@ final class PersonnelController extends Controller {
             "profiles" => Profile::getActiveByType(ProfileType::personnel, "(deactivated_at IS NULL) DESC, activated_at DESC"),
             "showingActiveOnly" => true
         ];
-        self::renderView(View::personnel, $viewParameters);
+        self::renderView(View::personnelProfiles, $viewParameters);
     }
 
     #[Route("/personnel/all", RequestMethod::get)]
@@ -24,7 +24,7 @@ final class PersonnelController extends Controller {
             "profiles" => Profile::getAllByType(ProfileType::personnel, "(deactivated_at IS NULL) DESC, activated_at DESC"),
             "showingActiveOnly" => false
         ];
-        self::renderView(View::personnel, $viewParameters);
+        self::renderView(View::personnelProfiles, $viewParameters);
     }
 
     #[Route("/personnel/directors", RequestMethod::get)]
@@ -32,8 +32,25 @@ final class PersonnelController extends Controller {
         group: AccessGroup::oneOfProfiles,
         profiles: [DirectorProfile::class]
     )]
-    public function showUsersWithDirectorProfileList(): void {
-        self::renderView(View::personnel);
+    public function showActiveDirectorProfilesList(): void {
+        $viewParameters = [
+            "profiles" => Profile::getActiveByType(ProfileType::director, "(deactivated_at IS NULL) DESC, activated_at DESC"),
+            "showingActiveOnly" => true
+        ];
+        self::renderView(View::directorProfiles, $viewParameters);
+    }
+
+    #[Route("/personnel/directors/all", RequestMethod::get)]
+    #[Access(
+        group: AccessGroup::oneOfProfiles,
+        profiles: [DirectorProfile::class]
+    )]
+    public function showAllDirectorProfilesList(): void {
+        $viewParameters = [
+            "profiles" => Profile::getAllByType(ProfileType::director, "(deactivated_at IS NULL) DESC, activated_at DESC"),
+            "showingActiveOnly" => false
+        ];
+        self::renderView(View::directorProfiles, $viewParameters);
     }
 }
 
