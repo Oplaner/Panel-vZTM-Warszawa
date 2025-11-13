@@ -8,6 +8,19 @@ enum PrivilegeScope: string {
     case canViewAllTimetables = "CAN_VIEW_ALL_TIMETABLES";
     case canViewAllVehicleLists = "CAN_VIEW_ALL_VEHICLE_LISTS";
     case canViewVehiclesOfDepot = "CAN_VIEW_VEHICLES_OF_DEPOT";
+
+    public function getDescription(): string {
+        return match ($this) {
+            self::canEditTimetableOfDepot => "Może edytować grafik zakładu",
+            self::canManageDriversOfDepot => "Może zarządzać kierowcami zakładu",
+            self::canManageVehiclesOfDepot => "Może zarządzać pojazdami zakładu",
+            self::canViewTimetableOfDepot => "Może przeglądać grafik zakładu",
+            self::canViewAllTimetables => "Może przeglądać grafiki wszystkich zakładów",
+            self::canViewAllVehicleLists => "Może przeglądać pojazdy wszystkich zakładów",
+            self::canViewVehiclesOfDepot => "Może przeglądać pojazdy zakładu",
+            default => $this->value
+        };
+    }
 }
 
 ?>

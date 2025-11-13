@@ -79,6 +79,17 @@ final class Privilege extends DatabaseEntity {
         return $this->associatedEntityID;
     }
 
+    public function getDescription(string $associatedEntityClass): string {
+        $associatedEntitySuffix = "";
+
+        if (!is_null($this->associatedEntityID)) {
+            $entity = $associatedEntityClass::withID($this->associatedEntityID);
+            $associatedEntitySuffix = " ({$entity->getAssociatedEntityName()})";
+        }
+
+        return $this->scope->getDescription().$associatedEntitySuffix;
+    }
+
     public function __toString() {
         return sprintf(
             __CLASS__."(id: \"%s\", scope: \"%s\", associatedEntityID: %s)",
