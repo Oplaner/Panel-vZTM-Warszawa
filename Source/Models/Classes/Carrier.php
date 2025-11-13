@@ -154,6 +154,10 @@ final class Carrier extends DatabaseEntity {
         $this->save();
     }
 
+    public function getAssociatedEntityName(): string {
+        return $this->getShortName();
+    }
+
     public function getSupervisors(): array {
         $result = DatabaseConnector::shared()->execute_query(
             "SELECT supervisor_id
