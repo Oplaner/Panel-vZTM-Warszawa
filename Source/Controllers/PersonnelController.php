@@ -93,7 +93,7 @@ final class PersonnelController extends Controller {
             "backAction" => "/personnel",
             "formAction" => "/personnel/profile/$profileID/deactivate",
             "confirmationMessage" => "Czy na pewno chcesz dezaktywować profil \"{$profile->getDescription()}\" tego pracownika? Tej czynności nie można cofnąć.",
-            "infoMessage" => "Jeśli jest to jedyny profil tego użytkownika, utraci on dostęp do systemu.",
+            "infoMessage" => "<span>Jeśli jest to jedyny profil tego użytkownika, utraci on dostęp do systemu.<br>Usunięcie uprawnień kierownika zakładu nie spowoduje aktualizacji listy kierowników tego zakładu.</span>",
             "cancelAction" => "/personnel/profile/$profileID",
             "submitButton" => "Dezaktywuj profil"
         ];
