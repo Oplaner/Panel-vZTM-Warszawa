@@ -71,6 +71,34 @@ final class PersonnelController extends Controller {
         ];
         self::renderView(View::personnelProfileDetails, $viewParameters);
     }
+
+    // showDirectorProfileDetails
+
+    #[Route("/personnel/profile/{profileID}/deactivate", RequestMethod::get)]
+    #[Access(
+        group: AccessGroup::oneOfProfiles,
+        profiles: [DirectorProfile::class]
+    )]
+    public function showDeactivatePersonnelProfileConfirmation(array $input): void {
+        extract($input[Router::PATH_DATA_KEY]);
+        $profile = PersonnelProfile::withID($profileID);
+
+        if (is_null($profile)) {
+            Router::redirect("/personnel");
+        }
+
+        $viewParameters = [
+            "pageSubtitle" => $profile->getOwner()->getFormattedLoginAndUsername(),
+            "title" => $profile->getOwner()->getFormattedLoginAndUsername(),
+            "backAction" => "/personnel",
+            "formAction" => "/personnel/profile/$profileID/deactivate",
+            "confirmationMessage" => "Czy na pewno chcesz dezaktywować profil \"{$profile->getDescription()}\" tego pracownika? Tej czynności nie można cofnąć.",
+            "infoMessage" => "Jeśli jest to jedyny profil tego użytkownika, utraci on dostęp do systemu.",
+            "cancelAction" => "/personnel/profile/$profileID",
+            "submitButton" => "Dezaktywuj profil"
+        ];
+        self::renderView(View::confirmation, $viewParameters);
+    }
 }
 
 ?>
