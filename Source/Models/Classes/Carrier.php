@@ -398,8 +398,9 @@ final class Carrier extends DatabaseEntity {
 
             foreach (self::$supervisorPrivilegeDefinitions as $definition) {
                 $scope = $definition["scope"];
+                $associatedEntityType = $definition["requiresEntityID"] ? AssociatedEntityType::carrier : null;
                 $associatedEntityID = $definition["requiresEntityID"] ? $this->getID() : null;
-                $this->supervisorPrivileges[] = Privilege::withScopeAndAssociatedEntityID($scope, $associatedEntityID) ?? Privilege::createNew($scope, $associatedEntityID);
+                $this->supervisorPrivileges[] = Privilege::withScopeAndAssociatedEntityID($scope, $associatedEntityID) ?? Privilege::createNew($scope, $associatedEntityType, $associatedEntityID);
             }
         }
 

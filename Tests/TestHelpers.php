@@ -18,7 +18,7 @@ final class TestHelpers {
     }
 
     public static function createTestPrivilegeWithAssociatedEntity(): Privilege {
-        return Privilege::createNew(PrivilegeScope::canViewTimetableOfDepot, DatabaseEntity::generateUUIDv4());
+        return Privilege::createNew(PrivilegeScope::canViewTimetableOfDepot, AssociatedEntityType::carrier, DatabaseEntity::generateUUIDv4());
     }
 
     public static function createTestPersonnelProfile(User $user): PersonnelProfile {
