@@ -4,8 +4,8 @@ final class PersonnelProfile extends Profile {
     private string $description;
     private array $privileges;
 
-    private function __construct(?string $id, string $userID, SystemDateTime $activatedAt, User $activatedBy, ?SystemDateTime $deactivatedAt, ?User $deactivatedBy, string $description, array $privileges) {
-        parent::__construct($id, $userID, $activatedAt, $activatedBy, $deactivatedAt, $deactivatedBy);
+    private function __construct(?string $id, string $ownerID, SystemDateTime $activatedAt, User $activatedBy, ?SystemDateTime $deactivatedAt, ?User $deactivatedBy, string $description, array $privileges) {
+        parent::__construct($id, $ownerID, $activatedAt, $activatedBy, $deactivatedAt, $deactivatedBy);
         $this->description = $description;
         $this->privileges = $privileges;
         $this->save();
@@ -86,9 +86,9 @@ final class PersonnelProfile extends Profile {
 
     public function __toString() {
         return sprintf(
-            __CLASS__."(id: \"%s\", userID: \"%s\", activatedAt: %s, activatedByUserID: \"%s\", deactivatedAt: %s, deactivatedByUserID: %s, description: \"%s\", privileges: (%d))",
+            __CLASS__."(id: \"%s\", ownerID: \"%s\", activatedAt: %s, activatedByUserID: \"%s\", deactivatedAt: %s, deactivatedByUserID: %s, description: \"%s\", privileges: (%d))",
             $this->id,
-            $this->userID,
+            $this->ownerID,
             $this->activatedAt->toDatabaseString(),
             $this->activatedBy->getID(),
             is_null($this->deactivatedAt) ? "null" : $this->deactivatedAt->toDatabaseString(),

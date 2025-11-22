@@ -4,8 +4,8 @@ final class DriverProfile extends Profile {
     private int $initialPenaltyMultiplier;
     private ?int $acquiredPenaltyMultiplier;
 
-    private function __construct(?string $id, string $userID, SystemDateTime $activatedAt, User $activatedBy, ?SystemDateTime $deactivatedAt, ?User $deactivatedBy, int $initialPenaltyMultiplier, ?int $acquiredPenaltyMultiplier) {
-        parent::__construct($id, $userID, $activatedAt, $activatedBy, $deactivatedAt, $deactivatedBy);
+    private function __construct(?string $id, string $ownerID, SystemDateTime $activatedAt, User $activatedBy, ?SystemDateTime $deactivatedAt, ?User $deactivatedBy, int $initialPenaltyMultiplier, ?int $acquiredPenaltyMultiplier) {
+        parent::__construct($id, $ownerID, $activatedAt, $activatedBy, $deactivatedAt, $deactivatedBy);
         $this->initialPenaltyMultiplier = $initialPenaltyMultiplier;
         $this->acquiredPenaltyMultiplier = $acquiredPenaltyMultiplier;
         $this->save();
@@ -108,9 +108,9 @@ final class DriverProfile extends Profile {
 
     public function __toString() {
         return sprintf(
-            __CLASS__."(id: \"%s\", userID: \"%s\", activatedAt: %s, activatedByUserID: \"%s\", deactivatedAt: %s, deactivatedByUserID: %s, initialPenaltyMultiplier: %d, acquiredPenaltyMultiplier: %s)",
+            __CLASS__."(id: \"%s\", ownerID: \"%s\", activatedAt: %s, activatedByUserID: \"%s\", deactivatedAt: %s, deactivatedByUserID: %s, initialPenaltyMultiplier: %d, acquiredPenaltyMultiplier: %s)",
             $this->id,
-            $this->userID,
+            $this->ownerID,
             $this->activatedAt->toDatabaseString(),
             $this->activatedBy->getID(),
             is_null($this->deactivatedAt) ? "null" : $this->deactivatedAt->toDatabaseString(),

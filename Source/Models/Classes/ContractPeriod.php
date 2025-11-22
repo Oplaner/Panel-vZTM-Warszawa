@@ -91,6 +91,10 @@ final class ContractPeriod extends DatabaseEntity {
     }
 
     public function setValidTo(SystemDateTime $validTo): void {
+        if (!is_null($this->getValidTo())) {
+            throw new DomainException("Contract period validTo value is already set.");
+        }
+
         Logger::log(LogLevel::info, "Contract period with ID \"{$this->id}\" is having its validTo value changed to {$validTo->toDatabaseString()}.");
         $this->validTo = $validTo;
         $this->wasModified = true;

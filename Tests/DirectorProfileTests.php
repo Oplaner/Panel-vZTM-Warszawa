@@ -79,23 +79,20 @@ final class DirectorProfileTests {
         return true;
     }
 
-    public static function deactivateProtectedDirectorProfile(): bool|string {
+    public static function throwExceptionWhenDeactivatingProtectedDirectorProfile(): bool|string {
         $user = TestHelpers::createTestUser();
         $profile = DirectorProfile::createNew($user, $user);
         self::markDirectorProfileAsProtected($profile->getID());
         DatabaseEntity::removeFromCache($profile);
         $profile = DirectorProfile::withID($profile->getID());
-        $profile->deactivate($user);
 
-        if (!is_null($profile->getDeactivatedAt())) {
-            return "The director profile deactivatedAt value should be null.";
-        } elseif (!is_null($profile->getDeactivatedBy())) {
-            return "The director profile deactivatedBy value should be null.";
-        } elseif (!$profile->isActive()) {
-            return "The protected director profile should be active.";
+        try {
+            $profile->deactivate($user);
+        } catch (DomainException) {
+            return true;
         }
 
-        return true;
+        return "No exception was thrown when deactivating protected director profile.";
     }
 
     private static function markDirectorProfileAsProtected(string $profileID): void {

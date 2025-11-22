@@ -324,6 +324,10 @@ final class Carrier extends DatabaseEntity {
     }
 
     public function close(User $authorizer): void {
+        if (!$this->isActive()) {
+            throw new DomainException("Carrier is already closed.");
+        }
+
         Logger::log(LogLevel::info, "User with ID \"{$authorizer->getID()}\" is closing carrier with ID \"$this->id\".");
         $this->validateNoContractsAreActiveBeforeClosing();
 

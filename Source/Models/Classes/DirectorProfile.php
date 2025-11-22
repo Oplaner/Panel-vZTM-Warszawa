@@ -3,8 +3,8 @@
 final class DirectorProfile extends Profile {    
     private bool $isProtected;
 
-    private function __construct(?string $id, string $userID, SystemDateTime $activatedAt, User $activatedBy, ?SystemDateTime $deactivatedAt, ?User $deactivatedBy, bool $isProtected) {
-        parent::__construct($id, $userID, $activatedAt, $activatedBy, $deactivatedAt, $deactivatedBy);
+    private function __construct(?string $id, string $ownerID, SystemDateTime $activatedAt, User $activatedBy, ?SystemDateTime $deactivatedAt, ?User $deactivatedBy, bool $isProtected) {
+        parent::__construct($id, $ownerID, $activatedAt, $activatedBy, $deactivatedAt, $deactivatedBy);
         $this->isProtected = $isProtected;
         $this->save();
     }
@@ -57,8 +57,7 @@ final class DirectorProfile extends Profile {
 
     public function deactivate(User $deactivator): void {
         if ($this->isProtected) {
-            Logger::log(LogLevel::warn, "User with ID \"{$deactivator->getID()}\" tried to deactivate protected director profile with ID \"{$this->id}\".");
-            return;
+            throw new DomainException("Cannot deactivate protected director profile.");
         }
 
         parent::deactivate($deactivator);
@@ -66,9 +65,9 @@ final class DirectorProfile extends Profile {
 
     public function __toString() {
         return sprintf(
-            __CLASS__."(id: \"%s\", userID: \"%s\", activatedAt: %s, activatedByUserID: \"%s\", deactivatedAt: %s, deactivatedByUserID: %s, isProtected: %s)",
+            __CLASS__."(id: \"%s\", ownerID: \"%s\", activatedAt: %s, activatedByUserID: \"%s\", deactivatedAt: %s, deactivatedByUserID: %s, isProtected: %s)",
             $this->id,
-            $this->userID,
+            $this->ownerID,
             $this->activatedAt->toDatabaseString(),
             $this->activatedBy->getID(),
             is_null($this->deactivatedAt) ? "null" : $this->deactivatedAt->toDatabaseString(),

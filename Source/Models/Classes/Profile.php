@@ -113,6 +113,10 @@ abstract class Profile extends DatabaseEntity {
     }
 
     public function deactivate(User $deactivator): void {
+        if (!$this->isActive()) {
+            throw new DomainException("Profile is already deactivated.");
+        }
+
         Logger::log(LogLevel::info, "User with ID \"{$deactivator->getID()}\" is deactivating profile with ID \"{$this->id}\".");
         $this->deactivatedAt = SystemDateTime::now();
         $this->deactivatedBy = $deactivator;
