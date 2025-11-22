@@ -99,6 +99,31 @@ final class PersonnelController extends Controller {
         ];
         self::renderView(View::confirmation, $viewParameters);
     }
+
+    #[Route("/personnel/profile/{profileID}/deactivate", RequestMethod::post)]
+    #[Access(
+        group: AccessGroup::oneOfProfiles,
+        profiles: [DirectorProfile::class]
+    )]
+    public function deactivatePersonnelProfile(array $input): void {
+        global $_USER;
+
+        extract($input[Router::PATH_DATA_KEY]);
+        $profile = PersonnelProfile::withID($profileID);
+        $post = $input[Router::POST_DATA_KEY];
+
+        if (is_null($profile) || !isset($post["confirmed"])) {
+            Router::redirect("/personnel");
+        }
+
+        $profile->deactivate($_USER);
+        $viewParameters = [
+            "profile" => $profile,
+            "showMessage" => true,
+            "message" => "Profil został zdezaktywowany."
+        ];
+        self::renderView(View::personnelProfileDetails, $viewParameters);
+    }
 }
 
 ?>

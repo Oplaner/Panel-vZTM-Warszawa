@@ -19,6 +19,17 @@ ViewBuilder::buildHead(Style::light, [Script::menu], $profile->getOwner()->getFo
 
 ?>
         <h1><a href="<?php echo PathBuilder::action($backAction) ?>">&#8617;</a> <?php echo $profile->getOwner()->getFormattedLoginAndUsername() ?></h1>
+<?php
+
+        if (isset($showMessage) && $showMessage):
+
+?>
+        <p class="message success"><?php echo $message ?></p>
+<?php
+
+        endif;
+
+?>
         <div class="sectionContainer">
             <div class="section full">
                 <h2><?php echo $profile->getDescription() ?></h2>
