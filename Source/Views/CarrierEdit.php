@@ -35,11 +35,11 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::search], $carrier->g
                     <input type="text" id="shortName" name="shortName" value="<?php echo $shortName ?>">
 <?php
 
-                    $createdAt = $carrier->getCreatedAt()->toLocalizedString(SystemDateTimeFormat::dateAndTimeWithoutSeconds);
+                    $createdAt = $carrier->getCreatedAt()->toLocalizedString(SystemDateTimeFormat::dateAndTimeWithSeconds);
                     $createdBy = $carrier->getCreatedBy()->getFormattedLoginAndUsername();
 
 ?>
-                    <p><b>Data utworzenia</b><br><?php echo $createdAt ?></p>
+                    <p><b>Data i godzina utworzenia</b><br><?php echo $createdAt ?></p>
                     <p><b>Utworzony przez</b><br><?php echo $createdBy ?></p>
                 </div>
                 <div class="sectionContainer column narrow">

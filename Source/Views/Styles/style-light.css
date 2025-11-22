@@ -400,8 +400,11 @@ input[type=submit]:hover {
 }
 
 #menu ul {
-    list-style-type: none;
-    padding-left: 0.25rem;
+    margin-bottom: 0;
+}
+
+#menu li::before {
+    content: none;
 }
 
 #content {
@@ -516,7 +519,17 @@ b {
 }
 
 ul {
+    margin-bottom: 1rem;
+    padding-left: 0.25rem;
     list-style-position: inside;
+    list-style-type: none;
+}
+
+li::before {
+    content: "\2022";
+    margin-right: 0.5rem;
+    font-family: Tahoma, sans-serif;
+    color: #9B422C;
 }
 
 table {

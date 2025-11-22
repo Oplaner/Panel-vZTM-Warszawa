@@ -52,6 +52,25 @@ final class PersonnelController extends Controller {
         ];
         self::renderView(View::directorProfiles, $viewParameters);
     }
+
+    #[Route("/personnel/profile/{profileID}", RequestMethod::get)]
+    #[Access(
+        group: AccessGroup::oneOfProfiles,
+        profiles: [DirectorProfile::class]
+    )]
+    public function showPersonnelProfileDetails(array $input): void {
+        extract($input[Router::PATH_DATA_KEY]);
+        $profile = PersonnelProfile::withID($profileID);
+
+        if (is_null($profile)) {
+            Router::redirect("/personnel");
+        }
+
+        $viewParameters = [
+            "profile" => $profile
+        ];
+        self::renderView(View::personnelProfileDetails, $viewParameters);
+    }
 }
 
 ?>

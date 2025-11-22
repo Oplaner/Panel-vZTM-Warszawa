@@ -50,24 +50,24 @@ ViewBuilder::buildHead(Style::light, [Script::menu], $carrier->getFullName())
                 </div>
 <?php
 
-                $createdAt = $carrier->getCreatedAt()->toLocalizedString(SystemDateTimeFormat::dateAndTimeWithoutSeconds);
+                $createdAt = $carrier->getCreatedAt()->toLocalizedString(SystemDateTimeFormat::dateAndTimeWithSeconds);
                 $createdBy = $carrier->getCreatedBy()->getFormattedLoginAndUsername();
 
 ?>
                 <div class="flexLayout">
                     <div>
-                        <p><b>Data utworzenia</b><br><?php echo $createdAt ?></p>
+                        <p><b>Data i godzina utworzenia</b><br><?php echo $createdAt ?></p>
                         <p><b>Utworzony przez</b><br><?php echo $createdBy ?></p>
                     </div>    
 <?php
 
                     if (!$carrier->isActive()):
-                    $closedAt = $carrier->getClosedAt()->toLocalizedString(SystemDateTimeFormat::dateAndTimeWithoutSeconds);
+                    $closedAt = $carrier->getClosedAt()->toLocalizedString(SystemDateTimeFormat::dateAndTimeWithSeconds);
                     $closedBy = $carrier->getClosedBy()->getFormattedLoginAndUsername();
 
 ?>
                     <div>
-                        <p><b>Data zamknięcia</b><br><?php echo $closedAt ?></p>
+                        <p><b>Data i godzina zamknięcia</b><br><?php echo $closedAt ?></p>
                         <p><b>Zamknięty przez</b><br><?php echo $closedBy ?></p>
                     </div>
 <?php

@@ -74,8 +74,8 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Personel
             foreach ($profiles as $profile):
             $statusClass = $profile->isActive() ? "active" : "inactive";
             $statusText = $profile->isActive() ? "aktywny" : "nieaktywny";
-            $activatedAt = $profile->getActivatedAt()->toLocalizedString(SystemDateTimeFormat::dateAndTimeWithSeconds);
-            $deactivatedAt = $profile->getDeactivatedAt()?->toLocalizedString(SystemDateTimeFormat::dateAndTimeWithSeconds);
+            $activatedAt = $profile->getActivatedAt()->toLocalizedString(SystemDateTimeFormat::dateOnly);
+            $deactivatedAt = $profile->getDeactivatedAt()?->toLocalizedString(SystemDateTimeFormat::dateOnly);
 
 ?>
             <tr>
@@ -95,14 +95,14 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Personel
                 endif;
 
 ?>
-                <td class="action"><a href="#">Pokaż więcej</a></td>
+                <td class="action"><a href="<?php echo PathBuilder::action("/personnel/profile/{$profile->getID()}") ?>">Pokaż szczegóły</a></td>
                 <td class="summary">
                     <div class="statusContainer">
                         <span class="status <?php echo $statusClass ?>"><?php echo $statusText ?></span>
                     </div>
                     <?php echo $profile->getOwner()->getFormattedLoginAndUsername() ?><br>
                     <?php echo $profile->getDescription() ?><br>
-                    <a href="#">Pokaż więcej</a>
+                    <a href="<?php echo PathBuilder::action("/personnel/profile/{$profile->getID()}") ?>">Pokaż szczegóły</a>
                 </td>
             </tr>
 <?php

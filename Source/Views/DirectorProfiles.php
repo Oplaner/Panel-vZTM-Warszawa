@@ -74,8 +74,8 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Dyrektor
             $statusClass = $profile->isActive() ? "active" : "inactive";
             $statusText = $profile->isActive() ? "aktywny" : "nieaktywny";
             $directorType = $profile->isProtected() ? "Dyrektor chroniony&nbsp;&#128737;&#65039;" : "Dyrektor";
-            $activatedAt = $profile->getActivatedAt()->toLocalizedString(SystemDateTimeFormat::dateAndTimeWithSeconds);
-            $deactivatedAt = $profile->getDeactivatedAt()?->toLocalizedString(SystemDateTimeFormat::dateAndTimeWithSeconds);
+            $activatedAt = $profile->getActivatedAt()->toLocalizedString(SystemDateTimeFormat::dateOnly);
+            $deactivatedAt = $profile->getDeactivatedAt()?->toLocalizedString(SystemDateTimeFormat::dateOnly);
 
 ?>
             <tr>
@@ -94,14 +94,14 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Dyrektor
                 endif;
 
 ?>
-                <td class="action"><a href="#">Pokaż więcej</a></td>
+                <td class="action"><a href="#">Pokaż szczegóły</a></td>
                 <td class="summary">
                     <div class="statusContainer">
                         <span class="status <?php echo $statusClass ?>"><?php echo $statusText ?></span>
                     </div>
                     <?php echo $profile->getOwner()->getFormattedLoginAndUsername() ?><br>
                     <?php echo $directorType ?><br>
-                    <a href="#">Pokaż więcej</a>
+                    <a href="#">Pokaż szczegóły</a>
                 </td>
             </tr>
 <?php
