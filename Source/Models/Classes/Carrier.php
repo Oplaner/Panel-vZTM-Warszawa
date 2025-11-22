@@ -247,6 +247,11 @@ final class Carrier extends DatabaseEntity {
             $supervisor->getActiveProfiles(),
             fn($profile) => is_a($profile, PersonnelProfile::class)
         );
+
+        if (is_null($personnelProfile)) {
+            return;
+        }
+
         $currentPersonnelProfileDescription = $personnelProfile->getDescription();
         $currentPersonnelProfilePrivileges = $personnelProfile->getPrivileges();
         $personnelProfile->deactivate($personnelProfileDeactivator);
