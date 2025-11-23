@@ -9,4 +9,4 @@ CREATE TABLE `contract_periods` (
 
 ALTER TABLE `contract_periods`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `contract_id` (`contract_id`);
+  ADD KEY `contract_id_key` (`contract_id`);

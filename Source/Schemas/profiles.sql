@@ -10,4 +10,4 @@ CREATE TABLE `profiles` (
 
 ALTER TABLE `profiles`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
+  ADD KEY `user_id_key` (`user_id`);

@@ -6,4 +6,4 @@ CREATE TABLE `profiles_driver` (
 
 
 ALTER TABLE `profiles_driver`
-  ADD KEY `profile_id` (`profile_id`);
+  ADD UNIQUE KEY `profile_id_key` (`profile_id`);

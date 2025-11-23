@@ -9,4 +9,4 @@ CREATE TABLE `session_tokens` (
 
 ALTER TABLE `session_tokens`
   ADD PRIMARY KEY (`token`),
-  ADD KEY `valid_to` (`valid_to`);
+  ADD KEY `valid_to_key` (`valid_to`);

@@ -10,4 +10,4 @@ CREATE TABLE `users` (
 
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `login` (`login`);
+  ADD UNIQUE KEY `login_key` (`login`);

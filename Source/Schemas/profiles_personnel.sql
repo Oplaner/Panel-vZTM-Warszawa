@@ -4,4 +4,4 @@ CREATE TABLE `profiles_personnel` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_polish_ci;
 
 ALTER TABLE `profiles_personnel`
-  ADD KEY `profile_id` (`profile_id`);
+  ADD UNIQUE KEY `profile_id_key` (`profile_id`);

@@ -9,5 +9,5 @@ CREATE TABLE `contracts` (
 
 ALTER TABLE `contracts`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `carrier_id` (`carrier_id`),
-  ADD KEY `driver_id` (`driver_id`);
+  ADD KEY `carrier_id_key` (`carrier_id`),
+  ADD KEY `driver_id_key` (`driver_id`);
