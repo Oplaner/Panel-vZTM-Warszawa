@@ -6,13 +6,14 @@ enum View: string {
     case carrierNew = "CarrierNew";
     case carriers = "Carriers";
     case confirmation = "Confirmation";
+    case directorProfileDetails = "DirectorProfileDetails";
+    case directorProfiles = "DirectorProfiles";
     case head = "Head";
     case login = "Login";
     case main = "Main";
     case menu = "Menu";
     case personnelProfileDetails = "PersonnelProfileDetails";
     case personnelProfiles = "PersonnelProfiles";
-    case directorProfiles = "DirectorProfiles";
     case topBar = "TopBar";
 }
 

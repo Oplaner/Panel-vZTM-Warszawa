@@ -72,7 +72,24 @@ final class PersonnelController extends Controller {
         self::renderView(View::personnelProfileDetails, $viewParameters);
     }
 
-    // showDirectorProfileDetails
+    #[Route("/personnel/directors/profile/{profileID}", RequestMethod::get)]
+    #[Access(
+        group: AccessGroup::oneOfProfiles,
+        profiles: [DirectorProfile::class]
+    )]
+    public function showDirectorProfileDetails(array $input): void {
+        extract($input[Router::PATH_DATA_KEY]);
+        $profile = DirectorProfile::withID($profileID);
+
+        if (is_null($profile)) {
+            Router::redirect("/personnel/directors");
+        }
+
+        $viewParameters = [
+            "profile" => $profile
+        ];
+        self::renderView(View::directorProfileDetails, $viewParameters);
+    }
 
     #[Route("/personnel/profile/{profileID}/deactivate", RequestMethod::get)]
     #[Access(

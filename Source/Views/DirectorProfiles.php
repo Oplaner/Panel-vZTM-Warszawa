@@ -73,7 +73,6 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Dyrektor
             foreach ($profiles as $profile):
             $statusClass = $profile->isActive() ? "active" : "inactive";
             $statusText = $profile->isActive() ? "aktywny" : "nieaktywny";
-            $directorType = $profile->isProtected() ? "Dyrektor chroniony&nbsp;&#128737;&#65039;" : "Dyrektor";
             $activatedAt = $profile->getActivatedAt()->toLocalizedString(SystemDateTimeFormat::dateOnly);
             $deactivatedAt = $profile->getDeactivatedAt()?->toLocalizedString(SystemDateTimeFormat::dateOnly);
 
@@ -81,7 +80,7 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Dyrektor
             <tr>
                 <td><span class="status <?php echo $statusClass ?>"><?php echo $statusText ?></span></td>
                 <td><?php echo $profile->getOwner()->getFormattedLoginAndUsername() ?></td>
-                <td><?php echo $directorType ?></td>
+                <td><?php echo $profile->getDirectorType() ?></td>
                 <td class="optional"><?php echo $activatedAt ?></td>
 <?php
 
@@ -94,14 +93,14 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Dyrektor
                 endif;
 
 ?>
-                <td class="action"><a href="#">Pokaż szczegóły</a></td>
+                <td class="action"><a href="<?php echo PathBuilder::action("/personnel/directors/profile/{$profile->getID()}") ?>">Pokaż szczegóły</a></td>
                 <td class="summary">
                     <div class="statusContainer">
                         <span class="status <?php echo $statusClass ?>"><?php echo $statusText ?></span>
                     </div>
                     <?php echo $profile->getOwner()->getFormattedLoginAndUsername() ?><br>
                     <?php echo $directorType ?><br>
-                    <a href="#">Pokaż szczegóły</a>
+                    <a href="<?php echo PathBuilder::action("/personnel/directors/profile/{$profile->getID()}") ?>">Pokaż szczegóły</a>
                 </td>
             </tr>
 <?php

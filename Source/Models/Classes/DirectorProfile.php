@@ -55,6 +55,10 @@ final class DirectorProfile extends Profile {
         return $this->isProtected;
     }
 
+    public function getDirectorType(): string {
+        return $this->isProtected() ? "Dyrektor chroniony&nbsp;&#128737;&#65039;" : "Dyrektor";
+    }
+
     public function deactivate(User $deactivator): void {
         if ($this->isProtected) {
             throw new DomainException("Cannot deactivate protected director profile.");
