@@ -73,15 +73,6 @@ final class CarrierController extends Controller {
         $isValidationSuccessful = true;
 
         try {
-            InputValidator::checkNonEmpty(self::FULL_NAME_FIELD_NAME, $fullName);
-            InputValidator::checkNonEmpty(self::SHORT_NAME_FIELD_NAME, $shortName);
-            InputValidator::checkNonEmpty(self::NUMBER_OF_TRIAL_TASKS_FIELD_NAME, $numberOfTrialTasks);
-            InputValidator::checkNonEmpty(self::NUMBER_OF_PENALTY_TASKS_FIELD_NAME, $numberOfPenaltyTasks);
-            InputValidator::checkLength(self::FULL_NAME_FIELD_NAME, $fullName, 1, 30);
-            InputValidator::checkLength(self::SHORT_NAME_FIELD_NAME, $shortName, 1, 10);
-            InputValidator::checkInteger(self::NUMBER_OF_TRIAL_TASKS_FIELD_NAME, $numberOfTrialTasks, 0, 255);
-            InputValidator::checkInteger(self::NUMBER_OF_PENALTY_TASKS_FIELD_NAME, $numberOfPenaltyTasks, 0, 255);
-
             if ($supervisorLoginsString != "") {
                 $supervisorLogins = explode(";", $supervisorLoginsString);
 
@@ -101,6 +92,15 @@ final class CarrierController extends Controller {
                 );
                 $supervisorLoginsString = implode(";", $supervisorLogins);
             }
+
+            InputValidator::checkNonEmpty(self::FULL_NAME_FIELD_NAME, $fullName);
+            InputValidator::checkNonEmpty(self::SHORT_NAME_FIELD_NAME, $shortName);
+            InputValidator::checkNonEmpty(self::NUMBER_OF_TRIAL_TASKS_FIELD_NAME, $numberOfTrialTasks);
+            InputValidator::checkNonEmpty(self::NUMBER_OF_PENALTY_TASKS_FIELD_NAME, $numberOfPenaltyTasks);
+            InputValidator::checkLength(self::FULL_NAME_FIELD_NAME, $fullName, 1, 30);
+            InputValidator::checkLength(self::SHORT_NAME_FIELD_NAME, $shortName, 1, 10);
+            InputValidator::checkInteger(self::NUMBER_OF_TRIAL_TASKS_FIELD_NAME, $numberOfTrialTasks, 0, 255);
+            InputValidator::checkInteger(self::NUMBER_OF_PENALTY_TASKS_FIELD_NAME, $numberOfPenaltyTasks, 0, 255);
         } catch (ValidationException $exception) {
             $showMessage = true;
             $messageType = "error";
@@ -236,15 +236,6 @@ final class CarrierController extends Controller {
         $isValidationSuccessful = true;
 
         try {
-            InputValidator::checkNonEmpty(self::FULL_NAME_FIELD_NAME, $fullName);
-            InputValidator::checkNonEmpty(self::SHORT_NAME_FIELD_NAME, $shortName);
-            InputValidator::checkNonEmpty(self::NUMBER_OF_TRIAL_TASKS_FIELD_NAME, $numberOfTrialTasks);
-            InputValidator::checkNonEmpty(self::NUMBER_OF_PENALTY_TASKS_FIELD_NAME, $numberOfPenaltyTasks);
-            InputValidator::checkLength(self::FULL_NAME_FIELD_NAME, $fullName, 1, 30);
-            InputValidator::checkLength(self::SHORT_NAME_FIELD_NAME, $shortName, 1, 10);
-            InputValidator::checkInteger(self::NUMBER_OF_TRIAL_TASKS_FIELD_NAME, $numberOfTrialTasks, 0, 255);
-            InputValidator::checkInteger(self::NUMBER_OF_PENALTY_TASKS_FIELD_NAME, $numberOfPenaltyTasks, 0, 255);
-
             if ($supervisorLoginsString != "") {
                 $supervisorLogins = explode(";", $supervisorLoginsString);
 
@@ -264,6 +255,15 @@ final class CarrierController extends Controller {
                 );
                 $supervisorLoginsString = implode(";", $supervisorLogins);
             }
+
+            InputValidator::checkNonEmpty(self::FULL_NAME_FIELD_NAME, $fullName);
+            InputValidator::checkNonEmpty(self::SHORT_NAME_FIELD_NAME, $shortName);
+            InputValidator::checkNonEmpty(self::NUMBER_OF_TRIAL_TASKS_FIELD_NAME, $numberOfTrialTasks);
+            InputValidator::checkNonEmpty(self::NUMBER_OF_PENALTY_TASKS_FIELD_NAME, $numberOfPenaltyTasks);
+            InputValidator::checkLength(self::FULL_NAME_FIELD_NAME, $fullName, 1, 30);
+            InputValidator::checkLength(self::SHORT_NAME_FIELD_NAME, $shortName, 1, 10);
+            InputValidator::checkInteger(self::NUMBER_OF_TRIAL_TASKS_FIELD_NAME, $numberOfTrialTasks, 0, 255);
+            InputValidator::checkInteger(self::NUMBER_OF_PENALTY_TASKS_FIELD_NAME, $numberOfPenaltyTasks, 0, 255);
         } catch (ValidationException $exception) {
             $message = $exception->getMessage();
             $isValidationSuccessful = false;
