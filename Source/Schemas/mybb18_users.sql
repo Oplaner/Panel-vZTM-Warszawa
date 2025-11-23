@@ -5,7 +5,7 @@ CREATE TABLE `mybb18_users` (
 
 ALTER TABLE `mybb18_users`
   ADD PRIMARY KEY (`uid`),
-  ADD UNIQUE KEY `username` (`username`);
+  ADD UNIQUE KEY `username_key` (`username`);
 
 ALTER TABLE `mybb18_users`
   MODIFY `uid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
