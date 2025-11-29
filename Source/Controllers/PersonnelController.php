@@ -100,7 +100,7 @@ final class PersonnelController extends Controller {
         extract($input[Router::PATH_DATA_KEY]);
         $profile = PersonnelProfile::withID($profileID);
 
-        if (is_null($profile)) {
+        if (is_null($profile) || !$profile->isActive()) {
             Router::redirect("/personnel");
         }
 
@@ -129,7 +129,7 @@ final class PersonnelController extends Controller {
         $profile = PersonnelProfile::withID($profileID);
         $post = $input[Router::POST_DATA_KEY];
 
-        if (is_null($profile) || !isset($post["confirmed"])) {
+        if (is_null($profile) || !$profile->isActive() || !isset($post["confirmed"])) {
             Router::redirect("/personnel");
         }
 
@@ -140,6 +140,57 @@ final class PersonnelController extends Controller {
             "message" => "Profil został zdezaktywowany."
         ];
         self::renderView(View::personnelProfileDetails, $viewParameters);
+    }
+
+    #[Route("/personnel/directors/profile/{profileID}/deactivate", RequestMethod::get)]
+    #[Access(
+        group: AccessGroup::oneOfProfiles,
+        profiles: [DirectorProfile::class]
+    )]
+    public function showDeactivateDirectorProfileConfirmation(array $input): void {
+        extract($input[Router::PATH_DATA_KEY]);
+        $profile = DirectorProfile::withID($profileID);
+
+        if (is_null($profile) || !$profile->isActive() || $profile->isProtected()) {
+            Router::redirect("/personnel/directors");
+        }
+
+        $viewParameters = [
+            "pageSubtitle" => $profile->getOwner()->getFormattedLoginAndUsername(),
+            "title" => $profile->getOwner()->getFormattedLoginAndUsername(),
+            "backAction" => "/personnel/directors",
+            "formAction" => "/personnel/directors/profile/$profileID/deactivate",
+            "confirmationMessage" => "Czy na pewno chcesz dezaktywować profil dyrektora? Tej czynności nie można cofnąć.",
+            "infoMessage" => "Jeśli jest to jedyny profil tego użytkownika, utraci on dostęp do systemu.",
+            "cancelAction" => "/personnel/directors/profile/$profileID",
+            "submitButton" => "Dezaktywuj profil"
+        ];
+        self::renderView(View::confirmation, $viewParameters);
+    }
+
+    #[Route("/personnel/directors/profile/{profileID}/deactivate", RequestMethod::post)]
+    #[Access(
+        group: AccessGroup::oneOfProfiles,
+        profiles: [DirectorProfile::class]
+    )]
+    public function deactivateDirectorProfile(array $input): void {
+        global $_USER;
+
+        extract($input[Router::PATH_DATA_KEY]);
+        $profile = DirectorProfile::withID($profileID);
+        $post = $input[Router::POST_DATA_KEY];
+
+        if (is_null($profile) || !$profile->isActive() || $profile->isProtected() || !isset($post["confirmed"])) {
+            Router::redirect("/personnel/directors");
+        }
+
+        $profile->deactivate($_USER);
+        $viewParameters = [
+            "profile" => $profile,
+            "showMessage" => true,
+            "message" => "Profil został zdezaktywowany."
+        ];
+        self::renderView(View::directorProfileDetails, $viewParameters);
     }
 }
 
