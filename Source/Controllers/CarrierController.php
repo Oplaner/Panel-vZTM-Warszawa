@@ -78,6 +78,7 @@ final class CarrierController extends Controller {
 
                 foreach ($supervisorLogins as $supervisorLogin) {
                     try {
+                        // 4294967295 is the maximum value which can be stored in unsigned int(10).
                         InputValidator::checkInteger(self::SUPERVISORS_FIELD_NAME, $supervisorLogin, 0, 4294967295);
                     } catch (ValidationException) {
                         $supervisorLoginsString = "";
@@ -176,7 +177,7 @@ final class CarrierController extends Controller {
         extract($input[Router::PATH_DATA_KEY]);
         $carrier = Carrier::withID($carrierID);
 
-        if (is_null($carrier)) {
+        if (is_null($carrier) || !$carrier->isActive()) {
             Router::redirect("/carriers");
         }
 
@@ -219,7 +220,7 @@ final class CarrierController extends Controller {
         extract($input[Router::PATH_DATA_KEY]);
         $carrier = Carrier::withID($carrierID);
 
-        if (is_null($carrier)) {
+        if (is_null($carrier) || !$carrier->isActive()) {
             Router::redirect("/carriers");
         }
 
@@ -241,6 +242,7 @@ final class CarrierController extends Controller {
 
                 foreach ($supervisorLogins as $supervisorLogin) {
                     try {
+                        // 4294967295 is the maximum value which can be stored in unsigned int(10).
                         InputValidator::checkInteger(self::SUPERVISORS_FIELD_NAME, $supervisorLogin, 0, 4294967295);
                     } catch (ValidationException) {
                         $supervisorLoginsString = "";
@@ -342,7 +344,7 @@ final class CarrierController extends Controller {
         extract($input[Router::PATH_DATA_KEY]);
         $carrier = Carrier::withID($carrierID);
 
-        if (is_null($carrier)) {
+        if (is_null($carrier) || !$carrier->isActive()) {
             Router::redirect("/carriers");
         }
 
@@ -371,7 +373,7 @@ final class CarrierController extends Controller {
         $carrier = Carrier::withID($carrierID);
         $post = $input[Router::POST_DATA_KEY];
 
-        if (is_null($carrier) || !isset($post["confirmed"])) {
+        if (is_null($carrier) || !$carrier->isActive() || !isset($post["confirmed"])) {
             Router::redirect("/carriers");
         }
 
