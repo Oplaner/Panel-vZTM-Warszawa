@@ -93,21 +93,42 @@ final class Carrier extends DatabaseEntity {
         return new Carrier($id, $fullName, $shortName, $numberOfTrialTasks, $numberOfPenaltyTasks, $createdAt, $createdBy, $closedAt, $closedBy);
     }
 
-    public static function getAll(string $sortSubstring = "created_at ASC"): array {
-        $query =
-        "SELECT id
-        FROM carriers
-        ORDER BY $sortSubstring";
+    public static function getAll(string $sortSubstring = "created_at ASC", ?string $limitSubstring = null): array {
+        $limitSubstring = is_null($limitSubstring) ? "" : "LIMIT $limitSubstring";
+        $query = trim(
+            "SELECT id
+            FROM carriers
+            ORDER BY $sortSubstring
+            $limitSubstring"
+        );
         return self::getWithQuery($query);
     }
     
-    public static function getActive(string $sortSubstring = "created_at ASC"): array {
-        $query =
-        "SELECT id
-        FROM carriers
-        WHERE closed_at IS NULL
-        ORDER BY $sortSubstring";
+    public static function getActive(string $sortSubstring = "created_at ASC", ?string $limitSubstring = null): array {
+        $limitSubstring = is_null($limitSubstring) ? "" : "LIMIT $limitSubstring";
+        $query = trim(
+            "SELECT id
+            FROM carriers
+            WHERE closed_at IS NULL
+            ORDER BY $sortSubstring
+            $limitSubstring"
+        );
         return self::getWithQuery($query);
+    }
+
+    public static function getAllCount(): int {
+        $query =
+        "SELECT COUNT(*)
+        FROM carriers";
+        return self::getCountWithQuery($query);
+    }
+
+    public static function getActiveCount(): int {
+        $query =
+        "SELECT COUNT(*)
+        FROM carriers
+        WHERE closed_at IS NULL";
+        return self::getCountWithQuery($query);
     }
 
     private static function getWithQuery(string $query, ?array $parameters = null): array {
@@ -120,6 +141,13 @@ final class Carrier extends DatabaseEntity {
 
         $result->free();
         return $carriers;
+    }
+
+    private static function getCountWithQuery(string $query): int {
+        $result = DatabaseConnector::shared()->execute_query($query);
+        $count = $result->fetch_column();
+        $result->free();
+        return $count;
     }
 
     private static function validateNumberOfTrialTasksIsNotLessThanZero(int $numberOfTrialTasks): void {

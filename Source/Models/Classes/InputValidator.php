@@ -17,23 +17,26 @@ final class InputValidator {
         return mb_trim($value, null, self::ENCODING);
     }
 
-    public static function checkNonEmpty(string $fieldName, string $value): void {
+    public static function checkNonEmpty(string $value, ?string $fieldName = null): void {
         if ($value == "") {
-            throw new ValidationException(self::generateErrorMessage(self::MESSAGE_TEMPLATE_NON_EMPTY, $fieldName));
+            $message = is_null($fieldName) ? "" : self::generateErrorMessage(self::MESSAGE_TEMPLATE_NON_EMPTY, $fieldName);
+            throw new ValidationException($message);
         }
     }
 
-    public static function checkLength(string $fieldName, string $value, int $min, int $max): void {
+    public static function checkLength(string $value, int $min, int $max, ?string $fieldName = null): void {
         $length = mb_strlen($value, self::ENCODING);
 
         if ($length < $min || $length > $max) {
-            throw new ValidationException(self::generateErrorMessage(self::MESSAGE_TEMPLATE_LENGTH, $fieldName, $min, $max));
+            $message = is_null($fieldName) ? "" : self::generateErrorMessage(self::MESSAGE_TEMPLATE_LENGTH, $fieldName, $min, $max);
+            throw new ValidationException($message);
         }
     }
 
-    public static function checkInteger(string $fieldName, string $value, int $min, int $max): void {
+    public static function checkInteger(string $value, int $min, int $max, ?string $fieldName = null): void {
         if (filter_var($value, FILTER_VALIDATE_INT) === false || $value < $min || $value > $max) {
-            throw new ValidationException(self::generateErrorMessage(self::MESSAGE_TEMPLATE_INTEGER, $fieldName, $min, $max));
+            $message = is_null($fieldName) ? "" : self::generateErrorMessage(self::MESSAGE_TEMPLATE_INTEGER, $fieldName, $min, $max);
+            throw new ValidationException($message);
         }
     }
 

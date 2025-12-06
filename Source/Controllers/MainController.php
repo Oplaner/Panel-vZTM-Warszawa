@@ -40,9 +40,6 @@ final class MainController extends Controller {
         group: AccessGroup::guestsOnly
     )]
     public function handleLogin(array $input): void {
-        $loginFieldName = "Login";
-        $passwordFieldName = "Hasło";
-
         $post = $input[Router::POST_DATA_KEY];
         $login = InputValidator::clean($post["login"]);
         $password = InputValidator::clean($post["password"]);
@@ -53,10 +50,10 @@ final class MainController extends Controller {
         $authenticationResult = null;
 
         try {
-            InputValidator::checkNonEmpty($loginFieldName, $login);
-            InputValidator::checkNonEmpty($passwordFieldName, $password);
-            InputValidator::checkLength($loginFieldName, $login, 1, 10);
-            InputValidator::checkLength($passwordFieldName, $password, $minPasswordLength, 255);
+            InputValidator::checkNonEmpty($login);
+            InputValidator::checkNonEmpty($password);
+            InputValidator::checkLength($login, 1, 10);
+            InputValidator::checkLength($password, $minPasswordLength, 255);
         } catch (ValidationException) {
             $isValidationSuccessful = false;
             $authenticationResult = AuthenticationResult::invalidCredentials;

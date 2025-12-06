@@ -13,8 +13,35 @@ final class CarrierController extends Controller {
         profiles: [DirectorProfile::class]
     )]
     public function showActiveCarriersList(): void {
+        $input = [
+            Router::PATH_DATA_KEY => [
+                "pageNumber" => 1
+            ]
+        ];
+        $this->showActiveCarriersListByPage($input);
+    }
+
+    #[Route("/carriers/page/{pageNumber}", RequestMethod::get)]
+    #[Access(
+        group: AccessGroup::oneOfProfiles,
+        profiles: [DirectorProfile::class]
+    )]
+    public function showActiveCarriersListByPage(array $input): void {
+        extract($input[Router::PATH_DATA_KEY]);
+        $pageNumber = InputValidator::clean($pageNumber);
+        $paginationInfo = new PaginationInfo(Carrier::getActiveCount(), self::getNumberOfObjectsPerPage());
+
+        try {
+            InputValidator::checkInteger($pageNumber, 1, $paginationInfo->getNumberOfPages());
+        } catch (ValidationException) {
+            Router::redirect("/carriers");
+        }
+
+        $paginationInfo->setCurrentPage($pageNumber);
+        $limitSubstring = $paginationInfo->getQueryLimitSubstring();
         $viewParameters = [
-            "carriers" => Carrier::getActive("created_at DESC"),
+            "carriers" => Carrier::getActive("created_at DESC", $limitSubstring),
+            "paginationInfo" => $paginationInfo,
             "showingActiveOnly" => true
         ];
         self::renderView(View::carriers, $viewParameters);
@@ -26,8 +53,35 @@ final class CarrierController extends Controller {
         profiles: [DirectorProfile::class]
     )]
     public function showAllCarriersList(): void {
+        $input = [
+            Router::PATH_DATA_KEY => [
+                "pageNumber" => 1
+            ]
+        ];
+        $this->showAllCarriersListByPage($input);
+    }
+
+    #[Route("/carriers/all/page/{pageNumber}", RequestMethod::get)]
+    #[Access(
+        group: AccessGroup::oneOfProfiles,
+        profiles: [DirectorProfile::class]
+    )]
+    public function showAllCarriersListByPage(array $input): void {
+        extract($input[Router::PATH_DATA_KEY]);
+        $pageNumber = InputValidator::clean($pageNumber);
+        $paginationInfo = new PaginationInfo(Carrier::getAllCount(), self::getNumberOfObjectsPerPage());
+
+        try {
+            InputValidator::checkInteger($pageNumber, 1, $paginationInfo->getNumberOfPages());
+        } catch (ValidationException) {
+            Router::redirect("/carriers/all");
+        }
+
+        $paginationInfo->setCurrentPage($pageNumber);
+        $limitSubstring = $paginationInfo->getQueryLimitSubstring();
         $viewParameters = [
-            "carriers" => Carrier::getAll("(closed_at IS NULL) DESC, created_at DESC"),
+            "carriers" => Carrier::getAll("(closed_at IS NULL) DESC, created_at DESC", $limitSubstring),
+            "paginationInfo" => $paginationInfo,
             "showingActiveOnly" => false
         ];
         self::renderView(View::carriers, $viewParameters);
@@ -79,7 +133,7 @@ final class CarrierController extends Controller {
                 foreach ($supervisorLogins as $supervisorLogin) {
                     try {
                         // 4294967295 is the maximum value which can be stored in unsigned int(10).
-                        InputValidator::checkInteger(self::SUPERVISORS_FIELD_NAME, $supervisorLogin, 0, 4294967295);
+                        InputValidator::checkInteger($supervisorLogin, 0, 4294967295, self::SUPERVISORS_FIELD_NAME);
                     } catch (ValidationException) {
                         $supervisorLoginsString = "";
                         throw new ValidationException(InputValidator::generateErrorMessage(InputValidator::MESSAGE_TEMPLATE_GENERIC, self::SUPERVISORS_FIELD_NAME));
@@ -94,14 +148,14 @@ final class CarrierController extends Controller {
                 $supervisorLoginsString = implode(";", $supervisorLogins);
             }
 
-            InputValidator::checkNonEmpty(self::FULL_NAME_FIELD_NAME, $fullName);
-            InputValidator::checkNonEmpty(self::SHORT_NAME_FIELD_NAME, $shortName);
-            InputValidator::checkNonEmpty(self::NUMBER_OF_TRIAL_TASKS_FIELD_NAME, $numberOfTrialTasks);
-            InputValidator::checkNonEmpty(self::NUMBER_OF_PENALTY_TASKS_FIELD_NAME, $numberOfPenaltyTasks);
-            InputValidator::checkLength(self::FULL_NAME_FIELD_NAME, $fullName, 1, 30);
-            InputValidator::checkLength(self::SHORT_NAME_FIELD_NAME, $shortName, 1, 10);
-            InputValidator::checkInteger(self::NUMBER_OF_TRIAL_TASKS_FIELD_NAME, $numberOfTrialTasks, 0, 255);
-            InputValidator::checkInteger(self::NUMBER_OF_PENALTY_TASKS_FIELD_NAME, $numberOfPenaltyTasks, 0, 255);
+            InputValidator::checkNonEmpty($fullName, self::FULL_NAME_FIELD_NAME);
+            InputValidator::checkNonEmpty($shortName, self::SHORT_NAME_FIELD_NAME);
+            InputValidator::checkNonEmpty($numberOfTrialTasks, self::NUMBER_OF_TRIAL_TASKS_FIELD_NAME);
+            InputValidator::checkNonEmpty($numberOfPenaltyTasks, self::NUMBER_OF_PENALTY_TASKS_FIELD_NAME);
+            InputValidator::checkLength($fullName, 1, 30, self::FULL_NAME_FIELD_NAME);
+            InputValidator::checkLength($shortName, 1, 10, self::SHORT_NAME_FIELD_NAME);
+            InputValidator::checkInteger($numberOfTrialTasks, 0, 255, self::NUMBER_OF_TRIAL_TASKS_FIELD_NAME);
+            InputValidator::checkInteger($numberOfPenaltyTasks, 0, 255, self::NUMBER_OF_PENALTY_TASKS_FIELD_NAME);
         } catch (ValidationException $exception) {
             $showMessage = true;
             $messageType = "error";
@@ -243,7 +297,7 @@ final class CarrierController extends Controller {
                 foreach ($supervisorLogins as $supervisorLogin) {
                     try {
                         // 4294967295 is the maximum value which can be stored in unsigned int(10).
-                        InputValidator::checkInteger(self::SUPERVISORS_FIELD_NAME, $supervisorLogin, 0, 4294967295);
+                        InputValidator::checkInteger($supervisorLogin, 0, 4294967295, self::SUPERVISORS_FIELD_NAME);
                     } catch (ValidationException) {
                         $supervisorLoginsString = "";
                         throw new ValidationException(InputValidator::generateErrorMessage(InputValidator::MESSAGE_TEMPLATE_GENERIC, self::SUPERVISORS_FIELD_NAME));
@@ -258,14 +312,14 @@ final class CarrierController extends Controller {
                 $supervisorLoginsString = implode(";", $supervisorLogins);
             }
 
-            InputValidator::checkNonEmpty(self::FULL_NAME_FIELD_NAME, $fullName);
-            InputValidator::checkNonEmpty(self::SHORT_NAME_FIELD_NAME, $shortName);
-            InputValidator::checkNonEmpty(self::NUMBER_OF_TRIAL_TASKS_FIELD_NAME, $numberOfTrialTasks);
-            InputValidator::checkNonEmpty(self::NUMBER_OF_PENALTY_TASKS_FIELD_NAME, $numberOfPenaltyTasks);
-            InputValidator::checkLength(self::FULL_NAME_FIELD_NAME, $fullName, 1, 30);
-            InputValidator::checkLength(self::SHORT_NAME_FIELD_NAME, $shortName, 1, 10);
-            InputValidator::checkInteger(self::NUMBER_OF_TRIAL_TASKS_FIELD_NAME, $numberOfTrialTasks, 0, 255);
-            InputValidator::checkInteger(self::NUMBER_OF_PENALTY_TASKS_FIELD_NAME, $numberOfPenaltyTasks, 0, 255);
+            InputValidator::checkNonEmpty($fullName, self::FULL_NAME_FIELD_NAME);
+            InputValidator::checkNonEmpty($shortName, self::SHORT_NAME_FIELD_NAME);
+            InputValidator::checkNonEmpty($numberOfTrialTasks, self::NUMBER_OF_TRIAL_TASKS_FIELD_NAME);
+            InputValidator::checkNonEmpty($numberOfPenaltyTasks, self::NUMBER_OF_PENALTY_TASKS_FIELD_NAME);
+            InputValidator::checkLength($fullName, 1, 30, self::FULL_NAME_FIELD_NAME);
+            InputValidator::checkLength($shortName, 1, 10, self::SHORT_NAME_FIELD_NAME);
+            InputValidator::checkInteger($numberOfTrialTasks, 0, 255, self::NUMBER_OF_TRIAL_TASKS_FIELD_NAME);
+            InputValidator::checkInteger($numberOfPenaltyTasks, 0, 255, self::NUMBER_OF_PENALTY_TASKS_FIELD_NAME);
         } catch (ValidationException $exception) {
             $message = $exception->getMessage();
             $isValidationSuccessful = false;

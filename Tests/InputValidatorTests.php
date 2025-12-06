@@ -40,7 +40,7 @@ final class InputValidatorTests {
             $didThrowException = false;
 
             try {
-                InputValidator::checkNonEmpty("Test field", $value);
+                InputValidator::checkNonEmpty($value);
             } catch (ValidationException) {
                 $didThrowException = true;
             }
@@ -71,7 +71,7 @@ final class InputValidatorTests {
             $didThrowException = false;
 
             try {
-                InputValidator::checkLength("Test field", $parameters[0], $parameters[1], $parameters[2]);
+                InputValidator::checkLength($parameters[0], $parameters[1], $parameters[2]);
             } catch (ValidationException) {
                 $didThrowException = true;
             }
@@ -106,7 +106,7 @@ final class InputValidatorTests {
             $didThrowException = false;
 
             try {
-                InputValidator::checkInteger("Test field", $parameters[0], $parameters[1], $parameters[2]);
+                InputValidator::checkInteger($parameters[0], $parameters[1], $parameters[2]);
             } catch (ValidationException) {
                 $didThrowException = true;
             }

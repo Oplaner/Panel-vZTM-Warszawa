@@ -3,6 +3,11 @@
 abstract class Controller {
     private const VIEWS_DIRECTORY = __DIR__."/../Views/";
 
+    protected static function getNumberOfObjectsPerPage(): int {
+        $properties = PropertiesReader::getProperties("application");
+        return $properties["numberOfObjectsPerPage"];
+    }
+
     protected static function renderView(View $view, array $parameters = []): void {
         global $_USER;
         extract($parameters);
