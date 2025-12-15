@@ -22,6 +22,11 @@ final class ViewBuilder {
         self::printNewLine();
     }
 
+    public static function buildPagination(PaginationInfo $paginationInfo, string $basePath): void {
+        include self::VIEWS_DIRECTORY.View::pagination->value.".php";
+        self::printNewLine();
+    }
+
     private static function getBasePageTitle(): string {
         if (is_null(self::$basePageTitle)) {
             $properties = PropertiesReader::getProperties("application");

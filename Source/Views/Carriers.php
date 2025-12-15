@@ -107,6 +107,11 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Zakłady
 
 ?>
         </table>
+<?php
+
+        ViewBuilder::buildPagination($paginationInfo, $showingActiveOnly ? "/carriers" : "/carriers/all");
+
+?>
     </div>
 </body>
 </html>

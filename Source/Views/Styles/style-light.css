@@ -587,6 +587,32 @@ td.action {
     color: #972525;
 }
 
+#pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    border-top: 1px solid #DADFE3;
+    padding-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+#pagination > * {
+    flex: 1;
+}
+
+#pagination > *:nth-child(1) {
+    text-align: left;
+}
+
+#pagination > *:nth-child(2) {
+    text-align: center;
+}
+
+#pagination > *:nth-child(3) {
+    text-align: right;
+}
+
 @media only screen and (max-width: 1000px) {
     th.optional, td.optional {
         display: none;

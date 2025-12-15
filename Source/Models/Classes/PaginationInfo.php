@@ -33,6 +33,22 @@ final class PaginationInfo {
         $this->currentPage = $currentPage;
     }
 
+    public function getPreviousPage(): ?int {
+        if ($this->isFirstPage()) {
+            return null;
+        }
+
+        return $this->currentPage - 1;
+    }
+
+    public function getNextPage(): ?int {
+        if ($this->isLastPage()) {
+            return null;
+        }
+
+        return $this->currentPage + 1;
+    }
+
     public function isFirstPage(): bool {
         if (is_null($this->currentPage)) {
             throw new LogicException(self::CURRENT_PAGE_NOT_SET_EXCEPTION_MESSAGE);
