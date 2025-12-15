@@ -112,6 +112,11 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Personel
 
 ?>
         </table>
+<?php
+
+        ViewBuilder::buildPagination($paginationInfo, $showingActiveOnly ? "/personnel" : "/personnel/all");
+
+?>
     </div>
 </body>
 </html>

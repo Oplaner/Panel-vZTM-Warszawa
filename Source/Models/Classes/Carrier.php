@@ -94,24 +94,24 @@ final class Carrier extends DatabaseEntity {
     }
 
     public static function getAll(string $sortSubstring = "created_at ASC", ?string $limitSubstring = null): array {
-        $limitSubstring = is_null($limitSubstring) ? "" : "LIMIT $limitSubstring";
+        $limitString = self::makeQueryLimitString($limitSubstring);
         $query = trim(
             "SELECT id
             FROM carriers
             ORDER BY $sortSubstring
-            $limitSubstring"
+            $limitString"
         );
         return self::getWithQuery($query);
     }
     
     public static function getActive(string $sortSubstring = "created_at ASC", ?string $limitSubstring = null): array {
-        $limitSubstring = is_null($limitSubstring) ? "" : "LIMIT $limitSubstring";
+        $limitString = self::makeQueryLimitString($limitSubstring);
         $query = trim(
             "SELECT id
             FROM carriers
             WHERE closed_at IS NULL
             ORDER BY $sortSubstring
-            $limitSubstring"
+            $limitString"
         );
         return self::getWithQuery($query);
     }
@@ -129,25 +129,6 @@ final class Carrier extends DatabaseEntity {
         FROM carriers
         WHERE closed_at IS NULL";
         return self::getCountWithQuery($query);
-    }
-
-    private static function getWithQuery(string $query, ?array $parameters = null): array {
-        $result = DatabaseConnector::shared()->execute_query($query, $parameters);
-        $carriers = [];
-
-        while ($carrierID = $result->fetch_column()) {
-            $carriers[] = self::withID($carrierID);
-        }
-
-        $result->free();
-        return $carriers;
-    }
-
-    private static function getCountWithQuery(string $query): int {
-        $result = DatabaseConnector::shared()->execute_query($query);
-        $count = $result->fetch_column();
-        $result->free();
-        return $count;
     }
 
     private static function validateNumberOfTrialTasksIsNotLessThanZero(int $numberOfTrialTasks): void {

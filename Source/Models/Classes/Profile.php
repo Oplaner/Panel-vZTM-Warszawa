@@ -41,40 +41,61 @@ abstract class Profile extends DatabaseEntity {
         return self::getWithQuery($query, $parameters);
     }
 
-    public static function getAllByType(ProfileType $type, string $sortSubstring = "activated_at ASC"): array {
-        $query =
+    public static function getAllByType(ProfileType $type, string $sortSubstring = "activated_at ASC", ?string $limitSubstring = null): array {
+        $limitString = self::makeQueryLimitString($limitSubstring);
+        $query = trim(
             "SELECT id, type
             FROM profiles
             WHERE type = ?
-            ORDER BY $sortSubstring";
+            ORDER BY $sortSubstring
+            $limitString"
+        );
         $parameters = [
             $type->value
         ];
         return self::getWithQuery($query, $parameters);
     }
 
-    public static function getActiveByType(ProfileType $type, string $sortSubstring = "activated_at ASC"): array {
-        $query =
+    public static function getActiveByType(ProfileType $type, string $sortSubstring = "activated_at ASC", ?string $limitSubstring = null): array {
+        $limitString = self::makeQueryLimitString($limitSubstring);
+        $query = trim(
             "SELECT id, type
             FROM profiles
             WHERE type = ?
             AND deactivated_at IS NULL
-            ORDER BY $sortSubstring";
+            ORDER BY $sortSubstring
+            $limitString"
+        );
         $parameters = [
             $type->value
         ];
         return self::getWithQuery($query, $parameters);
     }
 
-    protected static function validateUserDoesNotHaveProfileOfType(User $user): void {
-        $profileType = static::class;
-
-        if ($user->hasActiveProfileOfType($profileType)) {
-            throw new DomainException("Cannot create new $profileType - there is one currently active for the user.");
-        }
+    public static function getAllCountByType(ProfileType $type): int {
+        $query =
+        "SELECT COUNT(*)
+        FROM profiles
+        WHERE type = ?";
+        $parameters = [
+            $type->value
+        ];
+        return self::getCountWithQuery($query, $parameters);
     }
 
-    private static function getWithQuery(string $query, ?array $parameters = null): array {
+    public static function getActiveCountByType(ProfileType $type): int {
+        $query =
+        "SELECT COUNT(*)
+        FROM profiles
+        WHERE type = ?
+        AND deactivated_at IS NULL";
+        $parameters = [
+            $type->value
+        ];
+        return self::getCountWithQuery($query, $parameters);
+    }
+
+    protected static function getWithQuery(string $query, ?array $parameters = null): array {
         $result = DatabaseConnector::shared()->execute_query($query, $parameters);
         $profiles = [];
 
@@ -86,6 +107,14 @@ abstract class Profile extends DatabaseEntity {
 
         $result->free();
         return $profiles;
+    }
+
+    protected static function validateUserDoesNotHaveProfileOfType(User $user): void {
+        $profileType = static::class;
+
+        if ($user->hasActiveProfileOfType($profileType)) {
+            throw new DomainException("Cannot create new $profileType - there is one currently active for the user.");
+        }
     }
 
     public function getOwner(): User {

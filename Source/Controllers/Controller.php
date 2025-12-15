@@ -3,6 +3,14 @@
 abstract class Controller {
     private const VIEWS_DIRECTORY = __DIR__."/../Views/";
 
+    protected static function makeFirstPageInputArray(): array {
+        return [
+            Router::PATH_DATA_KEY => [
+                "pageNumber" => 1
+            ]
+        ];
+    }
+
     protected static function getNumberOfObjectsPerPage(): int {
         $properties = PropertiesReader::getProperties("application");
         return $properties["numberOfObjectsPerPage"];

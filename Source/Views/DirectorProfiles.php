@@ -110,6 +110,11 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Dyrektor
 
 ?>
         </table>
+<?php
+
+        ViewBuilder::buildPagination($paginationInfo, $showingActiveOnly ? "/personnel/directors" : "/personnel/directors/all");
+
+?>
     </div>
 </body>
 </html>

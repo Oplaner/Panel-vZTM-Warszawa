@@ -7,8 +7,30 @@ final class PersonnelController extends Controller {
         profiles: [DirectorProfile::class]
     )]
     public function showActivePersonnelProfilesList(): void {
+        $this->showActivePersonnelProfilesListByPage(self::makeFirstPageInputArray());
+    }
+
+    #[Route("/personnel/page/{pageNumber}", RequestMethod::get)]
+    #[Access(
+        group: AccessGroup::oneOfProfiles,
+        profiles: [DirectorProfile::class]
+    )]
+    public function showActivePersonnelProfilesListByPage(array $input): void {
+        extract($input[Router::PATH_DATA_KEY]);
+        $pageNumber = InputValidator::clean($pageNumber);
+        $paginationInfo = new PaginationInfo(Profile::getActiveCountByType(ProfileType::personnel), self::getNumberOfObjectsPerPage());
+
+        try {
+            InputValidator::checkInteger($pageNumber, 1, $paginationInfo->getNumberOfPages());
+        } catch (ValidationException) {
+            Router::redirect("/personnel");
+        }
+
+        $paginationInfo->setCurrentPage($pageNumber);
+        $limitSubstring = $paginationInfo->getQueryLimitSubstring();
         $viewParameters = [
-            "profiles" => Profile::getActiveByType(ProfileType::personnel, "(deactivated_at IS NULL) DESC, activated_at DESC"),
+            "profiles" => Profile::getActiveByType(ProfileType::personnel, "(deactivated_at IS NULL) DESC, activated_at DESC", $limitSubstring),
+            "paginationInfo" => $paginationInfo,
             "showingActiveOnly" => true
         ];
         self::renderView(View::personnelProfiles, $viewParameters);
@@ -20,8 +42,30 @@ final class PersonnelController extends Controller {
         profiles: [DirectorProfile::class]
     )]
     public function showAllPersonnelProfilesList(): void {
+        $this->showAllPersonnelProfilesListByPage(self::makeFirstPageInputArray());
+    }
+
+    #[Route("/personnel/all/page/{pageNumber}", RequestMethod::get)]
+    #[Access(
+        group: AccessGroup::oneOfProfiles,
+        profiles: [DirectorProfile::class]
+    )]
+    public function showAllPersonnelProfilesListByPage(array $input): void {
+        extract($input[Router::PATH_DATA_KEY]);
+        $pageNumber = InputValidator::clean($pageNumber);
+        $paginationInfo = new PaginationInfo(Profile::getAllCountByType(ProfileType::personnel), self::getNumberOfObjectsPerPage());
+
+        try {
+            InputValidator::checkInteger($pageNumber, 1, $paginationInfo->getNumberOfPages());
+        } catch (ValidationException) {
+            Router::redirect("/personnel/all");
+        }
+
+        $paginationInfo->setCurrentPage($pageNumber);
+        $limitSubstring = $paginationInfo->getQueryLimitSubstring();
         $viewParameters = [
-            "profiles" => Profile::getAllByType(ProfileType::personnel, "(deactivated_at IS NULL) DESC, activated_at DESC"),
+            "profiles" => Profile::getAllByType(ProfileType::personnel, "(deactivated_at IS NULL) DESC, activated_at DESC", $limitSubstring),
+            "paginationInfo" => $paginationInfo,
             "showingActiveOnly" => false
         ];
         self::renderView(View::personnelProfiles, $viewParameters);
@@ -33,8 +77,30 @@ final class PersonnelController extends Controller {
         profiles: [DirectorProfile::class]
     )]
     public function showActiveDirectorProfilesList(): void {
+        $this->showActiveDirectorProfilesListByPage(self::makeFirstPageInputArray());
+    }
+
+    #[Route("/personnel/directors/page/{pageNumber}", RequestMethod::get)]
+    #[Access(
+        group: AccessGroup::oneOfProfiles,
+        profiles: [DirectorProfile::class]
+    )]
+    public function showActiveDirectorProfilesListByPage(array $input): void {
+        extract($input[Router::PATH_DATA_KEY]);
+        $pageNumber = InputValidator::clean($pageNumber);
+        $paginationInfo = new PaginationInfo(Profile::getActiveCountByType(ProfileType::director), self::getNumberOfObjectsPerPage());
+
+        try {
+            InputValidator::checkInteger($pageNumber, 1, $paginationInfo->getNumberOfPages());
+        } catch (ValidationException) {
+            Router::redirect("/personnel/directors");
+        }
+
+        $paginationInfo->setCurrentPage($pageNumber);
+        $limitSubstring = $paginationInfo->getQueryLimitSubstring();
         $viewParameters = [
-            "profiles" => Profile::getActiveByType(ProfileType::director, "(deactivated_at IS NULL) DESC, activated_at DESC"),
+            "profiles" => Profile::getActiveByType(ProfileType::director, "(deactivated_at IS NULL) DESC, activated_at DESC", $limitSubstring),
+            "paginationInfo" => $paginationInfo,
             "showingActiveOnly" => true
         ];
         self::renderView(View::directorProfiles, $viewParameters);
@@ -46,8 +112,30 @@ final class PersonnelController extends Controller {
         profiles: [DirectorProfile::class]
     )]
     public function showAllDirectorProfilesList(): void {
+        $this->showAllDirectorProfilesListByPage(self::makeFirstPageInputArray());
+    }
+
+    #[Route("/personnel/directors/all/page/{pageNumber}", RequestMethod::get)]
+    #[Access(
+        group: AccessGroup::oneOfProfiles,
+        profiles: [DirectorProfile::class]
+    )]
+    public function showAllDirectorProfilesListByPage(array $input): void {
+        extract($input[Router::PATH_DATA_KEY]);
+        $pageNumber = InputValidator::clean($pageNumber);
+        $paginationInfo = new PaginationInfo(Profile::getAllCountByType(ProfileType::director), self::getNumberOfObjectsPerPage());
+
+        try {
+            InputValidator::checkInteger($pageNumber, 1, $paginationInfo->getNumberOfPages());
+        } catch (ValidationException) {
+            Router::redirect("/personnel/directors/all");
+        }
+
+        $paginationInfo->setCurrentPage($pageNumber);
+        $limitSubstring = $paginationInfo->getQueryLimitSubstring();
         $viewParameters = [
-            "profiles" => Profile::getAllByType(ProfileType::director, "(deactivated_at IS NULL) DESC, activated_at DESC"),
+            "profiles" => Profile::getAllByType(ProfileType::director, "(deactivated_at IS NULL) DESC, activated_at DESC", $limitSubstring),
+            "paginationInfo" => $paginationInfo,
             "showingActiveOnly" => false
         ];
         self::renderView(View::directorProfiles, $viewParameters);

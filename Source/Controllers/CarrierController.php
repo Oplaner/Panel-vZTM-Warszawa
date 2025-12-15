@@ -13,12 +13,7 @@ final class CarrierController extends Controller {
         profiles: [DirectorProfile::class]
     )]
     public function showActiveCarriersList(): void {
-        $input = [
-            Router::PATH_DATA_KEY => [
-                "pageNumber" => 1
-            ]
-        ];
-        $this->showActiveCarriersListByPage($input);
+        $this->showActiveCarriersListByPage(self::makeFirstPageInputArray());
     }
 
     #[Route("/carriers/page/{pageNumber}", RequestMethod::get)]
@@ -53,12 +48,7 @@ final class CarrierController extends Controller {
         profiles: [DirectorProfile::class]
     )]
     public function showAllCarriersList(): void {
-        $input = [
-            Router::PATH_DATA_KEY => [
-                "pageNumber" => 1
-            ]
-        ];
-        $this->showAllCarriersListByPage($input);
+        $this->showAllCarriersListByPage(self::makeFirstPageInputArray());
     }
 
     #[Route("/carriers/all/page/{pageNumber}", RequestMethod::get)]

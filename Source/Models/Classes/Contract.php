@@ -134,18 +134,6 @@ final class Contract extends DatabaseEntity {
         return self::getWithQuery($query, $parameters);
     }
 
-    private static function getWithQuery(string $query, ?array $parameters = null): array {
-        $result = DatabaseConnector::shared()->execute_query($query, $parameters);
-        $contracts = [];
-
-        while ($contractID = $result->fetch_column()) {
-            $contracts[] = self::withID($contractID);
-        }
-
-        $result->free();
-        return $contracts;
-    }
-
     private static function makeFinalStateQuotedStringsArray(): array {
         return array_map(
             fn($state) => "\"{$state->value}\"",
