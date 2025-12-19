@@ -22,7 +22,7 @@ final class PaginationInfo {
     }
 
     public function getNumberOfPages(): int {
-        return ceil($this->numberOfObjects / $this->numberOfObjectsPerPage);
+        return max(ceil($this->numberOfObjects / $this->numberOfObjectsPerPage), 1);
     }
 
     public function getCurrentPage(): ?int {
