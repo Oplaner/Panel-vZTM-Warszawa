@@ -120,6 +120,42 @@ final class InputValidatorTests {
 
         return true;
     }
+
+    public static function checkValidationForUUIDv4(): bool|string {
+        $testData = [
+            ["", true],
+            ["abc", true],
+            ["00000000-0000-0000-0000-000000000000", false],
+            ["387d2e58-9272-4ee9-85dc-b4c886b7060f", false],
+            ["387d2e58-9272-3ee9-85dc-b4c886b7060f", true],
+            ["387d2e58-9272-4ee9-85dc-b4c886b7060f", false],
+            ["387d2e58-9272-4ee9-95dc-b4c886b7060f", false],
+            ["387d2e58-9272-4ee9-a5dc-b4c886b7060f", false],
+            ["387d2e58-9272-4ee9-b5dc-b4c886b7060f", false],
+            ["387d2e58-9272-4ee9-75dc-b4c886b7060f", true],
+            ["387d2e58-9272-4ee9-c5dc-b4c886b7060f", true]
+        ];
+
+        for ($i = 0; $i < count($testData); $i++) {
+            $uuid = $testData[$i][0];
+            $shouldThrowException = $testData[$i][1];
+            $didThrowException = false;
+
+            try {
+                InputValidator::checkUUIDv4($uuid);
+            } catch (ValidationException) {
+                $didThrowException = true;
+            }
+
+            if ($didThrowException != $shouldThrowException) {
+                return "UUIDv4 validation failed for example at index $i.";
+            }
+
+            $i++;
+        }
+
+        return true;
+    }
 }
 
 ?>

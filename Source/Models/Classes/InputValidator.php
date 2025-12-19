@@ -40,6 +40,13 @@ final class InputValidator {
         }
     }
 
+    public static function checkUUIDv4(string $value, ?string $fieldName = null): void {
+        if (!preg_match("/^[\da-f]{8}-[\da-f]{4}-4[\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$/", $value)) {
+            $message = is_null($fieldName) ? "" : self::generateErrorMessage(self::MESSAGE_TEMPLATE_GENERIC, $fieldName);
+            throw new ValidationException($message);
+        }
+    }
+
     public static function generateErrorMessage(string $template, string ...$parameters): string {
         return vsprintf(str_replace(self::MESSAGE_PARAMETER_PLACEHOLDER, "%s", $template), $parameters);
     }
