@@ -148,6 +148,13 @@ final class PersonnelController extends Controller {
     )]
     public function showPersonnelProfileDetails(array $input): void {
         extract($input[Router::PATH_DATA_KEY]);
+
+        try {
+            InputValidator::checkUUIDv4($profileID);
+        } catch (ValidationException) {
+            Router::redirect("/personnel");
+        }
+
         $profile = PersonnelProfile::withID($profileID);
 
         if (is_null($profile)) {
@@ -167,6 +174,13 @@ final class PersonnelController extends Controller {
     )]
     public function showDirectorProfileDetails(array $input): void {
         extract($input[Router::PATH_DATA_KEY]);
+
+        try {
+            InputValidator::checkUUIDv4($profileID);
+        } catch (ValidationException) {
+            Router::redirect("/personnel/directors");
+        }
+
         $profile = DirectorProfile::withID($profileID);
 
         if (is_null($profile)) {
@@ -186,6 +200,13 @@ final class PersonnelController extends Controller {
     )]
     public function showDeactivatePersonnelProfileConfirmation(array $input): void {
         extract($input[Router::PATH_DATA_KEY]);
+
+        try {
+            InputValidator::checkUUIDv4($profileID);
+        } catch (ValidationException) {
+            Router::redirect("/personnel");
+        }
+
         $profile = PersonnelProfile::withID($profileID);
 
         if (is_null($profile) || !$profile->isActive()) {
@@ -212,8 +233,14 @@ final class PersonnelController extends Controller {
     )]
     public function deactivatePersonnelProfile(array $input): void {
         global $_USER;
-
         extract($input[Router::PATH_DATA_KEY]);
+
+        try {
+            InputValidator::checkUUIDv4($profileID);
+        } catch (ValidationException) {
+            Router::redirect("/personnel");
+        }
+
         $profile = PersonnelProfile::withID($profileID);
         $post = $input[Router::POST_DATA_KEY];
 
@@ -237,6 +264,13 @@ final class PersonnelController extends Controller {
     )]
     public function showDeactivateDirectorProfileConfirmation(array $input): void {
         extract($input[Router::PATH_DATA_KEY]);
+
+        try {
+            InputValidator::checkUUIDv4($profileID);
+        } catch (ValidationException) {
+            Router::redirect("/personnel/directors");
+        }
+
         $profile = DirectorProfile::withID($profileID);
 
         if (is_null($profile) || !$profile->isActive() || $profile->isProtected()) {
@@ -263,8 +297,14 @@ final class PersonnelController extends Controller {
     )]
     public function deactivateDirectorProfile(array $input): void {
         global $_USER;
-
         extract($input[Router::PATH_DATA_KEY]);
+
+        try {
+            InputValidator::checkUUIDv4($profileID);
+        } catch (ValidationException) {
+            Router::redirect("/personnel/directors");
+        }
+
         $profile = DirectorProfile::withID($profileID);
         $post = $input[Router::POST_DATA_KEY];
 

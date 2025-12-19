@@ -200,6 +200,13 @@ final class CarrierController extends Controller {
     )]
     public function showCarrierDetails(array $input): void {
         extract($input[Router::PATH_DATA_KEY]);
+
+        try {
+            InputValidator::checkUUIDv4($carrierID);
+        } catch (ValidationException) {
+            Router::redirect("/carriers");
+        }
+
         $carrier = Carrier::withID($carrierID);
 
         if (is_null($carrier)) {
@@ -219,6 +226,13 @@ final class CarrierController extends Controller {
     )]
     public function showEditCarrierForm(array $input): void {
         extract($input[Router::PATH_DATA_KEY]);
+
+        try {
+            InputValidator::checkUUIDv4($carrierID);
+        } catch (ValidationException) {
+            Router::redirect("/carriers");
+        }
+
         $carrier = Carrier::withID($carrierID);
 
         if (is_null($carrier) || !$carrier->isActive()) {
@@ -260,8 +274,14 @@ final class CarrierController extends Controller {
     )]
     public function editCarrier(array $input): void {
         global $_USER;
-
         extract($input[Router::PATH_DATA_KEY]);
+
+        try {
+            InputValidator::checkUUIDv4($carrierID);
+        } catch (ValidationException) {
+            Router::redirect("/carriers");
+        }
+
         $carrier = Carrier::withID($carrierID);
 
         if (is_null($carrier) || !$carrier->isActive()) {
@@ -386,6 +406,13 @@ final class CarrierController extends Controller {
     )]
     public function showCloseCarrierConfirmation(array $input): void {
         extract($input[Router::PATH_DATA_KEY]);
+
+        try {
+            InputValidator::checkUUIDv4($carrierID);
+        } catch (ValidationException) {
+            Router::redirect("/carriers");
+        }
+
         $carrier = Carrier::withID($carrierID);
 
         if (is_null($carrier) || !$carrier->isActive()) {
@@ -412,8 +439,14 @@ final class CarrierController extends Controller {
     )]
     public function closeCarrier(array $input): void {
         global $_USER;
-
         extract($input[Router::PATH_DATA_KEY]);
+
+        try {
+            InputValidator::checkUUIDv4($carrierID);
+        } catch (ValidationException) {
+            Router::redirect("/carriers");
+        }
+
         $carrier = Carrier::withID($carrierID);
         $post = $input[Router::POST_DATA_KEY];
 
