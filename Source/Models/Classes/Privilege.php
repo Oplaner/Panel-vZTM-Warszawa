@@ -118,7 +118,7 @@ final class Privilege extends DatabaseEntity {
                 [
                     $this->id,
                     $this->scope->value,
-                    $this->associatedEntityType->value,
+                    $this->associatedEntityType?->value,
                     $this->associatedEntityID
                 ]
             );

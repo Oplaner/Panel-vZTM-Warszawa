@@ -401,8 +401,8 @@ final class Carrier extends DatabaseEntity {
                     $this->shortName,
                     $this->numberOfTrialTasks,
                     $this->numberOfPenaltyTasks,
-                    $this->closedAt?->toDatabaseString() ?? null,
-                    $this->closedBy?->getID() ?? null,
+                    $this->closedAt?->toDatabaseString(),
+                    $this->closedBy?->getID(),
                     $this->id
                 ]
             );

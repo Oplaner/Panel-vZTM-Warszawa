@@ -127,7 +127,7 @@ final class ContractPeriod extends DatabaseEntity {
                     $this->state->value,
                     $this->validFrom->toDatabaseString(),
                     $this->authorizedBy->getID(),
-                    $this->validTo?->toDatabaseString() ?? null
+                    $this->validTo?->toDatabaseString()
                 ]
             );
             $this->isNew = false;

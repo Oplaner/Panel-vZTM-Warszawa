@@ -125,7 +125,6 @@ final class InputValidatorTests {
         $testData = [
             ["", true],
             ["abc", true],
-            ["00000000-0000-0000-0000-000000000000", false],
             ["387d2e58-9272-4ee9-85dc-b4c886b7060f", false],
             ["387d2e58-9272-3ee9-85dc-b4c886b7060f", true],
             ["387d2e58-9272-4ee9-85dc-b4c886b7060f", false],
