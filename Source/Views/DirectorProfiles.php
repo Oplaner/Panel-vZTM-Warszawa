@@ -112,7 +112,9 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Dyrektor
         </table>
 <?php
 
+        if ($paginationInfo->getNumberOfPages() > 1):
         ViewBuilder::buildPagination($paginationInfo, $showingActiveOnly ? "/personnel/directors" : "/personnel/directors/all");
+        endif;
 
 ?>
     </div>

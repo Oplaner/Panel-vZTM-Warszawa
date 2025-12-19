@@ -109,7 +109,9 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Zakłady
         </table>
 <?php
 
+        if ($paginationInfo->getNumberOfPages() > 1):
         ViewBuilder::buildPagination($paginationInfo, $showingActiveOnly ? "/carriers" : "/carriers/all");
+        endif;
 
 ?>
     </div>

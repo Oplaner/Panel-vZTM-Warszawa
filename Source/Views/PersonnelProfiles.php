@@ -114,7 +114,9 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Personel
         </table>
 <?php
 
+        if ($paginationInfo->getNumberOfPages() > 1):
         ViewBuilder::buildPagination($paginationInfo, $showingActiveOnly ? "/personnel" : "/personnel/all");
+        endif;
 
 ?>
     </div>
