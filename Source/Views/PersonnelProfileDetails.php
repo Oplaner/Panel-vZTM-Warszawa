@@ -39,10 +39,16 @@ ViewBuilder::buildHead(Style::light, [Script::menu], $profile->getOwner()->getFo
                         <ul>
 <?php
 
-                            foreach ($profile->getPrivileges() as $privilege):
+                            $privilegeDescriptions = array_map(
+                                fn($privilege) => $privilege->getDescription(Carrier::class),
+                                $profile->getPrivileges()
+                            );
+                            sort($privilegeDescriptions);
+
+                            foreach ($privilegeDescriptions as $privilegeDescription):
 
 ?>
-                            <li><?php echo $privilege->getDescription(Carrier::class) ?></li>
+                            <li><?php echo $privilegeDescription ?></li>
 <?php
 
                             endforeach;
