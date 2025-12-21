@@ -76,6 +76,55 @@ final class Privilege extends DatabaseEntity {
         return self::withID($id);
     }
 
+    public static function getGrantableGroups(): array {
+        $privileges = array_filter(
+            self::getAll(),
+            fn($privilege) => $privilege->isGrantable()
+        );
+        usort($privileges, fn($a, $b) => self::comparePrivileges($a, $b));
+
+        $groups = [];
+        $currentGroupIndex = -1;
+        $currentAssociatedEntityID = -1;
+
+        foreach ($privileges as $privilege) {
+            if ($privilege->associatedEntityID != $currentAssociatedEntityID) {
+                $currentGroupIndex++;
+            }
+
+            $groups[$currentGroupIndex][] = $privilege;
+            $currentAssociatedEntityID = $privilege->associatedEntityID;
+        }
+
+        return $groups;
+    }
+
+    private static function getAll(): array {
+        $query =
+            "SELECT id
+            FROM privileges
+            ORDER BY (associated_entity_type IS NULL) DESC, associated_entity_type ASC";
+        return self::getWithQuery($query);
+    }
+
+    private static function comparePrivileges(Privilege $a, Privilege $b): int {
+        if (is_null($a->associatedEntityType) && is_null($b->associatedEntityType)) {
+            return strcmp($a->getDescription(), $b->getDescription());
+        } elseif (is_null($a->associatedEntityType)) {
+            return -1;
+        } elseif (is_null($b->associatedEntityType)) {
+            return 1;
+        } elseif ($a->associatedEntityType != $b->associatedEntityType) {
+            return strcmp($a->associatedEntityType->value, $b->associatedEntityType->value);
+        } elseif ($a->associatedEntityID != $b->associatedEntityID) {
+            $associatedEntityA = $a->associatedEntityType->getClass()::withID($a->associatedEntityID);
+            $associatedEntityB = $b->associatedEntityType->getClass()::withID($b->associatedEntityID);
+            return strcmp($associatedEntityA->getAssociatedEntityName(), $associatedEntityB->getAssociatedEntityName());
+        } else {
+            return strcmp($a->getDescription(), $b->getDescription());
+        }
+    }
+
     public function getScope(): PrivilegeScope {
         return $this->scope;
     }
@@ -124,6 +173,15 @@ final class Privilege extends DatabaseEntity {
             );
             $this->isNew = false;
         }
+    }
+
+    private function isGrantable(): bool {
+        if (is_null($this->associatedEntityType)) {
+            return true;
+        }
+
+        $associatedEntity = $this->associatedEntityType->getClass()::withID($this->associatedEntityID);
+        return $associatedEntity->isActive();
     }
 }
 
