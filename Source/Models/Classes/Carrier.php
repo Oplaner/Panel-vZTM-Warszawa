@@ -118,16 +118,16 @@ final class Carrier extends DatabaseEntity {
 
     public static function getAllCount(): int {
         $query =
-        "SELECT COUNT(*)
-        FROM carriers";
+            "SELECT COUNT(*)
+            FROM carriers";
         return self::getCountWithQuery($query);
     }
 
     public static function getActiveCount(): int {
         $query =
-        "SELECT COUNT(*)
-        FROM carriers
-        WHERE closed_at IS NULL";
+            "SELECT COUNT(*)
+            FROM carriers
+            WHERE closed_at IS NULL";
         return self::getCountWithQuery($query);
     }
 

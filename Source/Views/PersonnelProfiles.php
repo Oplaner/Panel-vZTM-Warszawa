@@ -28,15 +28,15 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Personel
                 <div class="inputContainer">
 <?php
 
-                $checked = $showingActiveOnly ? " checked" : "";
-                $redirectAction = $showingActiveOnly ? "/personnel/all" : "/personnel";
+                    $checked = $showingActiveOnly ? " checked" : "";
+                    $redirectAction = $showingActiveOnly ? "/personnel/all" : "/personnel";
 
 ?>
-                <input type="checkbox" id="showActiveProfilesOnly" data-redirect="<?php echo PathBuilder::action($redirectAction) ?>"<?php echo $checked ?>>
-                <label for="showActiveProfilesOnly">Pokaż tylko aktywne profile</label>
+                    <input type="checkbox" id="showActiveProfilesOnly" data-redirect="<?php echo PathBuilder::action($redirectAction) ?>"<?php echo $checked ?>>
+                    <label for="showActiveProfilesOnly">Pokaż tylko aktywne profile</label>
+                </div>
             </div>
-            </div>
-            <a href="#" class="button">Nadaj uprawnienia</a>
+            <a href="<?php echo PathBuilder::action("/personnel/new") ?>" class="button">Nadaj uprawnienia</a>
         </div>
         <table>
             <tr>

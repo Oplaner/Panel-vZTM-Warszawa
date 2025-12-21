@@ -74,9 +74,9 @@ abstract class Profile extends DatabaseEntity {
 
     public static function getAllCountByType(ProfileType $type): int {
         $query =
-        "SELECT COUNT(*)
-        FROM profiles
-        WHERE type = ?";
+            "SELECT COUNT(*)
+            FROM profiles
+            WHERE type = ?";
         $parameters = [
             $type->value
         ];
@@ -85,10 +85,10 @@ abstract class Profile extends DatabaseEntity {
 
     public static function getActiveCountByType(ProfileType $type): int {
         $query =
-        "SELECT COUNT(*)
-        FROM profiles
-        WHERE type = ?
-        AND deactivated_at IS NULL";
+            "SELECT COUNT(*)
+            FROM profiles
+            WHERE type = ?
+            AND deactivated_at IS NULL";
         $parameters = [
             $type->value
         ];

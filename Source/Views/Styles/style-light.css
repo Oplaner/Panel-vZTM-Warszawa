@@ -144,7 +144,6 @@ input[type=checkbox]:checked::before, input[type=radio]:checked::before {
 
 .inputWithLoader {
     position: relative;
-    margin-bottom: 0.5rem;
 }
 
 .inputWithLoader input {

@@ -70,7 +70,7 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::search], $carrier->g
                             </div>
                             <input type="hidden" name="supervisorLoginsString" value="<?php echo $supervisorLoginsString ?>">
                             <label for="supervisorSearchBox">Dodaj kierownika:</label>
-                            <div class="inputWithLoader noBottomMargin">
+                            <div class="inputWithLoader">
                                 <input type="text" id="supervisorSearchBox" placeholder="ID lub nazwa...">
                                 <div class="loaderContainer">
                                     <div class="loader"></div>
