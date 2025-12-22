@@ -6,6 +6,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
     searchContainers.forEach(container => {
         const searchEndpoint = container.dataset.source;
+        const selectionLimit = container.dataset.selectionLimit;
         const searchInput = container.querySelector("input[type=text]");
         const searchMatchesContainer = container.querySelector(".searchMatchesContainer");
         const selectionInput = container.querySelector("input[type=hidden]");
@@ -59,12 +60,12 @@ window.addEventListener("DOMContentLoaded", () => {
             if (searchMatchesContainer.contains(target)) {
                 results = [];
                 searchInput.value = "";
-                handleSelection(target, selectionInput, selectionContainer);
+                handleSelection(searchInput, target, selectionInput, selectionContainer, selectionLimit);
             }
 
             if (selectionContainer.contains(target) && target.nodeName == "A") {
                 const selection = target.parentElement;
-                handleRemoval(selection, selectionInput, selectionContainer);
+                handleRemoval(searchInput, selection, selectionInput, selectionContainer, selectionLimit);
                 event.preventDefault();
             }
 
@@ -112,17 +113,19 @@ window.addEventListener("DOMContentLoaded", () => {
         showSearchMatches(searchMatchesContainer);
     }
 
-    function handleSelection(selection, selectionInput, selectionContainer) {
+    function handleSelection(searchInput, selection, selectionInput, selectionContainer, selectionLimit) {
         const key = selection.dataset.key;
         const value = selection.innerText;
         addToSelectionInput(key, selectionInput);
         addToSelectionContainer(key, value, selectionContainer);
+        handleSelectionLimit(searchInput, selectionContainer, selectionLimit);
     }
 
-    function handleRemoval(selection, selectionInput, selectionContainer) {
+    function handleRemoval(searchInput, selection, selectionInput, selectionContainer, selectionLimit) {
         const key = selection.dataset.key;
         removeFromSelectionInput(key, selectionInput);
         removeFromSelectionContainer(key, selectionContainer);
+        handleSelectionLimit(searchInput, selectionContainer, selectionLimit);
     }
 
     function addToSelectionInput(key, selectionInput) {
@@ -211,6 +214,15 @@ window.addEventListener("DOMContentLoaded", () => {
             div.append(removeButton);
             selectionContainer.append(div);
         });
+    }
+
+    function handleSelectionLimit(searchInput, selectionContainer, selectionLimit) {
+        if (selectionLimit == null) {
+            return;
+        }
+
+        const selectedItems = selectionContainer.querySelectorAll(".selection").length;
+        searchInput.disabled = selectedItems >= selectionLimit;
     }
 
     function substringLengthIsBelowThreshold(substring) {

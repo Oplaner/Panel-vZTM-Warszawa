@@ -90,12 +90,16 @@ input[type=text]::placeholder {
     color: #555555;
 }
 
-input[type=text]:focus, input[type=text]:hover,
-input[type=password]:focus, input[type=password]:hover,
-input[type=checkbox]:focus, input[type=checkbox]:hover,
-input[type=radio]:focus, input[type=radio]:hover {
+input[type=text]:not(:disabled):focus, input[type=text]:not(:disabled):hover,
+input[type=password]:not(:disabled):focus, input[type=password]:not(:disabled):hover,
+input[type=checkbox]:not(:disabled):focus, input[type=checkbox]:not(:disabled):hover,
+input[type=radio]:not(:disabled):focus, input[type=radio]:not(:disabled):hover {
     border-color: #251B16;
     outline: none;
+}
+
+input[type=text]:disabled, input[type=password]:disabled, input[type=checkbox]:disabled, input[type=radio]:disabled {
+    background-color: #DDE1E5;
 }
 
 input[type=checkbox], input[type=radio] {
@@ -178,6 +182,7 @@ input[type=checkbox]:checked::before, input[type=radio]:checked::before {
 
 .searchContainer {
     position: relative;
+    margin-bottom: 1rem;
 }
 
 .searchMatchesContainer {
