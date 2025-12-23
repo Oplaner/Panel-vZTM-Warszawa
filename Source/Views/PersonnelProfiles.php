@@ -36,7 +36,7 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Personel
                     <label for="showActiveProfilesOnly">Pokaż tylko aktywne profile</label>
                 </div>
             </div>
-            <a href="<?php echo PathBuilder::action("/personnel/new") ?>" class="button">Nadaj uprawnienia</a>
+            <a href="<?php echo PathBuilder::action("/personnel/new-profile") ?>" class="button">Nadaj uprawnienia</a>
         </div>
         <table>
             <tr>

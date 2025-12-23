@@ -10,7 +10,7 @@ final class UserController extends Controller {
         self::handleUserSearch($input, $searchMethod);
     }
 
-    #[Route("/users/search/nonPersonnel", RequestMethod::post)]
+    #[Route("/users/search/non-personnel", RequestMethod::post)]
     #[Access(
         group: AccessGroup::anyProfile     
     )]
@@ -19,7 +19,7 @@ final class UserController extends Controller {
         self::handleUserSearch($input, $searchMethod);
     }
 
-    #[Route("/users/search/nonDirector", RequestMethod::post)]
+    #[Route("/users/search/non-director", RequestMethod::post)]
     #[Access(
         group: AccessGroup::anyProfile     
     )]

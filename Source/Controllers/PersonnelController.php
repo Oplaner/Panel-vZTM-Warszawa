@@ -320,6 +320,22 @@ final class PersonnelController extends Controller {
         ];
         self::renderView(View::directorProfileDetails, $viewParameters);
     }
+
+    #[Route("/personnel/new-profile", RequestMethod::get)]
+    #[Access(
+        group: AccessGroup::oneOfProfiles,
+        profiles: [DirectorProfile::class]
+    )]
+    public function showNewPersonnelProfileForm(): void {
+        $viewParameters = [
+            "personnelSelection" => null,
+            "personnelLogin" => "",
+            "description" => "",
+            "privilegeGroups" => Privilege::getGrantableGroups(),
+            "privileges" => []
+        ];
+        self::renderView(View::personnelProfileNew, $viewParameters);
+    }
 }
 
 ?>
