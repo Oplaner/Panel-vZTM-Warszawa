@@ -52,7 +52,7 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::search], $carrier->g
                     </div>
                     <div class="section">
                         <h2>Kierownicy</h2>
-                        <div class="searchContainer" data-source="<?php echo PathBuilder::action("/users/search") ?>">
+                        <div class="searchContainer" data-source="<?php echo PathBuilder::action("/users/search/all") ?>">
                             <div class="selectionContainer">
 <?php
 

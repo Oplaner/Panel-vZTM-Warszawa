@@ -113,6 +113,25 @@ final class User extends DatabaseEntity {
         return self::getLoginAndUsernamePairsWithQuery($query, $parameters);
     }
 
+    public static function getNonProfileTypeLoginAndUsernamePairsContainingSubstring(ProfileType $profileType, string $substring): array {
+        $query =
+            "SELECT m.uid, m.username
+            FROM mybb18_users AS m
+            LEFT JOIN users AS u
+            ON m.uid = u.login
+            LEFT JOIN profiles AS p
+            ON u.id = p.user_id AND p.type = ? AND p.deactivated_at IS NULL
+            WHERE p.user_id IS NULL AND (m.uid LIKE ? OR m.username LIKE ?)
+            ORDER BY m.uid ASC";
+        $pattern = "%$substring%";
+        $parameters = [
+            $profileType->value,
+            $pattern,
+            $pattern
+        ];
+        return self::getLoginAndUsernamePairsWithQuery($query, $parameters);
+    }
+
     private static function getLoginAndUsernamePairsWithQuery(string $query, ?array $parameters = null): array {
         $result = DatabaseConnector::shared()->execute_query($query, $parameters);
         $users = [];

@@ -1,11 +1,34 @@
 <?php
 
 final class UserController extends Controller {
-    #[Route("/users/search", RequestMethod::post)]
+    #[Route("/users/search/all", RequestMethod::post)]
     #[Access(
         group: AccessGroup::anyProfile     
     )]
-    public function handleUserSearch(array $input): void {
+    public function handleAllUserSearch(array $input): void {
+        $searchMethod = fn($substring) => User::getAllLoginAndUsernamePairsContainingSubstring($substring);
+        self::handleUserSearch($input, $searchMethod);
+    }
+
+    #[Route("/users/search/nonPersonnel", RequestMethod::post)]
+    #[Access(
+        group: AccessGroup::anyProfile     
+    )]
+    public function handleNonPersonnelUserSearch(array $input): void {
+        $searchMethod = fn($substring) => User::getNonProfileTypeLoginAndUsernamePairsContainingSubstring(ProfileType::personnel, $substring);
+        self::handleUserSearch($input, $searchMethod);
+    }
+
+    #[Route("/users/search/nonDirector", RequestMethod::post)]
+    #[Access(
+        group: AccessGroup::anyProfile     
+    )]
+    public function handleNonDirectorUserSearch(array $input): void {
+        $searchMethod = fn($substring) => User::getNonProfileTypeLoginAndUsernamePairsContainingSubstring(ProfileType::director, $substring);
+        self::handleUserSearch($input, $searchMethod);
+    }
+
+    private function handleUserSearch(array $input, Closure $searchMethod): void {
         $post = $input[Router::POST_DATA_KEY];
         $substring = InputValidator::clean($post["substring"]);
 
@@ -17,7 +40,7 @@ final class UserController extends Controller {
             return;
         }
 
-        $users = User::getAllLoginAndUsernamePairsContainingSubstring($substring);
+        $users = $searchMethod($substring);
         self::renderJSON($users);
     }
 }
