@@ -13,7 +13,7 @@ final class DriverProfile extends Profile {
 
     public static function createNew(User $owner, User $activator): ?DriverProfile {
         Logger::log(LogLevel::info, "User with ID \"{$activator->getID()}\" is creating new driver profile for user with ID \"{$owner->getID()}\".");
-        self::validateUserDoesNotHaveProfileOfType($owner);
+        self::validateUserDoesNotHaveProfileOfType($owner, ProfileType::driver);
         $initialPenaltyMultiplier = self::getNextPenaltyMultiplierForUser($owner);
         return new DriverProfile(null, $owner->getID(), SystemDateTime::now(), $activator, null, null, $initialPenaltyMultiplier, null);
     }

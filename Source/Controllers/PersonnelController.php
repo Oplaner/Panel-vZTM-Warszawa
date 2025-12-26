@@ -1,6 +1,10 @@
 <?php
 
 final class PersonnelController extends Controller {
+    private const PERSONNEL_LOGIN_FIELD_NAME = "Pracownik";
+    private const PERSONNEL_DESCRIPTION_FIELD_NAME = "Opis funkcji";
+    private const PERSONNEL_PRIVILEGES_FIELD_NAME = "Uprawnienia";
+
     #[Route("/personnel", RequestMethod::get)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
@@ -333,6 +337,107 @@ final class PersonnelController extends Controller {
             "description" => "",
             "privilegeGroups" => Privilege::getGrantableGroups(),
             "privileges" => []
+        ];
+        self::renderView(View::personnelProfileNew, $viewParameters);
+    }
+
+    #[Route("/personnel/new-profile", RequestMethod::post)]
+    #[Access(
+        group: AccessGroup::oneOfProfiles,
+        profiles: [DirectorProfile::class]
+    )]
+    public function addNewPersonnelProfile(array $input): void {
+        global $_USER;
+
+        $post = $input[Router::POST_DATA_KEY];
+        $personnelLogin = InputValidator::clean($post["personnelLogin"]);
+        $description = InputValidator::clean($post["description"]);
+        $personnelSelection = null;
+        $personnelUser = null;
+        $privileges = [];
+
+        $errors = [];
+        $messageType = null;
+        $message = null;
+
+        // Validation: personnel login.
+        try {
+            InputValidator::checkNonEmpty($personnelLogin, self::PERSONNEL_LOGIN_FIELD_NAME);
+            InputValidator::checkInteger($personnelLogin, 0, 4294967295, self::PERSONNEL_LOGIN_FIELD_NAME);
+            $personnelSelections = User::getLoginAndUsernamePairsForAnyUsersWithLogins([$personnelLogin]);
+
+            if (count($personnelSelections) == 0) {
+                throw new ValidationException(InputValidator::generateErrorMessage(InputValidator::MESSAGE_TEMPLATE_GENERIC, self::PERSONNEL_LOGIN_FIELD_NAME));
+            }
+
+            $personnelSelection = $personnelSelections[0];
+            $personnelUser = User::withLogin($personnelLogin);
+
+            if (!is_null($personnelUser) && $personnelUser->hasActiveProfileOfType(ProfileType::personnel)) {
+                throw new ValidationException(InputValidator::generateErrorMessage(InputValidator::MESSAGE_TEMPLATE_GENERIC, self::PERSONNEL_LOGIN_FIELD_NAME));
+            }
+        } catch (ValidationException $exception) {
+            $personnelLogin = "";
+            $personnelSelection = null;
+            $personnelUser = null;
+            $errors[] = $exception->getMessage();
+        }
+
+        // Validation: description.
+        try {
+            InputValidator::checkNonEmpty($description, self::PERSONNEL_DESCRIPTION_FIELD_NAME);
+            InputValidator::checkLength($description, 5, 100, self::PERSONNEL_DESCRIPTION_FIELD_NAME);
+        } catch (ValidationException $exception) {
+            $errors[] = $exception->getMessage();
+        }
+
+        // Validation: privileges.
+        try {
+            $key = "privileges";
+            InputValidator::checkNonEmptyCheckboxArray($post, $key, self::PERSONNEL_PRIVILEGES_FIELD_NAME);
+
+            foreach (array_keys($post[$key]) as $privilegeID) {
+                InputValidator::checkUUIDv4($privilegeID);
+                $privilege = Privilege::withID($privilegeID);
+
+                if (is_null($privilege)) {
+                    throw new ValidationException(InputValidator::generateErrorMessage(InputValidator::MESSAGE_TEMPLATE_GENERIC, self::PERSONNEL_PRIVILEGES_FIELD_NAME));
+                }
+
+                $privileges[] = $privilege;
+            }
+        } catch (ValidationException $exception) {
+            $privileges = [];
+            $errors[] = $exception->getMessage();
+        }
+
+        if (count($errors) > 0) {
+            $messageType = "error";
+            $message = self::makeErrorMessage($errors);
+        } else {
+            if (is_null($personnelUser)) {
+                $personnelUser = User::createNew($personnelLogin);
+                // TODO: Handle newly created User (myBB PM?).
+            }
+
+            $profile = PersonnelProfile::createNew($personnelUser, $_USER, $description, $privileges);
+            $messageType = "success";
+            $message = "<span>Profil personelu został utworzony! Możesz podejrzeć jego szczegóły, <a href=\"".PathBuilder::action("/personnel/profile/{$profile->getID()}")."\">klikając tutaj</a>.</span>";
+            $personnelLogin = "";
+            $description = "";
+            $personnelSelection = null;
+            $privileges = [];
+        }
+
+        $viewParameters = [
+            "showMessage" => true,
+            "messageType" => $messageType,
+            "message" => $message,
+            "personnelSelection" => $personnelSelection,
+            "personnelLogin" => $personnelLogin,
+            "description" => $description,
+            "privilegeGroups" => Privilege::getGrantableGroups(),
+            "privileges" => $privileges
         ];
         self::renderView(View::personnelProfileNew, $viewParameters);
     }

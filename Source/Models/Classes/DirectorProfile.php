@@ -11,7 +11,7 @@ final class DirectorProfile extends Profile {
 
     public static function createNew(User $owner, User $activator): DirectorProfile {
         Logger::log(LogLevel::info, "User with ID \"{$activator->getID()}\" is creating new director profile for user with ID \"{$owner->getID()}\".");
-        self::validateUserDoesNotHaveProfileOfType($owner);
+        self::validateUserDoesNotHaveProfileOfType($owner, ProfileType::director);
         return new DirectorProfile(null, $owner->getID(), SystemDateTime::now(), $activator, null, null, false);
     }
 

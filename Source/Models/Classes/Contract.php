@@ -23,7 +23,7 @@ final class Contract extends DatabaseEntity {
         self::validateContractStateIsNotFinal($state);
         $totalPenaltyTasks = 0;
 
-        if (!$driver->hasActiveProfileOfType(DriverProfile::class)) {
+        if (!$driver->hasActiveProfileOfType(ProfileType::driver)) {
             $driverProfile = DriverProfile::createNew($driver, $authorizer);
 
             if ($state == ContractState::probationWithPenalty) {

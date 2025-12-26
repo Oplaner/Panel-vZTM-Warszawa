@@ -2,6 +2,7 @@
 
 final class InputValidator {
     public const MESSAGE_TEMPLATE_NON_EMPTY = "Pole \"{}\" nie powinno być puste.";
+    public const MESSAGE_TEMPLATE_NON_EMPTY_CHECKBOX_ARRAY = "Należy wybrać co najmniej jedną opcję z listy \"{}\".";
     public const MESSAGE_TEMPLATE_LENGTH = "Wartość w polu \"{}\" powinna mieć długość od {} do {} znaków.";
     public const MESSAGE_TEMPLATE_INTEGER = "Wartość w polu \"{}\" powinna być liczbą całkowitą od {} do {}.";
     public const MESSAGE_TEMPLATE_GENERIC = "Wartość w polu \"{}\" jest niepoprawna.";
@@ -20,6 +21,13 @@ final class InputValidator {
     public static function checkNonEmpty(string $value, ?string $fieldName = null): void {
         if ($value == "") {
             $message = is_null($fieldName) ? "" : self::generateErrorMessage(self::MESSAGE_TEMPLATE_NON_EMPTY, $fieldName);
+            throw new ValidationException($message);
+        }
+    }
+
+    public static function checkNonEmptyCheckboxArray(array $post, string $key, ?string $fieldName = null): void {
+        if (!array_key_exists($key, $post) || count($post[$key]) == 0) {
+            $message = is_null($fieldName) ? "" : self::generateErrorMessage(self::MESSAGE_TEMPLATE_NON_EMPTY_CHECKBOX_ARRAY, $fieldName);
             throw new ValidationException($message);
         }
     }

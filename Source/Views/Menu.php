@@ -1,7 +1,7 @@
     <div id="menu">
 <?php
 
-        if ($_USER->hasActiveProfileOfType(PersonnelProfile::class)):
+        if ($_USER->hasActiveProfileOfType(ProfileType::personnel)):
         $supervisedCarriers = [];
 
         foreach (Carrier::getActive() as $carrier):
@@ -27,7 +27,7 @@
         endforeach;
         endif;
 
-        if ($_USER->hasActiveProfileOfType(DirectorProfile::class)):
+        if ($_USER->hasActiveProfileOfType(ProfileType::director)):
 
 ?>
         <div>

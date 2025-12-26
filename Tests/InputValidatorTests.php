@@ -53,6 +53,32 @@ final class InputValidatorTests {
         return true;
     }
 
+    public static function checkValidationForNonEmptyCheckboxArray(): bool|string {
+        $testData = [
+            [[["name" => "Kamil"], "options"], true],
+            [[["name" => "Kamil", "options" => []], "options"], true],
+            [[["name" => "Kamil", "options" => ["validation"]], "options"], false]
+        ];
+
+        for ($i = 0; $i < count($testData); $i++) {
+            $parameters = $testData[$i][0];
+            $shouldThrowException = $testData[$i][1];
+            $didThrowException = false;
+
+            try {
+                InputValidator::checkNonEmptyCheckboxArray($parameters[0], $parameters[1]);
+            } catch (ValidationException) {
+                $didThrowException = true;
+            }
+
+            if ($didThrowException != $shouldThrowException) {
+                return "Non-empty checkbox array validation failed for example at index $i.";
+            }
+        }
+
+        return true;
+    }
+
     public static function checkValidationForLength(): bool|string {
         $testData = [
             [["", 0, 1], false],

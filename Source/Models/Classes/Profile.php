@@ -109,11 +109,9 @@ abstract class Profile extends DatabaseEntity {
         return $profiles;
     }
 
-    protected static function validateUserDoesNotHaveProfileOfType(User $user): void {
-        $profileType = static::class;
-
-        if ($user->hasActiveProfileOfType($profileType)) {
-            throw new DomainException("Cannot create new $profileType - there is one currently active for the user.");
+    protected static function validateUserDoesNotHaveProfileOfType(User $user, ProfileType $type): void {
+        if ($user->hasActiveProfileOfType($type)) {
+            throw new DomainException("Cannot create new {$type->getClass()} - there is one currently active for the user.");
         }
     }
 

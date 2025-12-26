@@ -16,6 +16,10 @@ abstract class Controller {
         return $properties["numberOfObjectsPerPage"];
     }
 
+    protected static function makeErrorMessage(array $errors): string {
+        return join("<br>", $errors);
+    }
+
     protected static function renderView(View $view, array $parameters = []): void {
         global $_USER;
         extract($parameters);

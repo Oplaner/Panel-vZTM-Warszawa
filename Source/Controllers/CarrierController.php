@@ -107,8 +107,8 @@ final class CarrierController extends Controller {
         $shortName = InputValidator::clean($post["shortName"]);
         $numberOfTrialTasks = InputValidator::clean($post["numberOfTrialTasks"]);
         $numberOfPenaltyTasks = InputValidator::clean($post["numberOfPenaltyTasks"]);
-        $supervisorSelections = [];
         $supervisorLoginsString = InputValidator::clean($post["supervisorLoginsString"]);
+        $supervisorSelections = [];
         $supervisorLogins = [];
 
         $showMessage = false;
@@ -122,8 +122,7 @@ final class CarrierController extends Controller {
 
                 foreach ($supervisorLogins as $supervisorLogin) {
                     try {
-                        // 4294967295 is the maximum value which can be stored in unsigned int(10).
-                        InputValidator::checkInteger($supervisorLogin, 0, 4294967295, self::SUPERVISORS_FIELD_NAME);
+                        InputValidator::checkInteger($supervisorLogin, 0, 4294967295);
                     } catch (ValidationException) {
                         $supervisorLoginsString = "";
                         throw new ValidationException(InputValidator::generateErrorMessage(InputValidator::MESSAGE_TEMPLATE_GENERIC, self::SUPERVISORS_FIELD_NAME));
@@ -142,8 +141,8 @@ final class CarrierController extends Controller {
             InputValidator::checkNonEmpty($shortName, self::SHORT_NAME_FIELD_NAME);
             InputValidator::checkNonEmpty($numberOfTrialTasks, self::NUMBER_OF_TRIAL_TASKS_FIELD_NAME);
             InputValidator::checkNonEmpty($numberOfPenaltyTasks, self::NUMBER_OF_PENALTY_TASKS_FIELD_NAME);
-            InputValidator::checkLength($fullName, 1, 30, self::FULL_NAME_FIELD_NAME);
-            InputValidator::checkLength($shortName, 1, 10, self::SHORT_NAME_FIELD_NAME);
+            InputValidator::checkLength($fullName, 5, 30, self::FULL_NAME_FIELD_NAME);
+            InputValidator::checkLength($shortName, 3, 10, self::SHORT_NAME_FIELD_NAME);
             InputValidator::checkInteger($numberOfTrialTasks, 0, 255, self::NUMBER_OF_TRIAL_TASKS_FIELD_NAME);
             InputValidator::checkInteger($numberOfPenaltyTasks, 0, 255, self::NUMBER_OF_PENALTY_TASKS_FIELD_NAME);
         } catch (ValidationException $exception) {
@@ -293,8 +292,8 @@ final class CarrierController extends Controller {
         $shortName = InputValidator::clean($post["shortName"]);
         $numberOfTrialTasks = InputValidator::clean($post["numberOfTrialTasks"]);
         $numberOfPenaltyTasks = InputValidator::clean($post["numberOfPenaltyTasks"]);
-        $supervisorSelections = [];
         $supervisorLoginsString = InputValidator::clean($post["supervisorLoginsString"]);
+        $supervisorSelections = [];
         $supervisorLogins = [];
 
         $message = null;
@@ -306,8 +305,7 @@ final class CarrierController extends Controller {
 
                 foreach ($supervisorLogins as $supervisorLogin) {
                     try {
-                        // 4294967295 is the maximum value which can be stored in unsigned int(10).
-                        InputValidator::checkInteger($supervisorLogin, 0, 4294967295, self::SUPERVISORS_FIELD_NAME);
+                        InputValidator::checkInteger($supervisorLogin, 0, 4294967295);
                     } catch (ValidationException) {
                         $supervisorLoginsString = "";
                         throw new ValidationException(InputValidator::generateErrorMessage(InputValidator::MESSAGE_TEMPLATE_GENERIC, self::SUPERVISORS_FIELD_NAME));
@@ -326,8 +324,8 @@ final class CarrierController extends Controller {
             InputValidator::checkNonEmpty($shortName, self::SHORT_NAME_FIELD_NAME);
             InputValidator::checkNonEmpty($numberOfTrialTasks, self::NUMBER_OF_TRIAL_TASKS_FIELD_NAME);
             InputValidator::checkNonEmpty($numberOfPenaltyTasks, self::NUMBER_OF_PENALTY_TASKS_FIELD_NAME);
-            InputValidator::checkLength($fullName, 1, 30, self::FULL_NAME_FIELD_NAME);
-            InputValidator::checkLength($shortName, 1, 10, self::SHORT_NAME_FIELD_NAME);
+            InputValidator::checkLength($fullName, 5, 30, self::FULL_NAME_FIELD_NAME);
+            InputValidator::checkLength($shortName, 3, 10, self::SHORT_NAME_FIELD_NAME);
             InputValidator::checkInteger($numberOfTrialTasks, 0, 255, self::NUMBER_OF_TRIAL_TASKS_FIELD_NAME);
             InputValidator::checkInteger($numberOfPenaltyTasks, 0, 255, self::NUMBER_OF_PENALTY_TASKS_FIELD_NAME);
         } catch (ValidationException $exception) {
