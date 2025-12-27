@@ -441,6 +441,35 @@ final class PersonnelController extends Controller {
         ];
         self::renderView(View::personnelProfileNew, $viewParameters);
     }
+
+    #[Route("/personnel/profile/{profileID}/edit", RequestMethod::get)]
+    #[Access(
+        group: AccessGroup::oneOfProfiles,
+        profiles: [DirectorProfile::class]
+    )]
+    public function showEditPersonnelProfileForm(array $input): void {
+        extract($input[Router::PATH_DATA_KEY]);
+
+        try {
+            InputValidator::checkUUIDv4($profileID);
+        } catch (ValidationException) {
+            Router::redirect("/personnel");
+        }
+
+        $profile = PersonnelProfile::withID($profileID);
+
+        if (is_null($profile) || !$profile->isActive()) {
+            Router::redirect("/personnel");
+        }
+
+        $viewParameters = [
+            "profile" => $profile,
+            "description" => $profile->getDescription(),
+            "privilegeGroups" => Privilege::getGrantableGroups(),
+            "privileges" => $profile->getPrivileges()
+        ];
+        self::renderView(View::personnelProfileEdit, $viewParameters);
+    }
 }
 
 ?>

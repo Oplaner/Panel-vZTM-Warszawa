@@ -101,7 +101,8 @@ ViewBuilder::buildHead(Style::light, [Script::menu], $profile->getOwner()->getFo
         if ($profile->isActive()):
 
 ?>
-        <div class="toolbar bottom singleAction">
+        <div class="toolbar bottom">
+            <a href="<?php echo PathBuilder::action("/personnel/profile/{$profile->getID()}/edit") ?>" class="button">Edytuj</a>
             <a href="<?php echo PathBuilder::action("/personnel/profile/{$profile->getID()}/deactivate") ?>" class="button destructive">Dezaktywuj profil</a>
         </div>
 <?php

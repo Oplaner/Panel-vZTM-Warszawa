@@ -14,6 +14,7 @@ enum View: string {
     case menu = "Menu";
     case pagination = "Pagination";
     case personnelProfileDetails = "PersonnelProfileDetails";
+    case personnelProfileEdit = "PersonnelProfileEdit";
     case personnelProfileNew = "PersonnelProfileNew";
     case personnelProfiles = "PersonnelProfiles";
     case topBar = "TopBar";
