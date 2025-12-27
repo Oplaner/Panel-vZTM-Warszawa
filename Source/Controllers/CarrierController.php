@@ -467,7 +467,7 @@ final class CarrierController extends Controller {
             "backAction" => "/carriers",
             "formAction" => "/carriers/$carrierID/close",
             "confirmationMessage" => "Czy na pewno chcesz zamknąć zakład? Tej czynności nie można cofnąć.",
-            "infoMessage" => "Wszystkie kontrakty z kierowcami muszą zostać uprzednio zakończone. Lista kierowników zakładu zostanie wyczyszczona.",
+            "infoMessage" => "Wszystkie kontrakty z&nbsp;kierowcami muszą zostać uprzednio zakończone. Lista kierowników zakładu zostanie wyczyszczona.",
             "cancelAction" => "/carriers/$carrierID",
             "submitButton" => "Zamknij zakład"
         ];

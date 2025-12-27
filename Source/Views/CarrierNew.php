@@ -33,7 +33,7 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::search], "Nowy zakł
                     <input type="text" id="fullName" name="fullName" value="<?php echo $fullName ?>">
                     <label for="shortName" class="required">Nazwa skrócona:</label>
                     <input type="text" id="shortName" name="shortName" value="<?php echo $shortName ?>">
-                    <p class="message info">Informacje dotyczące utworzenia zakładu (data i godzina, twórca) są zapisywane automatycznie.</p>
+                    <p class="message info">Informacje dotyczące utworzenia zakładu (data i&nbsp;godzina, twórca) są zapisywane automatycznie.</p>
                 </div>
                 <div class="sectionContainer column narrow">
                     <div class="section">

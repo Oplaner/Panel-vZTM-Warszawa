@@ -31,7 +31,7 @@ ViewBuilder::buildHead(Style::light, [Script::menu], $profile->getOwner()->getFo
                     <h2>Pracownik</h2>
                     <label for="description" class="required">Opis funkcji:</label>
                     <input type="text" id="description" name="description" value="<?php echo $description ?>">
-                    <p class="message info">Zmiana danych spowoduje dezaktywację obecnego i utworzenie nowego profilu personelu dla tego pracownika.</p>
+                    <p class="message info">Zmiana danych spowoduje dezaktywację obecnego i&nbsp;utworzenie nowego profilu personelu dla tego pracownika.</p>
                 </div>
                 <div class="section">
                     <h2>Uprawnienia</h2>
