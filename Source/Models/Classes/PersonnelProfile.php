@@ -1,6 +1,8 @@
 <?php
 
 final class PersonnelProfile extends Profile {
+    public const DEFAULT_PROFILE_DESCRIPTION = "Pracownik";
+
     private string $description;
     private array $privileges;
 

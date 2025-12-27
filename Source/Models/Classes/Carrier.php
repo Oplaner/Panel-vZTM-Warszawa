@@ -217,7 +217,9 @@ final class Carrier extends DatabaseEntity {
             $currentPersonnelProfileDescription = $personnelProfile->getDescription();
             $currentPersonnelProfilePrivileges = $personnelProfile->getPrivileges();
             $personnelProfile->deactivate($personnelProfileActivator);
-            $newPersonnelProfileDescription = $currentPersonnelProfileDescription.PHP_EOL.$supervisorDescription;
+            $newPersonnelProfileDescription = str_contains($currentPersonnelProfileDescription, $supervisorDescription)
+                ? $currentPersonnelProfileDescription
+                : $currentPersonnelProfileDescription.PHP_EOL.$supervisorDescription;
             $newPersonnelProfilePrivileges = $currentPersonnelProfilePrivileges;
 
             foreach ($supervisorPrivileges as $supervisorPrivilege) {
@@ -269,6 +271,11 @@ final class Carrier extends DatabaseEntity {
             "",
             $currentPersonnelProfileDescription
         );
+
+        if ($newPersonnelProfileDescription == "") {
+            $newPersonnelProfileDescription = PersonnelProfile::DEFAULT_PROFILE_DESCRIPTION;
+        }
+
         $newPersonnelProfilePrivileges = [];
 
         foreach ($currentPersonnelProfilePrivileges as $currentPrivilege) {
