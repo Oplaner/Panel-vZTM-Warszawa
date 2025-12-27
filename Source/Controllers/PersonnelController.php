@@ -470,6 +470,96 @@ final class PersonnelController extends Controller {
         ];
         self::renderView(View::personnelProfileEdit, $viewParameters);
     }
+
+    #[Route("/personnel/profile/{profileID}/edit", RequestMethod::post)]
+    #[Access(
+        group: AccessGroup::oneOfProfiles,
+        profiles: [DirectorProfile::class]
+    )]
+    public function editPersonnelProfile(array $input): void {
+        global $_USER;
+        extract($input[Router::PATH_DATA_KEY]);
+
+        try {
+            InputValidator::checkUUIDv4($profileID);
+        } catch (ValidationException) {
+            Router::redirect("/personnel");
+        }
+
+        $profile = PersonnelProfile::withID($profileID);
+
+        if (is_null($profile) || !$profile->isActive()) {
+            Router::redirect("/personnel");
+        }
+
+        $post = $input[Router::POST_DATA_KEY];
+        $description = InputValidator::clean($post["description"]);
+        $privileges = [];
+
+        $errors = [];
+
+        // Validation: description.
+        try {
+            InputValidator::checkNonEmpty($description, self::PERSONNEL_DESCRIPTION_FIELD_NAME);
+            InputValidator::checkLength($description, 5, 100, self::PERSONNEL_DESCRIPTION_FIELD_NAME);
+        } catch (ValidationException $exception) {
+            $errors[] = $exception->getMessage();
+        }
+
+        // Validation: privileges.
+        try {
+            $key = "privileges";
+            InputValidator::checkNonEmptyCheckboxArray($post, $key, self::PERSONNEL_PRIVILEGES_FIELD_NAME);
+
+            foreach (array_keys($post[$key]) as $privilegeID) {
+                InputValidator::checkUUIDv4($privilegeID);
+                $privilege = Privilege::withID($privilegeID);
+
+                if (is_null($privilege)) {
+                    throw new ValidationException(InputValidator::generateErrorMessage(InputValidator::MESSAGE_TEMPLATE_GENERIC, self::PERSONNEL_PRIVILEGES_FIELD_NAME));
+                }
+
+                $privileges[] = $privilege;
+            }
+        } catch (ValidationException $exception) {
+            $privileges = [];
+            $errors[] = $exception->getMessage();
+        }
+
+        // Validation: difference check.
+        $descriptionDidChange = $description != $profile->getDescription();
+        $privilegeIDs = array_map(
+            fn($privilege) => $privilege->getID(),
+            $privileges
+        );
+        $profilePrivilegeIDs = array_map(
+            fn($profilePrivilege) => $profilePrivilege->getID(),
+            $profile->getPrivileges()
+        );
+        $privilegesDidChange = count($privilegeIDs) != count($profilePrivilegeIDs) || count(array_diff($privilegeIDs, $profilePrivilegeIDs)) > 0;
+        $profileDidChange = $descriptionDidChange || $privilegesDidChange;
+
+        if (count($errors) > 0 || !$profileDidChange) {
+            $viewParameters = [
+                "profile" => $profile,
+                "showMessage" => true,
+                "message" => count($errors) > 0 ? self::makeErrorMessage($errors) : "Nie wprowadzono żadnych zmian. Profil nie został zaktualizowany.",
+                "description" => $description,
+                "privilegeGroups" => Privilege::getGrantableGroups(),
+                "privileges" => $privileges
+            ];
+            self::renderView(View::personnelProfileEdit, $viewParameters);
+        } else {
+            $profile->deactivate($_USER);
+            $newProfile = PersonnelProfile::createNew($profile->getOwner(), $_USER, $description, $privileges);
+            $viewParameters = [
+                "profile" => $profile,
+                "showMessage" => true,
+                "message" => "<span>Profil personelu został pomyślnie zaktualizowany. Aktualnie widzisz poprzedni, zdezaktywowany profil. Nowy profil możesz podejrzeć, <a href=\"".PathBuilder::action("/personnel/profile/{$newProfile->getID()}")."\">klikając tutaj</a>.</span>"
+            ];
+            self::renderView(View::personnelProfileDetails, $viewParameters);
+        }
+    }
 }
 
 ?>
