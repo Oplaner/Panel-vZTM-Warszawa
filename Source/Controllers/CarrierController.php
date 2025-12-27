@@ -111,11 +111,43 @@ final class CarrierController extends Controller {
         $supervisorSelections = [];
         $supervisorLogins = [];
 
-        $showMessage = false;
+        $errors = [];
         $messageType = null;
         $message = null;
-        $isValidationSuccessful = true;
 
+        // Validation: full name.
+        try {
+            InputValidator::checkNonEmpty($fullName, self::FULL_NAME_FIELD_NAME);
+            InputValidator::checkLength($fullName, 5, 30, self::FULL_NAME_FIELD_NAME);
+        } catch (ValidationException $exception) {
+            $errors[] = $exception->getMessage();
+        }
+
+        // Validation: short name.
+        try {
+            InputValidator::checkNonEmpty($shortName, self::SHORT_NAME_FIELD_NAME);
+            InputValidator::checkLength($shortName, 3, 10, self::SHORT_NAME_FIELD_NAME);
+        } catch (ValidationException $exception) {
+            $errors[] = $exception->getMessage();
+        }
+
+        // Validation: number of trial tasks.
+        try {
+            InputValidator::checkNonEmpty($numberOfTrialTasks, self::NUMBER_OF_TRIAL_TASKS_FIELD_NAME);
+            InputValidator::checkInteger($numberOfTrialTasks, 0, 255, self::NUMBER_OF_TRIAL_TASKS_FIELD_NAME);
+        } catch (ValidationException $exception) {
+            $errors[] = $exception->getMessage();
+        }
+
+        // Validation: number of penalty tasks.
+        try {
+            InputValidator::checkNonEmpty($numberOfPenaltyTasks, self::NUMBER_OF_PENALTY_TASKS_FIELD_NAME);
+            InputValidator::checkInteger($numberOfPenaltyTasks, 0, 255, self::NUMBER_OF_PENALTY_TASKS_FIELD_NAME);
+        } catch (ValidationException $exception) {
+            $errors[] = $exception->getMessage();
+        }
+
+        // Validation: supervisors.
         try {
             if ($supervisorLoginsString != "") {
                 $supervisorLogins = explode(";", $supervisorLoginsString);
@@ -136,23 +168,14 @@ final class CarrierController extends Controller {
                 );
                 $supervisorLoginsString = implode(";", $supervisorLogins);
             }
-
-            InputValidator::checkNonEmpty($fullName, self::FULL_NAME_FIELD_NAME);
-            InputValidator::checkNonEmpty($shortName, self::SHORT_NAME_FIELD_NAME);
-            InputValidator::checkNonEmpty($numberOfTrialTasks, self::NUMBER_OF_TRIAL_TASKS_FIELD_NAME);
-            InputValidator::checkNonEmpty($numberOfPenaltyTasks, self::NUMBER_OF_PENALTY_TASKS_FIELD_NAME);
-            InputValidator::checkLength($fullName, 5, 30, self::FULL_NAME_FIELD_NAME);
-            InputValidator::checkLength($shortName, 3, 10, self::SHORT_NAME_FIELD_NAME);
-            InputValidator::checkInteger($numberOfTrialTasks, 0, 255, self::NUMBER_OF_TRIAL_TASKS_FIELD_NAME);
-            InputValidator::checkInteger($numberOfPenaltyTasks, 0, 255, self::NUMBER_OF_PENALTY_TASKS_FIELD_NAME);
         } catch (ValidationException $exception) {
-            $showMessage = true;
-            $messageType = "error";
-            $message = $exception->getMessage();
-            $isValidationSuccessful = false;
+            $errors[] = $exception->getMessage();
         }
 
-        if ($isValidationSuccessful) {
+        if (count($errors) > 0) {
+            $messageType = "error";
+            $message = self::makeErrorMessage($errors);
+        } else {
             $supervisors = [];
 
             foreach ($supervisorLogins as $supervisorLogin) {
@@ -167,19 +190,18 @@ final class CarrierController extends Controller {
             }
     
             $carrier = Carrier::createNew($fullName, $shortName, $supervisors, $numberOfTrialTasks, $numberOfPenaltyTasks, $_USER);
-            $showMessage = true;
             $messageType = "success";
             $message = "<span>Zakład został utworzony! Możesz podejrzeć jego szczegóły, <a href=\"".PathBuilder::action("/carriers/{$carrier->getID()}")."\">klikając tutaj</a>.</span>";
             $fullName = "";
             $shortName = "";
             $numberOfTrialTasks = "";
             $numberOfPenaltyTasks = "";
-            $supervisorSelections = [];
             $supervisorLoginsString = "";
+            $supervisorSelections = [];
         }
 
         $viewParameters = [
-            "showMessage" => $showMessage,
+            "showMessage" => true,
             "messageType" => $messageType,
             "message" => $message,
             "fullName" => $fullName,
@@ -296,9 +318,41 @@ final class CarrierController extends Controller {
         $supervisorSelections = [];
         $supervisorLogins = [];
 
-        $message = null;
-        $isValidationSuccessful = true;
+        $errors = [];
 
+        // Validation: full name.
+        try {
+            InputValidator::checkNonEmpty($fullName, self::FULL_NAME_FIELD_NAME);
+            InputValidator::checkLength($fullName, 5, 30, self::FULL_NAME_FIELD_NAME);
+        } catch (ValidationException $exception) {
+            $errors[] = $exception->getMessage();
+        }
+
+        // Validation: short name.
+        try {
+            InputValidator::checkNonEmpty($shortName, self::SHORT_NAME_FIELD_NAME);
+            InputValidator::checkLength($shortName, 3, 10, self::SHORT_NAME_FIELD_NAME);
+        } catch (ValidationException $exception) {
+            $errors[] = $exception->getMessage();
+        }
+
+        // Validation: number of trial tasks.
+        try {
+            InputValidator::checkNonEmpty($numberOfTrialTasks, self::NUMBER_OF_TRIAL_TASKS_FIELD_NAME);
+            InputValidator::checkInteger($numberOfTrialTasks, 0, 255, self::NUMBER_OF_TRIAL_TASKS_FIELD_NAME);
+        } catch (ValidationException $exception) {
+            $errors[] = $exception->getMessage();
+        }
+
+        // Validation: number of penalty tasks.
+        try {
+            InputValidator::checkNonEmpty($numberOfPenaltyTasks, self::NUMBER_OF_PENALTY_TASKS_FIELD_NAME);
+            InputValidator::checkInteger($numberOfPenaltyTasks, 0, 255, self::NUMBER_OF_PENALTY_TASKS_FIELD_NAME);
+        } catch (ValidationException $exception) {
+            $errors[] = $exception->getMessage();
+        }
+
+        // Validation: supervisors.
         try {
             if ($supervisorLoginsString != "") {
                 $supervisorLogins = explode(";", $supervisorLoginsString);
@@ -319,21 +373,24 @@ final class CarrierController extends Controller {
                 );
                 $supervisorLoginsString = implode(";", $supervisorLogins);
             }
-
-            InputValidator::checkNonEmpty($fullName, self::FULL_NAME_FIELD_NAME);
-            InputValidator::checkNonEmpty($shortName, self::SHORT_NAME_FIELD_NAME);
-            InputValidator::checkNonEmpty($numberOfTrialTasks, self::NUMBER_OF_TRIAL_TASKS_FIELD_NAME);
-            InputValidator::checkNonEmpty($numberOfPenaltyTasks, self::NUMBER_OF_PENALTY_TASKS_FIELD_NAME);
-            InputValidator::checkLength($fullName, 5, 30, self::FULL_NAME_FIELD_NAME);
-            InputValidator::checkLength($shortName, 3, 10, self::SHORT_NAME_FIELD_NAME);
-            InputValidator::checkInteger($numberOfTrialTasks, 0, 255, self::NUMBER_OF_TRIAL_TASKS_FIELD_NAME);
-            InputValidator::checkInteger($numberOfPenaltyTasks, 0, 255, self::NUMBER_OF_PENALTY_TASKS_FIELD_NAME);
         } catch (ValidationException $exception) {
-            $message = $exception->getMessage();
-            $isValidationSuccessful = false;
+            $errors[] = $exception->getMessage();
         }
 
-        if ($isValidationSuccessful) {
+        if (count($errors) > 0) {
+            $viewParameters = [
+                "carrier" => $carrier,
+                "showMessage" => true,
+                "message" => self::makeErrorMessage($errors),
+                "fullName" => $fullName,
+                "shortName" => $shortName,
+                "numberOfTrialTasks" => $numberOfTrialTasks,
+                "numberOfPenaltyTasks" => $numberOfPenaltyTasks,
+                "supervisorSelections" => $supervisorSelections,
+                "supervisorLoginsString" => $supervisorLoginsString
+            ];
+            self::renderView(View::carrierEdit, $viewParameters);
+        } else {
             $currentSupervisorLogins = array_map(
                 fn($supervisor) => $supervisor->getLogin(),
                 $carrier->getSupervisors()
@@ -381,19 +438,6 @@ final class CarrierController extends Controller {
                 "message" => "Zakład został pomyślnie zaktualizowany."
             ];
             self::renderView(View::carrierDetails, $viewParameters);
-        } else {
-            $viewParameters = [
-                "carrier" => $carrier,
-                "showMessage" => true,
-                "message" => $message,
-                "fullName" => $fullName,
-                "shortName" => $shortName,
-                "numberOfTrialTasks" => $numberOfTrialTasks,
-                "numberOfPenaltyTasks" => $numberOfPenaltyTasks,
-                "supervisorSelections" => $supervisorSelections,
-                "supervisorLoginsString" => $supervisorLoginsString
-            ];
-            self::renderView(View::carrierEdit, $viewParameters);
         }
     }
 
