@@ -49,17 +49,21 @@ final class MainController extends Controller {
         $isValidationSuccessful = true;
         $authenticationResult = null;
 
+        Logger::log(LogLevel::info, "Validating login request.");
+
         try {
             InputValidator::checkNonEmpty($login);
             InputValidator::checkNonEmpty($password);
             InputValidator::checkLength($login, 1, 10);
             InputValidator::checkLength($password, $minPasswordLength, 255);
         } catch (ValidationException) {
+            Logger::log(LogLevel::info, "Validation failed.");
             $isValidationSuccessful = false;
             $authenticationResult = AuthenticationResult::invalidCredentials;
         }
 
         if ($isValidationSuccessful) {
+            Logger::log(LogLevel::info, "Validation succeeded. Beginning authentication.");
             $authenticationResult = Authenticator::authenticateUser($login, $password);
 
             if ($authenticationResult == AuthenticationResult::success) {
@@ -79,6 +83,7 @@ final class MainController extends Controller {
         group: AccessGroup::anyProfile
     )]
     public function handleLogout(): void {
+        Logger::log(LogLevel::info, "Handling logout request.");
         Authenticator::endUserSession();
         $viewParameters = [
             "showLogoutMessage" => true

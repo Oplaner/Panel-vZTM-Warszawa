@@ -115,6 +115,8 @@ final class CarrierController extends Controller {
         $messageType = null;
         $message = null;
 
+        Logger::log(LogLevel::info, "Validating new carrier information.");
+
         // Validation: full name.
         try {
             InputValidator::checkNonEmpty($fullName, self::FULL_NAME_FIELD_NAME);
@@ -173,9 +175,11 @@ final class CarrierController extends Controller {
         }
 
         if (!empty($errors)) {
+            Logger::log(LogLevel::info, "Validation failed.");
             $messageType = "error";
             $message = self::makeErrorMessage($errors);
         } else {
+            Logger::log(LogLevel::info, "Validation succeeded.");
             $supervisors = [];
 
             foreach ($supervisorLogins as $supervisorLogin) {
@@ -320,6 +324,8 @@ final class CarrierController extends Controller {
 
         $errors = [];
 
+        Logger::log(LogLevel::info, "Validating updated information for carrier with ID \"{$carrier->getID()}\".");
+
         // Validation: full name.
         try {
             InputValidator::checkNonEmpty($fullName, self::FULL_NAME_FIELD_NAME);
@@ -378,6 +384,7 @@ final class CarrierController extends Controller {
         }
 
         if (!empty($errors)) {
+            Logger::log(LogLevel::info, "Validation failed.");
             $viewParameters = [
                 "carrier" => $carrier,
                 "showMessage" => true,
@@ -391,6 +398,7 @@ final class CarrierController extends Controller {
             ];
             self::renderView(View::carrierEdit, $viewParameters);
         } else {
+            Logger::log(LogLevel::info, "Validation succeeded. Updating carrier information.");
             $currentSupervisorLogins = array_map(
                 fn($supervisor) => $supervisor->getLogin(),
                 $carrier->getSupervisors()

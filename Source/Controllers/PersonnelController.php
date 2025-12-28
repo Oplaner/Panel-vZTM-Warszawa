@@ -360,6 +360,8 @@ final class PersonnelController extends Controller {
         $messageType = null;
         $message = null;
 
+        Logger::log(LogLevel::info, "Validating new personnel profile information.");
+
         // Validation: personnel login.
         try {
             InputValidator::checkNonEmpty($personnelLogin, self::PERSONNEL_LOGIN_FIELD_NAME);
@@ -412,9 +414,12 @@ final class PersonnelController extends Controller {
         }
 
         if (!empty($errors)) {
+            Logger::log(LogLevel::info, "Validation failed.");
             $messageType = "error";
             $message = self::makeErrorMessage($errors);
         } else {
+            Logger::log(LogLevel::info, "Validation succeeded.");
+
             if (is_null($personnelUser)) {
                 $personnelUser = User::createNew($personnelLogin);
                 // TODO: Handle newly created User (myBB PM?).
@@ -498,6 +503,8 @@ final class PersonnelController extends Controller {
 
         $errors = [];
 
+        Logger::log(LogLevel::info, "Validating updated information for personnel profile with ID \"{$profile->getID()}\".");
+
         // Validation: description.
         try {
             InputValidator::checkNonEmpty($description, self::PERSONNEL_DESCRIPTION_FIELD_NAME);
@@ -540,6 +547,7 @@ final class PersonnelController extends Controller {
         $profileDidChange = $descriptionDidChange || $privilegesDidChange;
 
         if (!empty($errors) || !$profileDidChange) {
+            Logger::log(LogLevel::info, "Validation failed or the information did not change.");
             $viewParameters = [
                 "profile" => $profile,
                 "showMessage" => true,
@@ -550,6 +558,7 @@ final class PersonnelController extends Controller {
             ];
             self::renderView(View::personnelProfileEdit, $viewParameters);
         } else {
+            Logger::log(LogLevel::info, "Validation succeeded.");
             $profile->deactivate($_USER);
             $newProfile = PersonnelProfile::createNew($profile->getOwner(), $_USER, $description, $privileges);
             $viewParameters = [
