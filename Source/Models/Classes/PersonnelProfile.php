@@ -73,7 +73,7 @@ final class PersonnelProfile extends Profile {
     }
 
     private static function validatePrivilegesArrayIsNotEmpty($privileges): void {
-        if (count($privileges) == 0) {
+        if (empty($privileges)) {
             throw new DomainException("Creating personnel profile with 0 privileges is not allowed.");
         }
     }

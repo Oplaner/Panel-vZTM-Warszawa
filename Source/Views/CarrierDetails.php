@@ -89,7 +89,7 @@ ViewBuilder::buildHead(Style::light, [Script::menu], $carrier->getFullName())
 
                     $supervisors = $carrier->getSupervisors();
 
-                    if (count($supervisors) == 0):
+                    if (empty($supervisors)):
 
 ?>
                     <p>Zakład nie ma przypisanego kierownika.</p>

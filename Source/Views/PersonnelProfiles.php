@@ -61,7 +61,7 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Personel
             </tr>
 <?php
 
-            if (count($profiles) == 0):
+            if (empty($profiles)):
             $colspan = $showingActiveOnly ? 7 : 8;
 
 ?>

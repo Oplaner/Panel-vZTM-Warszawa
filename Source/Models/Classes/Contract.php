@@ -150,7 +150,7 @@ final class Contract extends DatabaseEntity {
             fn($contract) => $contract->getCarrier()->getID() == $carrier->getID()
         );
 
-        if (count($carrierAndDriverContracts) > 0) {
+        if (!empty($carrierAndDriverContracts)) {
             throw new DomainException("Cannot create new contract - there is one currently active for the user.");
         }
     }
@@ -275,7 +275,7 @@ final class Contract extends DatabaseEntity {
     private function deactivateDriverProfileIfNeeded(User $authorizer): void {
         $driverActiveContracts = self::getActiveByDriver($this->driver);
 
-        if (count($driverActiveContracts) == 0) {
+        if (empty($driverActiveContracts)) {
             Logger::log(LogLevel::info, "The last contract of user with ID \"{$this->driver->getID()}\" has been terminated. Their driver profile deactivation will follow.");
             $this->getDriverProfile()->deactivate($authorizer);
         }

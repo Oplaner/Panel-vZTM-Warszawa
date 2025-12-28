@@ -65,7 +65,7 @@ final class Logger {
     private static function findLatestLogFileName(): ?string {
         $logFileNames = self::findAllLogFileNames();
         usort($logFileNames, fn($a, $b) => self::compareLogFileNames($a, $b, false));
-        return count($logFileNames) == 0 ? null : $logFileNames[0];
+        return empty($logFileNames) ? null : $logFileNames[0];
     }
 
     private static function deleteExpiredLogFiles(): void {
@@ -120,7 +120,7 @@ final class Logger {
     private function write(): void {
         self::deleteExpiredLogFiles();
 
-        if (count($this->logs) == 0) {
+        if (empty($this->logs)) {
             return;
         }
 
@@ -135,7 +135,7 @@ final class Logger {
         $this->logs = array_reverse($this->logs); // For safe element removal.
         $file = null;
 
-        while (count($this->logs) > 0) {
+        while (!empty($this->logs)) {
             $i = count($this->logs) - 1;
 
             if (is_null($currentLogFileName)) {

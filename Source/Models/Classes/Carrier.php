@@ -289,7 +289,7 @@ final class Carrier extends DatabaseEntity {
             }
         }
 
-        if (count($newPersonnelProfilePrivileges) > 0) {
+        if (!empty($newPersonnelProfilePrivileges)) {
             PersonnelProfile::createNew($supervisor, $personnelProfileDeactivator, $newPersonnelProfileDescription, $newPersonnelProfilePrivileges);
         }
     }
@@ -433,7 +433,7 @@ final class Carrier extends DatabaseEntity {
     }
 
     private function validateNoContractsAreActiveBeforeClosing(): void {
-        if (count(Contract::getActiveByCarrier($this)) > 0) {
+        if (!empty(Contract::getActiveByCarrier($this))) {
             throw new DomainException("All contracts with the carrier must be terminated before closing it.");
         }
     }

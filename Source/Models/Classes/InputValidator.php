@@ -26,7 +26,7 @@ final class InputValidator {
     }
 
     public static function checkNonEmptyCheckboxArray(array $post, string $key, ?string $fieldName = null): void {
-        if (!array_key_exists($key, $post) || count($post[$key]) == 0) {
+        if (!array_key_exists($key, $post) || empty($post[$key])) {
             $message = is_null($fieldName) ? "" : self::generateErrorMessage(self::MESSAGE_TEMPLATE_NON_EMPTY_CHECKBOX_ARRAY, $fieldName);
             throw new ValidationException($message);
         }

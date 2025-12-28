@@ -50,7 +50,7 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Zakłady
             </tr>
 <?php
 
-            if (count($carriers) == 0):
+            if (empty($carriers)):
             $colspan = $showingActiveOnly ? 7 : 8;
 
 ?>

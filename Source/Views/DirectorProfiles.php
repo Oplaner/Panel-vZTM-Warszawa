@@ -60,7 +60,7 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Dyrektor
             </tr>
 <?php
 
-            if (count($profiles) == 0):
+            if (empty($profiles)):
             $colspan = $showingActiveOnly ? 6 : 7;
 
 ?>

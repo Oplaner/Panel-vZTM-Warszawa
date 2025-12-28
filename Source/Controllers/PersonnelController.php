@@ -366,7 +366,7 @@ final class PersonnelController extends Controller {
             InputValidator::checkInteger($personnelLogin, 0, 4294967295, self::PERSONNEL_LOGIN_FIELD_NAME);
             $personnelSelections = User::getLoginAndUsernamePairsForAnyUsersWithLogins([$personnelLogin]);
 
-            if (count($personnelSelections) == 0) {
+            if (empty($personnelSelections)) {
                 throw new ValidationException(InputValidator::generateErrorMessage(InputValidator::MESSAGE_TEMPLATE_GENERIC, self::PERSONNEL_LOGIN_FIELD_NAME));
             }
 
@@ -411,7 +411,7 @@ final class PersonnelController extends Controller {
             $errors[] = $exception->getMessage();
         }
 
-        if (count($errors) > 0) {
+        if (!empty($errors)) {
             $messageType = "error";
             $message = self::makeErrorMessage($errors);
         } else {
@@ -536,14 +536,14 @@ final class PersonnelController extends Controller {
             fn($profilePrivilege) => $profilePrivilege->getID(),
             $profile->getPrivileges()
         );
-        $privilegesDidChange = count($privilegeIDs) != count($profilePrivilegeIDs) || count(array_diff($privilegeIDs, $profilePrivilegeIDs)) > 0;
+        $privilegesDidChange = count($privilegeIDs) != count($profilePrivilegeIDs) || !empty(array_diff($privilegeIDs, $profilePrivilegeIDs));
         $profileDidChange = $descriptionDidChange || $privilegesDidChange;
 
-        if (count($errors) > 0 || !$profileDidChange) {
+        if (!empty($errors) || !$profileDidChange) {
             $viewParameters = [
                 "profile" => $profile,
                 "showMessage" => true,
-                "message" => count($errors) > 0 ? self::makeErrorMessage($errors) : "Nie wprowadzono żadnych zmian. Profil nie został zaktualizowany.",
+                "message" => !empty($errors) ? self::makeErrorMessage($errors) : "Nie wprowadzono żadnych zmian. Profil nie został zaktualizowany.",
                 "description" => $description,
                 "privilegeGroups" => Privilege::getGrantableGroups(),
                 "privileges" => $privileges

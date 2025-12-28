@@ -40,7 +40,7 @@ final class CarrierTests {
             return "New carrier full name is incorrect. Expected: \"$fullName\", found: \"{$carrier->getFullName()}\".";
         } elseif ($carrier->getShortName() != $shortName) {
             return "New carrier short name is incorrect. Expected: \"$shortName\", found: \"{$carrier->getShortName()}\".";
-        } elseif (count($supervisors) != 0) {
+        } elseif (!empty($supervisors)) {
             return "New carrier has incorrect number of supervisors. Expected: 0, found: ".count($supervisors).".";
         } elseif ($carrier->getNumberOfTrialTasks() != $numberOfTrialTasks) {
             return "New carrier numberOfTrialTasks value is incorrect. Expected: $numberOfTrialTasks, found: {$carrier->getNumberOfTrialTasks()}.";
@@ -132,7 +132,7 @@ final class CarrierTests {
         $carrier->addSupervisor($user, $user);
         $supervisorsAfterChange = $carrier->getSupervisors();
 
-        if (count($supervisorsBeforeChange) != 0) {
+        if (!empty($supervisorsBeforeChange)) {
             return "The number of carrier supervisors before the change is incorrect. Expected: 0, found: ".count($supervisorsBeforeChange).".";
         } elseif (count($supervisorsAfterChange) != 1) {
             return "The number of carrier supervisors after the change is incorrect. Expected: 1, found: ".count($supervisorsAfterChange).".";
@@ -173,7 +173,7 @@ final class CarrierTests {
             return "The number of carrier supervisors before the change is incorrect. Expected: 1, found: ".count($supervisorsBeforeChange).".";
         } elseif ($supervisorsBeforeChange[0]->getID() != $user->getID()) {
             return "The carrier supervisor user ID is incorrect. Expected: \"{$user->getID()}\", found: \"{$supervisorsBeforeChange[0]->getID()}\".";
-        } elseif (count($supervisorsAfterChange) != 0) {
+        } elseif (!empty($supervisorsAfterChange)) {
             return "The number of carrier supervisors after the change is incorrect. Expected: 0, found: ".count($supervisorsAfterChange).".";
         }
 
@@ -258,7 +258,7 @@ final class CarrierTests {
             return "The carrier closedBy user ID value is incorrect. Expected: \"{$user->getID()}\", found: \"{$carrier->getClosedBy()->getID()}\".";
         } elseif ($carrier->isActive()) {
             return "The carrier should be inactive.";
-        } elseif (count($supervisorsAfterClosing) > 0) {
+        } elseif (!empty($supervisorsAfterClosing)) {
             return "The carrier should have no supervisors.";
         }
 

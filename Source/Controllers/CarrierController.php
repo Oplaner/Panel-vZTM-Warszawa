@@ -172,7 +172,7 @@ final class CarrierController extends Controller {
             $errors[] = $exception->getMessage();
         }
 
-        if (count($errors) > 0) {
+        if (!empty($errors)) {
             $messageType = "error";
             $message = self::makeErrorMessage($errors);
         } else {
@@ -377,7 +377,7 @@ final class CarrierController extends Controller {
             $errors[] = $exception->getMessage();
         }
 
-        if (count($errors) > 0) {
+        if (!empty($errors)) {
             $viewParameters = [
                 "carrier" => $carrier,
                 "showMessage" => true,

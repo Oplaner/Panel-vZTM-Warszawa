@@ -234,7 +234,7 @@ final class User extends DatabaseEntity {
     }
 
     public function isActive(): bool {
-        return count($this->getActiveProfiles()) > 0;
+        return !empty($this->getActiveProfiles());
     }
 
     public function __toString() {
