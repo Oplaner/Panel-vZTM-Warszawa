@@ -99,7 +99,7 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Dyrektor
                         <span class="status <?php echo $statusClass ?>"><?php echo $statusText ?></span>
                     </div>
                     <?php echo $profile->getOwner()->getFormattedLoginAndUsername() ?><br>
-                    <?php echo $directorType ?><br>
+                    <?php echo $profile->getDirectorType() ?><br>
                     <a href="<?php echo PathBuilder::action("/personnel/directors/profile/{$profile->getID()}") ?>">Pokaż szczegóły</a>
                 </td>
             </tr>
