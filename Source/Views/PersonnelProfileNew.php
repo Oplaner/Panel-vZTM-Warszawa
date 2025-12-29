@@ -28,7 +28,7 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::search], "Nowy praco
         <form action="<?php echo PathBuilder::action("/personnel/new-profile") ?>" method="POST">
             <div class="sectionContainer column">
                 <div class="section">
-                    <h2>Pracownik</h2>
+                    <h2>Użytkownik</h2>
                     <div class="searchContainer" data-source="<?php echo PathBuilder::action("/users/search/non-personnel") ?>" data-selection-limit="1">
                         <div class="selectionContainer">
 <?php
@@ -46,7 +46,7 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::search], "Nowy praco
 ?>
                         </div>
                         <input type="hidden" name="personnelLogin" value="<?php echo $personnelLogin ?>">
-                        <label for="personnelSearchBox" class="required">Wybierz pracownika:</label>
+                        <label for="personnelSearchBox" class="required">Wybierz użytkownika:</label>
                         <div class="inputWithLoader">
 <?php
 

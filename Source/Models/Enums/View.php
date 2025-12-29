@@ -7,6 +7,7 @@ enum View: string {
     case carriers = "Carriers";
     case confirmation = "Confirmation";
     case directorProfileDetails = "DirectorProfileDetails";
+    case directorProfileNew = "DirectorProfileNew";
     case directorProfiles = "DirectorProfiles";
     case head = "Head";
     case login = "Login";

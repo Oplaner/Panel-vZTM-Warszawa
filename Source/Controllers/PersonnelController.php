@@ -1,9 +1,9 @@
 <?php
 
 final class PersonnelController extends Controller {
-    private const PERSONNEL_LOGIN_FIELD_NAME = "Pracownik";
     private const PERSONNEL_DESCRIPTION_FIELD_NAME = "Opis funkcji";
     private const PERSONNEL_PRIVILEGES_FIELD_NAME = "Uprawnienia";
+    private const USER_LOGIN_FIELD_NAME = "Użytkownik";
 
     #[Route("/personnel", RequestMethod::get)]
     #[Access(
@@ -364,24 +364,23 @@ final class PersonnelController extends Controller {
 
         // Validation: personnel login.
         try {
-            InputValidator::checkNonEmpty($personnelLogin, self::PERSONNEL_LOGIN_FIELD_NAME);
-            InputValidator::checkInteger($personnelLogin, 0, 4294967295, self::PERSONNEL_LOGIN_FIELD_NAME);
+            InputValidator::checkNonEmpty($personnelLogin, self::USER_LOGIN_FIELD_NAME);
+            InputValidator::checkInteger($personnelLogin, 0, 4294967295, self::USER_LOGIN_FIELD_NAME);
             $personnelSelections = User::getLoginAndUsernamePairsForAnyUsersWithLogins([$personnelLogin]);
 
             if (empty($personnelSelections)) {
-                throw new ValidationException(InputValidator::generateErrorMessage(InputValidator::MESSAGE_TEMPLATE_GENERIC, self::PERSONNEL_LOGIN_FIELD_NAME));
+                throw new ValidationException(InputValidator::generateErrorMessage(InputValidator::MESSAGE_TEMPLATE_GENERIC, self::USER_LOGIN_FIELD_NAME));
             }
 
             $personnelSelection = $personnelSelections[0];
             $personnelUser = User::withLogin($personnelLogin);
 
             if (!is_null($personnelUser) && $personnelUser->hasActiveProfileOfType(ProfileType::personnel)) {
-                throw new ValidationException(InputValidator::generateErrorMessage(InputValidator::MESSAGE_TEMPLATE_GENERIC, self::PERSONNEL_LOGIN_FIELD_NAME));
+                throw new ValidationException(InputValidator::generateErrorMessage(InputValidator::MESSAGE_TEMPLATE_GENERIC, self::USER_LOGIN_FIELD_NAME));
             }
         } catch (ValidationException $exception) {
             $personnelLogin = "";
             $personnelSelection = null;
-            $personnelUser = null;
             $errors[] = $exception->getMessage();
         }
 
@@ -445,6 +444,81 @@ final class PersonnelController extends Controller {
             "privileges" => $privileges
         ];
         self::renderView(View::personnelProfileNew, $viewParameters);
+    }
+
+    #[Route("/personnel/directors/new-profile", RequestMethod::get)]
+    #[Access(
+        group: AccessGroup::oneOfProfiles,
+        profiles: [DirectorProfile::class]
+    )]
+    public function showNewDirectorProfileForm(): void {
+        $viewParameters = [
+            "directorSelection" => null,
+            "directorLogin" => ""
+        ];
+        self::renderView(View::directorProfileNew, $viewParameters);
+    }
+
+    #[Route("/personnel/directors/new-profile", RequestMethod::post)]
+    #[Access(
+        group: AccessGroup::oneOfProfiles,
+        profiles: [DirectorProfile::class]
+    )]
+    public function addNewDirectorProfile(array $input): void {
+        global $_USER;
+
+        $post = $input[Router::POST_DATA_KEY];
+        $directorLogin = InputValidator::clean($post["directorLogin"]);
+        $directorUser = null;
+
+        $error = null;
+        $messageType = null;
+        $message = null;
+
+        Logger::log(LogLevel::info, "Validating new director profile information.");
+
+        // Validation: director login.
+        try {
+            InputValidator::checkNonEmpty($directorLogin, self::USER_LOGIN_FIELD_NAME);
+            InputValidator::checkInteger($directorLogin, 0, 4294967295, self::USER_LOGIN_FIELD_NAME);
+            $directorSelections = User::getLoginAndUsernamePairsForAnyUsersWithLogins([$directorLogin]);
+
+            if (empty($directorSelections)) {
+                throw new ValidationException(InputValidator::generateErrorMessage(InputValidator::MESSAGE_TEMPLATE_GENERIC, self::USER_LOGIN_FIELD_NAME));
+            }
+
+            $directorUser = User::withLogin($directorLogin);
+
+            if (!is_null($directorUser) && $directorUser->hasActiveProfileOfType(ProfileType::director)) {
+                throw new ValidationException(InputValidator::generateErrorMessage(InputValidator::MESSAGE_TEMPLATE_GENERIC, self::USER_LOGIN_FIELD_NAME));
+            }
+        } catch (ValidationException $exception) {
+            $error = $exception->getMessage();
+        }
+
+        if (!is_null($error)) {
+            Logger::log(LogLevel::info, "Validation failed.");
+            $messageType = "error";
+            $message = $error;
+        } else {
+            Logger::log(LogLevel::info, "Validation succeeded.");
+
+            if (is_null($directorUser)) {
+                $directorUser = User::createNew($directorLogin);
+                // TODO: Handle newly created User (myBB PM?).
+            }
+
+            $profile = DirectorProfile::createNew($directorUser, $_USER);
+            $messageType = "success";
+            $message = "<span>Profil dyrektora został utworzony! Możesz podejrzeć jego szczegóły, <a href=\"".PathBuilder::action("/personnel/directors/profile/{$profile->getID()}")."\">klikając tutaj</a>.</span>";
+        }
+
+        $viewParameters = [
+            "showMessage" => true,
+            "messageType" => $messageType,
+            "message" => $message
+        ];
+        self::renderView(View::directorProfileNew, $viewParameters);
     }
 
     #[Route("/personnel/profile/{profileID}/edit", RequestMethod::get)]
