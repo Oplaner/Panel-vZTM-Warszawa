@@ -49,6 +49,17 @@ final class SystemDateTimeTests {
         return true;
     }
 
+    public static function checkTimestamp(): bool|string {
+        $myBirthday = new SystemDateTime("1998-02-10 18:00:00.000000");
+        $expectedTimestamp = 887133600;
+
+        if ($myBirthday->toTimestamp() != $expectedTimestamp) {
+            return "Expected timestamp for {$myBirthday->toDatabaseString()} UTC to be $expectedTimestamp. Found: {$myBirthday->toTimestamp()}.";
+        }
+
+        return true;
+    }
+
     public static function checkDatabaseStringPattern(): bool|string {
         $now = new SystemDateTime();
         $databaseString = $now->toDatabaseString();

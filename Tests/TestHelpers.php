@@ -39,16 +39,16 @@ final class TestHelpers {
 
     public static function cleanDatabase(): void {
         $tables = [
-            "carriers",
             "carrier_supervisors",
-            "contracts",
+            "carriers",
             "contract_periods",
+            "contracts",
             "personnel_profile_privileges",
             "privileges",
-            "profiles",
             "profiles_director",
             "profiles_driver",
             "profiles_personnel",
+            "profiles",
             "session_tokens",
             "users"
         ];

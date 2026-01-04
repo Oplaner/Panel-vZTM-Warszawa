@@ -270,7 +270,7 @@ final class User extends DatabaseEntity {
                     $this->username,
                     password_hash($this->temporaryPassword, PASSWORD_DEFAULT),
                     $this->temporaryPasswordValidTo->toDatabaseString(),
-                    $this->shouldChangePassword,
+                    (int) $this->shouldChangePassword,
                     $this->createdAt->toDatabaseString()
                 ]
             );
@@ -282,7 +282,7 @@ final class User extends DatabaseEntity {
                 WHERE id = ?",
                 [
                     $this->username,
-                    $this->shouldChangePassword,
+                    (int) $this->shouldChangePassword,
                     $this->id
                 ]
             );

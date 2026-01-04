@@ -43,6 +43,10 @@ final class SystemDateTime {
         return $systemDateTime;
     }
 
+    public function toTimestamp(): int {
+        return $this->dateTime->getTimestamp();
+    }
+
     public function toDatabaseString(): string {
         return $this->dateTime->format(self::MYSQL_DATETIME_FORMAT);
     }
