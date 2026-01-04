@@ -10,7 +10,7 @@ final class CarrierController extends Controller {
     #[Route("/carriers", RequestMethod::get)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]
+        profiles: [ProfileType::director]
     )]
     public function showActiveCarriersList(): void {
         $this->showActiveCarriersListByPage(self::makeFirstPageInputArray());
@@ -19,7 +19,7 @@ final class CarrierController extends Controller {
     #[Route("/carriers/page/{pageNumber}", RequestMethod::get)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]
+        profiles: [ProfileType::director]
     )]
     public function showActiveCarriersListByPage(array $input): void {
         extract($input[Router::PATH_DATA_KEY]);
@@ -45,7 +45,7 @@ final class CarrierController extends Controller {
     #[Route("/carriers/all", RequestMethod::get)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]
+        profiles: [ProfileType::director]
     )]
     public function showAllCarriersList(): void {
         $this->showAllCarriersListByPage(self::makeFirstPageInputArray());
@@ -54,7 +54,7 @@ final class CarrierController extends Controller {
     #[Route("/carriers/all/page/{pageNumber}", RequestMethod::get)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]
+        profiles: [ProfileType::director]
     )]
     public function showAllCarriersListByPage(array $input): void {
         extract($input[Router::PATH_DATA_KEY]);
@@ -80,7 +80,7 @@ final class CarrierController extends Controller {
     #[Route("/carriers/new", RequestMethod::get)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]
+        profiles: [ProfileType::director]
     )]
     public function showNewCarrierForm(): void {
         $viewParameters = [
@@ -97,7 +97,7 @@ final class CarrierController extends Controller {
     #[Route("/carriers/new", RequestMethod::post)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]
+        profiles: [ProfileType::director]
     )]
     public function addNewCarrier(array $input): void {
         global $_USER;
@@ -221,7 +221,7 @@ final class CarrierController extends Controller {
     #[Route("/carriers/{carrierID}", RequestMethod::get)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]
+        profiles: [ProfileType::director]
     )]
     public function showCarrierDetails(array $input): void {
         extract($input[Router::PATH_DATA_KEY]);
@@ -247,7 +247,7 @@ final class CarrierController extends Controller {
     #[Route("/carriers/{carrierID}/edit", RequestMethod::get)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]
+        profiles: [ProfileType::director]
     )]
     public function showEditCarrierForm(array $input): void {
         extract($input[Router::PATH_DATA_KEY]);
@@ -295,7 +295,7 @@ final class CarrierController extends Controller {
     #[Route("/carriers/{carrierID}/edit", RequestMethod::post)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]
+        profiles: [ProfileType::director]
     )]
     public function editCarrier(array $input): void {
         global $_USER;
@@ -452,7 +452,7 @@ final class CarrierController extends Controller {
     #[Route("/carriers/{carrierID}/close", RequestMethod::get)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]
+        profiles: [ProfileType::director]
     )]
     public function showCloseCarrierConfirmation(array $input): void {
         extract($input[Router::PATH_DATA_KEY]);
@@ -485,7 +485,7 @@ final class CarrierController extends Controller {
     #[Route("/carriers/{carrierID}/close", RequestMethod::post)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]
+        profiles: [ProfileType::director]
     )]
     public function closeCarrier(array $input): void {
         global $_USER;

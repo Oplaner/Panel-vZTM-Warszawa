@@ -8,7 +8,7 @@ final class PersonnelController extends Controller {
     #[Route("/personnel", RequestMethod::get)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]
+        profiles: [ProfileType::director]
     )]
     public function showActivePersonnelProfilesList(): void {
         $this->showActivePersonnelProfilesListByPage(self::makeFirstPageInputArray());
@@ -17,7 +17,7 @@ final class PersonnelController extends Controller {
     #[Route("/personnel/page/{pageNumber}", RequestMethod::get)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]
+        profiles: [ProfileType::director]
     )]
     public function showActivePersonnelProfilesListByPage(array $input): void {
         extract($input[Router::PATH_DATA_KEY]);
@@ -43,7 +43,7 @@ final class PersonnelController extends Controller {
     #[Route("/personnel/all", RequestMethod::get)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]
+        profiles: [ProfileType::director]
     )]
     public function showAllPersonnelProfilesList(): void {
         $this->showAllPersonnelProfilesListByPage(self::makeFirstPageInputArray());
@@ -52,7 +52,7 @@ final class PersonnelController extends Controller {
     #[Route("/personnel/all/page/{pageNumber}", RequestMethod::get)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]
+        profiles: [ProfileType::director]
     )]
     public function showAllPersonnelProfilesListByPage(array $input): void {
         extract($input[Router::PATH_DATA_KEY]);
@@ -78,7 +78,7 @@ final class PersonnelController extends Controller {
     #[Route("/personnel/directors", RequestMethod::get)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]
+        profiles: [ProfileType::director]
     )]
     public function showActiveDirectorProfilesList(): void {
         $this->showActiveDirectorProfilesListByPage(self::makeFirstPageInputArray());
@@ -87,7 +87,7 @@ final class PersonnelController extends Controller {
     #[Route("/personnel/directors/page/{pageNumber}", RequestMethod::get)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]
+        profiles: [ProfileType::director]
     )]
     public function showActiveDirectorProfilesListByPage(array $input): void {
         extract($input[Router::PATH_DATA_KEY]);
@@ -113,7 +113,7 @@ final class PersonnelController extends Controller {
     #[Route("/personnel/directors/all", RequestMethod::get)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]
+        profiles: [ProfileType::director]
     )]
     public function showAllDirectorProfilesList(): void {
         $this->showAllDirectorProfilesListByPage(self::makeFirstPageInputArray());
@@ -122,7 +122,7 @@ final class PersonnelController extends Controller {
     #[Route("/personnel/directors/all/page/{pageNumber}", RequestMethod::get)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]
+        profiles: [ProfileType::director]
     )]
     public function showAllDirectorProfilesListByPage(array $input): void {
         extract($input[Router::PATH_DATA_KEY]);
@@ -148,7 +148,7 @@ final class PersonnelController extends Controller {
     #[Route("/personnel/profile/{profileID}", RequestMethod::get)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]
+        profiles: [ProfileType::director]
     )]
     public function showPersonnelProfileDetails(array $input): void {
         extract($input[Router::PATH_DATA_KEY]);
@@ -174,7 +174,7 @@ final class PersonnelController extends Controller {
     #[Route("/personnel/directors/profile/{profileID}", RequestMethod::get)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]
+        profiles: [ProfileType::director]
     )]
     public function showDirectorProfileDetails(array $input): void {
         extract($input[Router::PATH_DATA_KEY]);
@@ -200,7 +200,7 @@ final class PersonnelController extends Controller {
     #[Route("/personnel/profile/{profileID}/deactivate", RequestMethod::get)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]
+        profiles: [ProfileType::director]
     )]
     public function showDeactivatePersonnelProfileConfirmation(array $input): void {
         extract($input[Router::PATH_DATA_KEY]);
@@ -233,7 +233,7 @@ final class PersonnelController extends Controller {
     #[Route("/personnel/profile/{profileID}/deactivate", RequestMethod::post)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]
+        profiles: [ProfileType::director]
     )]
     public function deactivatePersonnelProfile(array $input): void {
         global $_USER;
@@ -264,7 +264,7 @@ final class PersonnelController extends Controller {
     #[Route("/personnel/directors/profile/{profileID}/deactivate", RequestMethod::get)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]
+        profiles: [ProfileType::director]
     )]
     public function showDeactivateDirectorProfileConfirmation(array $input): void {
         extract($input[Router::PATH_DATA_KEY]);
@@ -297,7 +297,7 @@ final class PersonnelController extends Controller {
     #[Route("/personnel/directors/profile/{profileID}/deactivate", RequestMethod::post)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]
+        profiles: [ProfileType::director]
     )]
     public function deactivateDirectorProfile(array $input): void {
         global $_USER;
@@ -328,7 +328,7 @@ final class PersonnelController extends Controller {
     #[Route("/personnel/new-profile", RequestMethod::get)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]
+        profiles: [ProfileType::director]
     )]
     public function showNewPersonnelProfileForm(): void {
         $viewParameters = [
@@ -344,7 +344,7 @@ final class PersonnelController extends Controller {
     #[Route("/personnel/new-profile", RequestMethod::post)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]
+        profiles: [ProfileType::director]
     )]
     public function addNewPersonnelProfile(array $input): void {
         global $_USER;
@@ -449,7 +449,7 @@ final class PersonnelController extends Controller {
     #[Route("/personnel/directors/new-profile", RequestMethod::get)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]
+        profiles: [ProfileType::director]
     )]
     public function showNewDirectorProfileForm(): void {
         $viewParameters = [
@@ -462,7 +462,7 @@ final class PersonnelController extends Controller {
     #[Route("/personnel/directors/new-profile", RequestMethod::post)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]
+        profiles: [ProfileType::director]
     )]
     public function addNewDirectorProfile(array $input): void {
         global $_USER;
@@ -524,7 +524,7 @@ final class PersonnelController extends Controller {
     #[Route("/personnel/profile/{profileID}/edit", RequestMethod::get)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]
+        profiles: [ProfileType::director]
     )]
     public function showEditPersonnelProfileForm(array $input): void {
         extract($input[Router::PATH_DATA_KEY]);
@@ -553,7 +553,7 @@ final class PersonnelController extends Controller {
     #[Route("/personnel/profile/{profileID}/edit", RequestMethod::post)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [DirectorProfile::class]
+        profiles: [ProfileType::director]
     )]
     public function editPersonnelProfile(array $input): void {
         global $_USER;

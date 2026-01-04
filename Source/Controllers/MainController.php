@@ -19,7 +19,7 @@ final class MainController extends Controller {
     #[Route("/timetable/{depotID}", RequestMethod::get)]
     #[Access(
         group: AccessGroup::oneOfProfiles,
-        profiles: [PersonnelProfile::class],
+        profiles: [ProfileType::personnel],
         allowedPersonnelPrivileges: [
             ["scope" => PrivilegeScope::canViewTimetableOfDepot, "entityKey" => "depotID"]
         ]

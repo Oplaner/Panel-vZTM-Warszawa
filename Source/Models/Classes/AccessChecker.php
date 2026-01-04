@@ -30,7 +30,7 @@ final class AccessChecker {
 
     private static function directorMatchExists(Access $access): bool {
         foreach ($access->profiles as $accessProfile) {
-            if ($accessProfile == DirectorProfile::class) {
+            if ($accessProfile == ProfileType::director) {
                 return true;
             }
         }
@@ -40,7 +40,7 @@ final class AccessChecker {
 
     private static function personnelMatchExists(PersonnelProfile $userProfile, Access $access, array $pathData): bool {
         foreach ($access->profiles as $accessProfile) {
-            if ($accessProfile != PersonnelProfile::class) {
+            if ($accessProfile != ProfileType::personnel) {
                 continue;
             }
 
@@ -84,7 +84,7 @@ final class AccessChecker {
 
     private static function driverMatchExists(User $driver, Access $access, array $pathData): bool {
         foreach ($access->profiles as $accessProfile) {
-            if ($accessProfile != DriverProfile::class) {
+            if ($accessProfile != ProfileType::driver) {
                 continue;
             }
 

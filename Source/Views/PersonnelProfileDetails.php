@@ -40,7 +40,7 @@ ViewBuilder::buildHead(Style::light, [Script::menu], $profile->getOwner()->getFo
 <?php
 
                             $privilegeDescriptions = array_map(
-                                fn($privilege) => $privilege->getDescription(Carrier::class),
+                                fn($privilege) => $privilege->getDescription(),
                                 $profile->getPrivileges()
                             );
                             sort($privilegeDescriptions);
