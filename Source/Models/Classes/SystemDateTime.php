@@ -1,6 +1,7 @@
 <?php
 
 final class SystemDateTime {
+    private const MYSQL_DATE_FORMAT = "Y-m-d";
     private const MYSQL_DATETIME_FORMAT = "Y-m-d H:i:s.u";
     private const LOG_DATETIME_FORMAT = "Y-m-d_H-i-s";
     private const LOCAL_TIME_ZONE = "Europe/Warsaw";
@@ -11,6 +12,11 @@ final class SystemDateTime {
         $timeZone = new DateTimeZone("UTC");
 
         if (!is_null($dateTime)) {
+            if (($dateFromMySQLFormat = DateTimeImmutable::createFromFormat("!".self::MYSQL_DATE_FORMAT, $dateTime, $timeZone)) !== false) {
+                $this->dateTime = $dateFromMySQLFormat;
+                return;
+            }
+
             if (($dateTimeFromMySQLFormat = DateTimeImmutable::createFromFormat(self::MYSQL_DATETIME_FORMAT, $dateTime, $timeZone)) !== false) {
                 $this->dateTime = $dateTimeFromMySQLFormat;
                 return;
@@ -47,8 +53,9 @@ final class SystemDateTime {
         return $this->dateTime->getTimestamp();
     }
 
-    public function toDatabaseString(): string {
-        return $this->dateTime->format(self::MYSQL_DATETIME_FORMAT);
+    public function toDatabaseString(bool $dateOnly = false): string {
+        $format = $dateOnly ? self::MYSQL_DATE_FORMAT : self::MYSQL_DATETIME_FORMAT;
+        return $this->dateTime->format($format);
     }
 
     public function toLogString(): string {

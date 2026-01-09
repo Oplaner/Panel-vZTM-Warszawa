@@ -21,7 +21,21 @@ final class SystemDateTimeTests {
         return true;
     }
 
-    public static function createSystemDateTimeWithSpecifiedTimeUsingMySQLFormat(): bool|string {
+    public static function createSystemDateTimeWithSpecifiedTimeUsingMySQLDateFormat(): bool|string {
+        $myBirthday = "1998-02-10";
+        $then = new SystemDateTime($myBirthday);
+        $databaseString = $then->toDatabaseString(true);
+
+        if (!is_a($then, SystemDateTime::class)) {
+            return "Expected a ".SystemDateTime::class." object. Found: ".gettype($then).".";
+        } elseif ($databaseString != $myBirthday) {
+            return "Expected database string to be \"$myBirthday\". Found: \"$databaseString\".";
+        }
+
+        return true;
+    }
+
+    public static function createSystemDateTimeWithSpecifiedTimeUsingMySQLDateTimeFormat(): bool|string {
         $myBirthday = "1998-02-10 18:00:00.000000";
         $then = new SystemDateTime($myBirthday);
         $databaseString = $then->toDatabaseString();
