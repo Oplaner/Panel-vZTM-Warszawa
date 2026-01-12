@@ -236,7 +236,7 @@ final class Application extends DatabaseEntity {
         $this->validationCode = null;
         $this->wasModified = true;
         $this->save();
-        Logger::log(LogLevel::info, "Application is now SENT.");
+        Logger::log(LogLevel::info, "Application status is now \"SENT\".");
     }
 
     public function approve(Carrier $assignedCarrier, ?string $resolutionNote, User $resolver): void {
@@ -311,7 +311,7 @@ final class Application extends DatabaseEntity {
 
         if ($this->status != ApplicationStatus::sent) {
             Logger::log(LogLevel::warn, "Failed to resolve the application.");
-            throw new DomainException("Resolving an application with status other than SENT is not allowed.");
+            throw new DomainException("Resolving an application with status other than \"SENT\" is not allowed.");
         }
 
         $this->status = $targetStatus;
