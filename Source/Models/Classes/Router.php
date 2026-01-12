@@ -48,6 +48,7 @@ final class Router {
                 if (!AccessChecker::userCanAccess($access, $input[self::PATH_DATA_KEY])) {
                     Logger::log(LogLevel::info, "Access denied. Redirecting to home.");
                     self::redirectToHome();
+                    return;
                 }
 
                 $controller = new $controller();
