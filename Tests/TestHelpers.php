@@ -5,6 +5,32 @@ final class TestHelpers {
     public const EXISTING_TEST_USER_USERNAME = "Oplaner";
     public const NOT_EXISTING_TEST_USER_LOGIN = 100;
 
+    public static function createTestApplication(bool $isSent): Application {
+        $application = Application::createNew(self::EXISTING_TEST_USER_LOGIN, self::EXISTING_TEST_USER_USERNAME, new SystemDateTime("1998-02-10"), "http://some-url.com", "Motivation.");
+
+        if (!$isSent) {
+            return $application;
+        }
+
+        $validationCode = self::getApplicationValidationCode($application);
+        $application->send($validationCode);
+        return $application;
+    }
+
+    public static function getApplicationValidationCode(Application $application): ?string {
+        $result = DatabaseConnector::shared()->execute_query(
+            "SELECT validation_code
+            FROM applications
+            WHERE id = ?",
+            [
+                $application->getID()
+            ]
+        );
+        $validationCode = $result->fetch_column();
+        $result->free();
+        return $validationCode;
+    }
+
     public static function createTestUser(): User {
         return User::createNew(self::EXISTING_TEST_USER_LOGIN);
     }
@@ -39,6 +65,7 @@ final class TestHelpers {
 
     public static function cleanDatabase(): void {
         $tables = [
+            "applications",
             "carrier_supervisors",
             "carriers",
             "contract_periods",
