@@ -1,37 +1,37 @@
-        <div id="pagination">
+<div id="pagination">
 <?php
 
-            if (!$paginationInfo->isFirstPage()):
+    if (!$paginationInfo->isFirstPage()):
 
 ?>
-            <a href="<?php echo PathBuilder::action("$basePath/page/{$paginationInfo->getPreviousPage()}") ?>">&lt;&nbsp;Poprzednia</a>
+    <a href="<?php echo PathBuilder::action("$basePath/page/{$paginationInfo->getPreviousPage()}") ?>">&lt;&nbsp;Poprzednia</a>
 <?php
 
-            else:
+    else:
 
 ?>
-            <div></div>
+    <div></div>
 <?php
 
-            endif;
+    endif;
 
 ?>
-            <div>Strona <?php echo $paginationInfo->getCurrentPage() ?> z <?php echo $paginationInfo->getNumberOfPages() ?></div>
+    <div>Strona <?php echo $paginationInfo->getCurrentPage() ?> z <?php echo $paginationInfo->getNumberOfPages() ?></div>
 <?php
 
-            if (!$paginationInfo->isLastPage()):
+    if (!$paginationInfo->isLastPage()):
 
 ?>
-            <a href="<?php echo PathBuilder::action("$basePath/page/{$paginationInfo->getNextPage()}") ?>">Następna&nbsp;&gt;</a>
+    <a href="<?php echo PathBuilder::action("$basePath/page/{$paginationInfo->getNextPage()}") ?>">Następna&nbsp;&gt;</a>
 <?php
 
-            else:
+    else:
 
 ?>
-            <div></div>
+    <div></div>
 <?php
 
-            endif;
+    endif;
 
 ?>
-        </div>
+</div>
