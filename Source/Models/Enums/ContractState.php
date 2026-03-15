@@ -1,17 +1,17 @@
 <?php
 
 enum ContractState: string {
+    case active = "ACTIVE";
     case probation = "PROBATION";
     case probationWithPenalty = "PROBATION_WITH_PENALTY";
-    case active = "ACTIVE";
     case terminated = "TERMINATED";
-    case terminatedDisciplinarily = "TERMINATED_DISCIPLINARILY";
     case terminatedAutomatically = "TERMINATED_AUTOMATICALLY";
+    case terminatedDisciplinarily = "TERMINATED_DISCIPLINARILY";
 
     private const FINAL_STATES = [
         self::terminated,
-        self::terminatedDisciplinarily,
-        self::terminatedAutomatically
+        self::terminatedAutomatically,
+        self::terminatedDisciplinarily
     ];
 
     public function isFinal(): bool {

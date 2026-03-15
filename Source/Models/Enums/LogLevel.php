@@ -1,8 +1,8 @@
 <?php
 
 enum LogLevel {
-    case info;
     case error;
+    case info;
     case warn;
 }
 

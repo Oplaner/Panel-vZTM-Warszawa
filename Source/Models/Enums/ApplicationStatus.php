@@ -1,11 +1,11 @@
 <?php
 
 enum ApplicationStatus: string {
+    case approved = "APPROVED";
     case created = "CREATED";
-    case sent = "SENT";
     case expired = "EXPIRED";
     case rejected = "REJECTED";
-    case approved = "APPROVED";
+    case sent = "SENT";
 }
 
 ?>
