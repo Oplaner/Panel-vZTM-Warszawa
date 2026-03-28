@@ -100,7 +100,7 @@ final class SystemDateTimeTests {
 
     public static function checkTimeZoneDayShiftInLocalizedString(): bool|string {
         $lastDayOfYear = new SystemDateTime("2023-12-31 23:00:00.000000");
-        $localizedString = $lastDayOfYear->toLocalizedString(SystemDateTimeFormat::dateOnly);
+        $localizedString = $lastDayOfYear->toLocalizedString(SystemDateTimeFormat::date);
         $expectedString = "01.01.2024";
 
         if ($localizedString != $expectedString) {

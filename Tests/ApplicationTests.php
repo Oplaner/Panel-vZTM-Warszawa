@@ -42,8 +42,8 @@ final class ApplicationTests {
         } elseif ($application->getUsername() != $username) {
             return "New application username is incorrect. Expected: \"$username\", found: \"{$application->getUsername()}\".";
         } elseif ($application->getDateOfBirth() != $dateOfBirth) {
-            $expected = $dateOfBirth->toLocalizedString(SystemDateTimeFormat::dateOnly);
-            $found = $application->getDateOfBirth()->toLocalizedString(SystemDateTimeFormat::dateOnly);
+            $expected = $dateOfBirth->toLocalizedString(SystemDateTimeFormat::date);
+            $found = $application->getDateOfBirth()->toLocalizedString(SystemDateTimeFormat::date);
             return "New application dateOfBirth is incorrect. Expected: $expected, found: $found.";
         } elseif ($application->getPassedExamProofURL() != $passedExamProofURL) {
             return "New application passedExamProofURL is incorrect. Expected: \"$passedExamProofURL\", found: \"{$application->getPassedExamProofURL()}\".";
@@ -90,8 +90,8 @@ final class ApplicationTests {
         } elseif ($application->getUsername() != $username) {
             return "The application username is incorrect. Expected: \"$username\", found: \"{$application->getUsername()}\".";
         } elseif ($application->getDateOfBirth() != $dateOfBirth) {
-            $expected = $dateOfBirth->toLocalizedString(SystemDateTimeFormat::dateOnly);
-            $found = $application->getDateOfBirth()->toLocalizedString(SystemDateTimeFormat::dateOnly);
+            $expected = $dateOfBirth->toLocalizedString(SystemDateTimeFormat::date);
+            $found = $application->getDateOfBirth()->toLocalizedString(SystemDateTimeFormat::date);
             return "The application dateOfBirth is incorrect. Expected: $expected, found: $found.";
         } elseif ($application->getPassedExamProofURL() != $passedExamProofURL) {
             return "The application passedExamProofURL is incorrect. Expected: \"$passedExamProofURL\", found: \"{$application->getPassedExamProofURL()}\".";

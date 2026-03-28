@@ -37,18 +37,18 @@ a:hover:not(.button) {
     text-decoration: underline;
 }
 
-#loginPageContainer {
+#centeredContentContainer {
     display: flex;
     justify-content: center;
 }
 
-#loginForm {
+#centeredContent {
     width: 400px;
     margin-top: calc(10vh - 1rem);
     padding: 1rem;
 }
 
-#loginForm img {
+#centeredContent img {
     display: block;
     width: 200px;
     margin-left: auto;
@@ -56,13 +56,26 @@ a:hover:not(.button) {
     margin-bottom: 1rem;
 }
 
-#loginForm h1 {
+#centeredContent h1 {
     text-align: center;
 }
 
-#loginForm form {
+#centeredContent form {
     width: 90%;
-    margin: 0 auto;
+    margin: 0 auto 1rem auto;
+}
+
+#centeredContent > p {
+    margin: 0;
+    text-align: center;
+}
+
+#centeredLogo img {
+    display: block;
+    width: 200px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1rem;
 }
 
 label {
@@ -86,19 +99,26 @@ input[type=text], input[type=password] {
     border-radius: 5px;
 }
 
-input[type=text]::placeholder {
+input[type=text]::placeholder, option:disabled {
     color: #555555;
 }
 
 input[type=text]:not(:disabled):focus, input[type=text]:not(:disabled):hover,
 input[type=password]:not(:disabled):focus, input[type=password]:not(:disabled):hover,
 input[type=checkbox]:not(:disabled):focus, input[type=checkbox]:not(:disabled):hover,
-input[type=radio]:not(:disabled):focus, input[type=radio]:not(:disabled):hover {
+input[type=radio]:not(:disabled):focus, input[type=radio]:not(:disabled):hover,
+select:not(:disabled):focus, select:not(:disabled):hover,
+textarea:not(:disabled):focus, textarea:not(:disabled):hover {
     border-color: #251B16;
     outline: none;
 }
 
-input[type=text]:disabled, input[type=password]:disabled, input[type=checkbox]:disabled, input[type=radio]:disabled {
+input[type=text]:disabled,
+input[type=password]:disabled,
+input[type=checkbox]:disabled,
+input[type=radio]:disabled,
+select:disabled,
+textarea:disabled {
     background-color: #DDE1E5;
 }
 
@@ -144,6 +164,39 @@ input[type=radio]::before {
 input[type=checkbox]:checked::before, input[type=radio]:checked::before {
     opacity: 1;
     transform: scale(1);
+}
+
+select {
+    padding: 0.3rem;
+    font-size: 0.9rem;
+    color: #251B16;
+    background-color: #FFFFFF;
+    border: 1px solid #929FA9;
+    border-radius: 5px;
+}
+
+textarea {
+    width: 100%;
+    min-height: 5rem;
+    resize: vertical;
+    margin-bottom: 1rem;
+    padding: 0.3rem;
+    font-size: 0.9rem;
+    color: #251B16;
+    background-color: #FFFFFF;
+    border: 1px solid #929FA9;
+    border-radius: 5px;
+}
+
+.datePicker {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.datePicker select {
+    flex: 1;
 }
 
 .inputWithLoader {
@@ -421,6 +474,11 @@ input[type=submit]:hover {
     z-index: 0;
 }
 
+#content.noTopBar {
+    top: 0;
+    height: 100vh;
+}
+
 #content > .sectionContainer, #content form > .sectionContainer {
     margin-bottom: 1rem;
 }
@@ -628,16 +686,16 @@ td.action {
 }
 
 @media only screen and (max-width: 600px) {
-    #loginForm {
+    #centeredContent {
         margin-top: 0;
         width: 100%;
     }
 
-    #loginForm img {
+    #centeredContent img, #centeredLogo img {
         width: 40%;
     }
 
-    #loginForm form {
+    #centeredContent form {
         width: 100%;
     }
 

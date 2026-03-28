@@ -70,8 +70,8 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Zakłady
                     $carrier->getSupervisors()
                 )
             );
-            $createdAt = $carrier->getCreatedAt()->toLocalizedString(SystemDateTimeFormat::dateOnly);
-            $closedAt = $carrier->getClosedAt()?->toLocalizedString(SystemDateTimeFormat::dateOnly);
+            $createdAt = $carrier->getCreatedAt()->toLocalizedString(SystemDateTimeFormat::date);
+            $closedAt = $carrier->getClosedAt()?->toLocalizedString(SystemDateTimeFormat::date);
 
 ?>
             <tr>

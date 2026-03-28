@@ -1,11 +1,13 @@
 <?php
 
 enum View: string {
+    case applicationNew = "ApplicationNew";
     case carrierDetails = "CarrierDetails";
     case carrierEdit = "CarrierEdit";
     case carrierNew = "CarrierNew";
     case carriers = "Carriers";
     case confirmation = "Confirmation";
+    case datePicker = "DatePicker";
     case directorProfileDetails = "DirectorProfileDetails";
     case directorProfileNew = "DirectorProfileNew";
     case directorProfiles = "DirectorProfiles";

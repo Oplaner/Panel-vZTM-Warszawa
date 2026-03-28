@@ -73,8 +73,8 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::redirect], "Dyrektor
             foreach ($profiles as $profile):
             $statusClass = $profile->isActive() ? "active" : "inactive";
             $statusText = $profile->isActive() ? "aktywny" : "nieaktywny";
-            $activatedAt = $profile->getActivatedAt()->toLocalizedString(SystemDateTimeFormat::dateOnly);
-            $deactivatedAt = $profile->getDeactivatedAt()?->toLocalizedString(SystemDateTimeFormat::dateOnly);
+            $activatedAt = $profile->getActivatedAt()->toLocalizedString(SystemDateTimeFormat::date);
+            $deactivatedAt = $profile->getDeactivatedAt()?->toLocalizedString(SystemDateTimeFormat::date);
 
 ?>
             <tr>

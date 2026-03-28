@@ -6,8 +6,8 @@ ViewBuilder::buildHead(Style::light, [], null)
 
 ?>
 <body>
-    <div id="loginPageContainer">
-        <div id="loginForm">
+    <div id="centeredContentContainer">
+        <div id="centeredContent">
             <a href="<?php echo PathBuilder::root() ?>">
                 <img src="<?php echo PathBuilder::image("vztm-logo-full.svg") ?>" alt="Logo vZTM Warszawa">
             </a>
@@ -48,6 +48,7 @@ ViewBuilder::buildHead(Style::light, [], null)
                     <input type="submit" value="Zaloguj się">
                 </div>
             </form>
+            <p><a href="<?php echo PathBuilder::action("/applications/new") ?>">Zostań kierowcą</a></p>
         </div>
     </div>
 </body>

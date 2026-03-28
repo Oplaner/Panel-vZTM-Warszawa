@@ -6,7 +6,16 @@ final class ApplicationController extends Controller {
         group: AccessGroup::guestsOnly
     )]
     public function showNewApplicationForm(): void {
-        // TODO
+        $parameters = [
+            "login" => "",
+            "username" => "",
+            "day" => 0,
+            "month" => 0,
+            "year" => 0,
+            "passedExamProofURL" => "",
+            "motivation" => ""
+        ];
+        self::renderView(View::applicationNew, $parameters);
     }
 }
 
