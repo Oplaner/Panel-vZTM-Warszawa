@@ -1,7 +1,6 @@
 CREATE TABLE `applications` (
   `id` char(36) CHARACTER SET ascii COLLATE ascii_general_nopad_ci NOT NULL,
   `login` int(10) UNSIGNED NOT NULL,
-  `username` varchar(120) NOT NULL,
   `date_of_birth` date NOT NULL,
   `passed_exam_proof_url` varchar(100) CHARACTER SET ascii COLLATE ascii_general_nopad_ci NOT NULL,
   `motivation` varchar(500) NOT NULL,

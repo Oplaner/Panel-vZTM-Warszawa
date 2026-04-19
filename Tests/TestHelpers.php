@@ -6,7 +6,7 @@ final class TestHelpers {
     public const NOT_EXISTING_TEST_USER_LOGIN = 100;
 
     public static function createTestApplication(bool $isSent): Application {
-        $application = Application::createNew(self::EXISTING_TEST_USER_LOGIN, self::EXISTING_TEST_USER_USERNAME, new SystemDateTime("1998-02-10"), "http://some-url.com", "Motivation.");
+        $application = Application::createNew(self::EXISTING_TEST_USER_LOGIN, new SystemDateTime("1998-02-10"), "http://some-url.com", "Motivation.");
 
         if (!$isSent) {
             return $application;

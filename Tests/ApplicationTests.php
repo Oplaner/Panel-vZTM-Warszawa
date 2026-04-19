@@ -27,20 +27,17 @@ final class ApplicationTests {
 
     public static function createNewApplication(): bool|string {
         $login = TestHelpers::EXISTING_TEST_USER_LOGIN;
-        $username = TestHelpers::EXISTING_TEST_USER_USERNAME;
         $dateOfBirth = new SystemDateTime("1998-02-10");
         $passedExamProofURL = "http://some-url.com";
         $motivation = "Motivation.";
         $status = ApplicationStatus::created;
-        $application = Application::createNew($login, $username, $dateOfBirth, $passedExamProofURL, $motivation);
+        $application = Application::createNew($login, $dateOfBirth, $passedExamProofURL, $motivation);
         $validationCode = TestHelpers::getApplicationValidationCode($application);
 
         if (!is_a($application, Application::class)) {
             return "Expected an ".Application::class." object. Found: ".gettype($application).".";
         } elseif ($application->getLogin() != $login) {
             return "New application login is incorrect. Expected: $login, found: {$application->getLogin()}.";
-        } elseif ($application->getUsername() != $username) {
-            return "New application username is incorrect. Expected: \"$username\", found: \"{$application->getUsername()}\".";
         } elseif ($application->getDateOfBirth() != $dateOfBirth) {
             $expected = $dateOfBirth->toLocalizedString(SystemDateTimeFormat::date);
             $found = $application->getDateOfBirth()->toLocalizedString(SystemDateTimeFormat::date);
@@ -68,11 +65,10 @@ final class ApplicationTests {
 
     public static function getApplication(): bool|string {
         $login = TestHelpers::EXISTING_TEST_USER_LOGIN;
-        $username = TestHelpers::EXISTING_TEST_USER_USERNAME;
         $dateOfBirth = new SystemDateTime("1998-02-10");
         $passedExamProofURL = "http://some-url.com";
         $motivation = "Motivation.";
-        $application = Application::createNew($login, $username, $dateOfBirth, $passedExamProofURL, $motivation);
+        $application = Application::createNew($login, $dateOfBirth, $passedExamProofURL, $motivation);
         $validationCode = TestHelpers::getApplicationValidationCode($application);
         $application->send($validationCode);
         $resolver = TestHelpers::createTestUser();
@@ -87,8 +83,6 @@ final class ApplicationTests {
             return "Expected an ".Application::class." object. Found: ".gettype($application).".";
         } elseif ($application->getLogin() != $login) {
             return "The application login is incorrect. Expected: \"$login\", found: \"{$application->getLogin()}\".";
-        } elseif ($application->getUsername() != $username) {
-            return "The application username is incorrect. Expected: \"$username\", found: \"{$application->getUsername()}\".";
         } elseif ($application->getDateOfBirth() != $dateOfBirth) {
             $expected = $dateOfBirth->toLocalizedString(SystemDateTimeFormat::date);
             $found = $application->getDateOfBirth()->toLocalizedString(SystemDateTimeFormat::date);

@@ -5,7 +5,6 @@ final class Application extends DatabaseEntity {
     private const VALIDATION_CODE_LENGTH = 6;
 
     private int $login;
-    private string $username;
     private SystemDateTime $dateOfBirth;
     private string $passedExamProofURL;
     private string $motivation;
@@ -17,10 +16,9 @@ final class Application extends DatabaseEntity {
     private ?SystemDateTime $resolvedAt;
     private ?User $resolvedBy;
 
-    private function __construct(?string $id, int $login, string $username, SystemDateTime $dateOfBirth, string $passedExamProofURL, string $motivation, SystemDateTime $createdAt, ApplicationStatus $status, ?string $validationCode, ?Carrier $assignedCarrier, ?string $resolutionNote, ?SystemDateTime $resolvedAt, ?User $resolvedBy) {
+    private function __construct(?string $id, int $login, SystemDateTime $dateOfBirth, string $passedExamProofURL, string $motivation, SystemDateTime $createdAt, ApplicationStatus $status, ?string $validationCode, ?Carrier $assignedCarrier, ?string $resolutionNote, ?SystemDateTime $resolvedAt, ?User $resolvedBy) {
         parent::__construct($id);
         $this->login = $login;
-        $this->username = $username;
         $this->dateOfBirth = $dateOfBirth;
         $this->passedExamProofURL = $passedExamProofURL;
         $this->motivation = $motivation;
@@ -34,11 +32,11 @@ final class Application extends DatabaseEntity {
         $this->save();
     }
 
-    public static function createNew(int $login, string $username, SystemDateTime $dateOfBirth, string $passedExamProofURL, string $motivation): Application {
+    public static function createNew(int $login, SystemDateTime $dateOfBirth, string $passedExamProofURL, string $motivation): Application {
         Logger::log(LogLevel::info, "Creating new application for user with login $login.");
         self::validateActiveApplicationDoesNotExist($login);
         $validationCode = self::generateValidationCode();
-        $application = new Application(null, $login, $username, $dateOfBirth, $passedExamProofURL, $motivation, SystemDateTime::now(), ApplicationStatus::created, $validationCode, null, null, null, null);
+        $application = new Application(null, $login, $dateOfBirth, $passedExamProofURL, $motivation, SystemDateTime::now(), ApplicationStatus::created, $validationCode, null, null, null, null);
         self::sendMessageWithValidationCode($login, $validationCode);
         return $application;
     }
@@ -51,7 +49,7 @@ final class Application extends DatabaseEntity {
         }
 
         $result = DatabaseConnector::shared()->execute_query(
-            "SELECT id, login, username, date_of_birth, passed_exam_proof_url, motivation, created_at, status, validation_code, assigned_carrier_id, resolution_note, resolved_at, resolved_by_user_id
+            "SELECT id, login, date_of_birth, passed_exam_proof_url, motivation, created_at, status, validation_code, assigned_carrier_id, resolution_note, resolved_at, resolved_by_user_id
             FROM applications
             WHERE id = ?",
             [
@@ -68,7 +66,6 @@ final class Application extends DatabaseEntity {
         $data = $result->fetch_assoc();
         $result->free();
         $login = $data["login"];
-        $username = $data["username"];
         $dateOfBirth = new SystemDateTime($data["date_of_birth"]);
         $passedExamProofURL = $data["passed_exam_proof_url"];
         $motivation = $data["motivation"];
@@ -79,7 +76,7 @@ final class Application extends DatabaseEntity {
         $resolutionNote = $data["resolution_note"];
         $resolvedAt = is_null($data["resolved_at"]) ? null : new SystemDateTime($data["resolved_at"]);
         $resolvedBy = is_null($data["resolved_by_user_id"]) ? null : User::withID($data["resolved_by_user_id"]);
-        return new Application($id, $login, $username, $dateOfBirth, $passedExamProofURL, $motivation, $createdAt, $status, $validationCode, $assignedCarrier, $resolutionNote, $resolvedAt, $resolvedBy);
+        return new Application($id, $login, $dateOfBirth, $passedExamProofURL, $motivation, $createdAt, $status, $validationCode, $assignedCarrier, $resolutionNote, $resolvedAt, $resolvedBy);
     }
 
     public static function getAll(string $sortSubstring = "created_at ASC", ?string $limitSubstring = null): array {
@@ -184,10 +181,6 @@ final class Application extends DatabaseEntity {
         return $this->login;
     }
 
-    public function getUsername(): string {
-        return $this->username;
-    }
-
     public function getDateOfBirth(): SystemDateTime {
         return $this->dateOfBirth;
     }
@@ -249,10 +242,9 @@ final class Application extends DatabaseEntity {
 
     public function __toString() {
         return sprintf(
-            __CLASS__."(id: \"%s\", login: %d, username: \"%s\", dateOfBirth: %s, createdAt: %s, status: \"%s\", assignedCarrierID: %s, resolvedAt: %s, resolvedByUserID: %s)",
+            __CLASS__."(id: \"%s\", login: %d, dateOfBirth: %s, createdAt: %s, status: \"%s\", assignedCarrierID: %s, resolvedAt: %s, resolvedByUserID: %s)",
             $this->id,
             $this->login,
-            $this->username,
             $this->dateOfBirth->toDatabaseString(true),
             $this->createdAt->toDatabaseString(),
             $this->status->value,
@@ -268,12 +260,11 @@ final class Application extends DatabaseEntity {
         if ($this->isNew) {
             $db->execute_query(
                 "INSERT INTO applications
-                (id, login, username, date_of_birth, passed_exam_proof_url, motivation, created_at, status, validation_code, assigned_carrier_id, resolution_note, resolved_at, resolved_by_user_id)
+                (id, login, date_of_birth, passed_exam_proof_url, motivation, created_at, status, validation_code, assigned_carrier_id, resolution_note, resolved_at, resolved_by_user_id)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 [
                     $this->id,
                     $this->login,
-                    $this->username,
                     $this->dateOfBirth->toDatabaseString(true),
                     $this->passedExamProofURL,
                     $this->motivation,
