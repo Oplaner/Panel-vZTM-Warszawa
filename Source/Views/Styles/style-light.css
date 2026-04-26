@@ -27,6 +27,22 @@ h1 a {
     font-size: 0.8em;
 }
 
+#logo {
+    margin-bottom: 1rem;
+    text-align: center;
+    line-height: 0;
+}
+
+#logo a {
+    display: inline-block;
+    width: 200px;
+}
+
+#logo img {
+    display: block;
+    width: 100%;
+}
+
 a:link:not(.button), a:visited:not(.button) {
     font-weight: 500;
     color: #9B422C;
@@ -48,14 +64,6 @@ a:hover:not(.button) {
     padding: 1rem;
 }
 
-#centeredContent img {
-    display: block;
-    width: 200px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 1rem;
-}
-
 #centeredContent h1 {
     text-align: center;
 }
@@ -68,14 +76,6 @@ a:hover:not(.button) {
 #centeredContent > p {
     margin: 0;
     text-align: center;
-}
-
-#centeredLogo img {
-    display: block;
-    width: 200px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 1rem;
 }
 
 label {
@@ -692,7 +692,7 @@ td.action {
         width: 100%;
     }
 
-    #centeredContent img, #centeredLogo img {
+    #logo a {
         width: 40%;
     }
 

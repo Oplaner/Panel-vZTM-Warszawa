@@ -2,12 +2,12 @@
 <html lang="pl">
 <?php
 
-ViewBuilder::buildHead(Style::light, [], null)
+ViewBuilder::buildHead(Style::light, [Script::search], "Zostań kierowcą")
 
 ?>
 <body>
     <div id="content" class="noTopBar">
-        <div id="centeredLogo">
+        <div id="logo">
             <a href="<?php echo PathBuilder::root() ?>">
                 <img src="<?php echo PathBuilder::image("vztm-logo-full.svg") ?>" alt="Logo vZTM Warszawa">
             </a>

@@ -8,9 +8,11 @@ ViewBuilder::buildHead(Style::light, [], null)
 <body>
     <div id="centeredContentContainer">
         <div id="centeredContent">
-            <a href="<?php echo PathBuilder::root() ?>">
-                <img src="<?php echo PathBuilder::image("vztm-logo-full.svg") ?>" alt="Logo vZTM Warszawa">
-            </a>
+            <div id="logo">
+                <a href="<?php echo PathBuilder::root() ?>">
+                    <img src="<?php echo PathBuilder::image("vztm-logo-full.svg") ?>" alt="Logo vZTM Warszawa">
+                </a>
+            </div>
             <h1>Panel vZTM Warszawa</h1>
             <form action="<?php echo PathBuilder::action("/login") ?>" method="POST">
 <?php
