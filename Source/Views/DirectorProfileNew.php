@@ -29,22 +29,22 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::search], "Nowy dyrek
             <div class="sectionContainer column">
                 <div class="section">
                     <h2>Użytkownik</h2>
-                    <div class="searchContainer" data-source="<?php echo PathBuilder::action("/users/search/non-director") ?>" data-selection-limit="1">
-                        <div class="selectionContainer"></div>
-                        <input type="hidden" name="directorLogin">
-                        <label for="directorSearchBox" class="required">Wybierz użytkownika:</label>
-                        <div class="inputWithLoader">
-                            <input type="text" id="directorSearchBox" placeholder="ID lub nazwa...">
-                            <div class="loaderContainer">
-                                <div class="loader"></div>
-                            </div>
-                        </div>
-                        <div class="searchMatchesContainer">
-                            <div class="searchMatchesScrollContainer">
-                                <div class="searchMatches"></div>
-                            </div>
-                        </div>
-                    </div>
+<?php
+
+                    ViewBuilder::buildSearchBox(
+                        "/users/search/non-director",
+                        1,
+                        [],
+                        true,
+                        "directorLogin",
+                        "",
+                        "directorSearchBox",
+                        "Wybierz użytkownika:",
+                        "ID lub nazwa...",
+                        5
+                    );
+
+?>
                     <p class="message info">Wyniki wyszukiwania obejmują wyłącznie użytkowników bez aktywnego profilu dyrektora.</p>
                 </div>
                 <div class="section">

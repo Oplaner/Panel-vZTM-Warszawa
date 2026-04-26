@@ -29,41 +29,22 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::search], "Nowy praco
             <div class="sectionContainer column">
                 <div class="section">
                     <h2>Użytkownik</h2>
-                    <div class="searchContainer" data-source="<?php echo PathBuilder::action("/users/search/non-personnel") ?>" data-selection-limit="1">
-                        <div class="selectionContainer">
 <?php
 
-                            if (!is_null($personnelSelection)):
+                    ViewBuilder::buildSearchBox(
+                        "/users/search/non-personnel",
+                        1,
+                        is_null($personnelSelection) ? [] : [$personnelSelection],
+                        true,
+                        "personnelLogin",
+                        $personnelLogin,
+                        "personnelSearchBox",
+                        "Wybierz użytkownika:",
+                        "ID lub nazwa...",
+                        5
+                    );
 
 ?>
-                            <div class="selection" data-key="<?php echo $personnelSelection["key"] ?>">
-                                <span><?php echo $personnelSelection["value"] ?></span>&nbsp;<a href="#">[&times;]</a>
-                            </div>
-<?php
-
-                            endif;
-
-?>
-                        </div>
-                        <input type="hidden" name="personnelLogin" value="<?php echo $personnelLogin ?>">
-                        <label for="personnelSearchBox" class="required">Wybierz użytkownika:</label>
-                        <div class="inputWithLoader">
-<?php
-
-                            $disabled = !is_null($personnelSelection) ? " disabled" : "";
-
-?>
-                            <input type="text" id="personnelSearchBox" placeholder="ID lub nazwa..." <?php echo $disabled ?>>
-                            <div class="loaderContainer">
-                                <div class="loader"></div>
-                            </div>
-                        </div>
-                        <div class="searchMatchesContainer">
-                            <div class="searchMatchesScrollContainer">
-                                <div class="searchMatches"></div>
-                            </div>
-                        </div>
-                    </div>
                     <p class="message info">Wyniki wyszukiwania obejmują wyłącznie użytkowników bez aktywnego profilu personelu.</p>
                     <label for="description" class="required">Opis funkcji:</label>
                     <input type="text" id="description" name="description" value="<?php echo $description ?>">

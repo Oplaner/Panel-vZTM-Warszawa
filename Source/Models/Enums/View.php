@@ -20,6 +20,7 @@ enum View: string {
     case personnelProfileEdit = "PersonnelProfileEdit";
     case personnelProfileNew = "PersonnelProfileNew";
     case personnelProfiles = "PersonnelProfiles";
+    case searchBox = "SearchBox";
     case topBar = "TopBar";
 }
 

@@ -20,17 +20,16 @@ final class ViewBuilder {
         self::buildView(View::menu, 1, compact("_USER"));
     }
 
-    public static function buildPagination(PaginationInfo $paginationInfo, string $basePath): void {
-        self::buildView(View::pagination, 2, compact("paginationInfo", "basePath"));
+    public static function buildSearchBox(string $searchAction, ?int $selectionLimit, array $selections, bool $inputRequired, $rawInputName, $rawInputValue, $inputID, $inputLabel, $inputPlaceholder, int $indentLevel): void {
+        self::buildView(View::searchBox, $indentLevel, compact("searchAction", "selectionLimit", "selections", "inputRequired", "rawInputName", "rawInputValue", "inputID", "inputLabel", "inputPlaceholder"));
     }
 
-    public static function buildView(View $view, int $indentLevel, array $parameters = []): void {
-        extract($parameters);
-        ob_start();
-        include self::VIEWS_DIRECTORY.$view->value.".php";
-        $content = ob_get_clean();
-        $indent = str_repeat(self::INDENT_STRING, $indentLevel);
-        echo preg_replace("/^/m", $indent, $content).PHP_EOL;
+    public static function buildDatePicker(int $day, int $month, int $year, int $maxYear, int $minYear, int $indentLevel): void {
+        self::buildView(View::datePicker, $indentLevel, compact("day", "month", "year", "maxYear", "minYear"));
+    }
+
+    public static function buildPagination(PaginationInfo $paginationInfo, string $basePath): void {
+        self::buildView(View::pagination, 2, compact("paginationInfo", "basePath"));
     }
 
     private static function getBasePageTitle(): string {
@@ -40,6 +39,15 @@ final class ViewBuilder {
         }
 
         return self::$basePageTitle;
+    }
+
+    private static function buildView(View $view, int $indentLevel, array $parameters = []): void {
+        extract($parameters);
+        ob_start();
+        include self::VIEWS_DIRECTORY.$view->value.".php";
+        $content = ob_get_clean();
+        $indent = str_repeat(self::INDENT_STRING, $indentLevel);
+        echo preg_replace("/^/m", $indent, $content).PHP_EOL;
     }
 }
 

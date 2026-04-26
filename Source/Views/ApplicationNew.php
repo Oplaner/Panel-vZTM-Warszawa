@@ -27,17 +27,30 @@ ViewBuilder::buildHead(Style::light, [], null)
         <form action="<?php echo PathBuilder::action("/applications/new") ?>" method="POST">
             <div class="sectionContainer">
                 <div class="section narrow">
-                    <label for="login" class="required">Login (ID na forum):</label>
-                    <input type="text" id="login" name="login" value="<?php echo $login ?>">
-                    <label for="username" class="required">Nazwa użytkownika:</label>
-                    <input type="text" id="username" name="username" value="<?php echo $username ?>">
+<?php
+
+                    ViewBuilder::buildSearchBox(
+                        "/users/search/driver-candidate",
+                        1,
+                        is_null($candidateSelection) ? [] : [$candidateSelection],
+                        true,
+                        "candidateLogin",
+                        $candidateLogin,
+                        "candidateSearchBox",
+                        "Wybierz użytkownika:",
+                        "ID lub nazwa...",
+                        5
+                    );
+
+?>
+                    <p class="message info">Wyniki wyszukiwania obejmują wyłącznie tych użytkowników, którzy nie mają aktywnej lub oczekującej na rozpatrzenie aplikacji.</p>
                     <label for="day" class="required">Data urodzenia:</label>
 <?php
 
                     $properties = PropertiesReader::getProperties("application");
                     $maxYear = (int) SystemDateTime::now()->toLocalizedString(SystemDateTimeFormat::year);
                     $minYear = $maxYear - $properties["dateOfBirthMinYearOffset"];
-                    ViewBuilder::buildView(View::datePicker, 5, compact("day", "month", "year", "maxYear", "minYear"));
+                    ViewBuilder::buildDatePicker($day, $month, $year, $maxYear, $minYear, 5);
 
 ?>
                 </div>

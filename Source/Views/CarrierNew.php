@@ -45,36 +45,22 @@ ViewBuilder::buildHead(Style::light, [Script::menu, Script::search], "Nowy zakł
                     </div>
                     <div class="section">
                         <h2>Kierownicy</h2>
-                        <div class="searchContainer" data-source="<?php echo PathBuilder::action("/users/search/all") ?>">
-                            <div class="selectionContainer">
 <?php
 
-                                foreach ($supervisorSelections as $supervisorSelection):
+                        ViewBuilder::buildSearchBox(
+                            "/users/search/all",
+                            null,
+                            $supervisorSelections,
+                            false,
+                            "supervisorLoginsString",
+                            $supervisorLoginsString,
+                            "supervisorSearchBox",
+                            "Dodaj kierownika:",
+                            "ID lub nazwa...",
+                            6
+                        );
 
 ?>
-                                <div class="selection" data-key="<?php echo $supervisorSelection["key"] ?>">
-                                    <span><?php echo $supervisorSelection["value"] ?></span>&nbsp;<a href="#">[&times;]</a>
-                                </div>
-<?php
-
-                                endforeach;
-
-?>
-                            </div>
-                            <input type="hidden" name="supervisorLoginsString" value="<?php echo $supervisorLoginsString ?>">
-                            <label for="supervisorSearchBox">Dodaj kierownika:</label>
-                            <div class="inputWithLoader">
-                                <input type="text" id="supervisorSearchBox" placeholder="ID lub nazwa...">
-                                <div class="loaderContainer">
-                                    <div class="loader"></div>
-                                </div>
-                            </div>
-                            <div class="searchMatchesContainer">
-                                <div class="searchMatchesScrollContainer">
-                                    <div class="searchMatches"></div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>

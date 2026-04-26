@@ -452,11 +452,7 @@ final class PersonnelController extends Controller {
         profiles: [ProfileType::director]
     )]
     public function showNewDirectorProfileForm(): void {
-        $viewParameters = [
-            "directorSelection" => null,
-            "directorLogin" => ""
-        ];
-        self::renderView(View::directorProfileNew, $viewParameters);
+        self::renderView(View::directorProfileNew);
     }
 
     #[Route("/personnel/directors/new-profile", RequestMethod::post)]
