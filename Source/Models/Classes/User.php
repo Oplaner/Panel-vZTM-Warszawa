@@ -132,6 +132,31 @@ final class User extends DatabaseEntity {
         return self::getLoginAndUsernamePairsWithQuery($query, $parameters);
     }
 
+    public static function getDriverCandidateLoginAndUsernamePairsContainingSubstring(string $substring): array {
+        $query =
+            "SELECT m.uid, m.username
+            FROM mybb18_users AS m
+            LEFT JOIN applications AS a
+            ON a.id = (
+                SELECT sa.id
+                FROM applications AS sa
+                WHERE sa.login = m.uid
+                ORDER BY sa.created_at DESC
+                LIMIT 1
+            )
+            WHERE (a.id IS NULL OR a.status NOT IN (?, ?, ?)) AND (m.uid LIKE ? OR m.username LIKE ?)
+            ORDER BY m.uid ASC";
+        $pattern = "%$substring%";
+        $parameters = [
+            ApplicationStatus::approved->value,
+            ApplicationStatus::created->value,
+            ApplicationStatus::sent->value,
+            $pattern,
+            $pattern
+        ];
+        return self::getLoginAndUsernamePairsWithQuery($query, $parameters);
+    }
+
     private static function getLoginAndUsernamePairsWithQuery(string $query, ?array $parameters = null): array {
         $result = DatabaseConnector::shared()->execute_query($query, $parameters);
         $users = [];

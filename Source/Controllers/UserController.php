@@ -28,6 +28,15 @@ final class UserController extends Controller {
         self::handleUserSearch($input, $searchMethod);
     }
 
+    #[Route("/users/search/driver-candidate", RequestMethod::post)]
+    #[Access(
+        group: AccessGroup::guestsOnly     
+    )]
+    public function handleDriverCandidateUserSearch(array $input): void {
+        $searchMethod = fn($substring) => User::getDriverCandidateLoginAndUsernamePairsContainingSubstring($substring);
+        self::handleUserSearch($input, $searchMethod);
+    }
+
     private function handleUserSearch(array $input, Closure $searchMethod): void {
         $post = $input[Router::POST_DATA_KEY];
         $substring = InputValidator::clean($post["substring"]);
