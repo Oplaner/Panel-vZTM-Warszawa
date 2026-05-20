@@ -47,9 +47,6 @@ ViewBuilder::buildHead(Style::light, [Script::search], "Zostań kierowcą")
                     <label for="day" class="required">Data urodzenia:</label>
 <?php
 
-                    $properties = PropertiesReader::getProperties("application");
-                    $maxYear = (int) SystemDateTime::now()->toLocalizedString(SystemDateTimeFormat::year);
-                    $minYear = $maxYear - $properties["dateOfBirthMinYearOffset"];
                     ViewBuilder::buildDatePicker($day, $month, $year, $maxYear, $minYear, 5);
 
 ?>

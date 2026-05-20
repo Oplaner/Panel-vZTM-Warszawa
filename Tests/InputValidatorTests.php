@@ -181,6 +181,67 @@ final class InputValidatorTests {
 
         return true;
     }
+
+    public static function checkValidationForDateComponents(): bool|string {
+        $testData = [
+            [[0, 0, 0], true],
+            [[32, 2, 1998], true],
+            [[10, 13, 1998], true],
+            [[10, 2, 1998], false],
+            [[29, 2, 2024], false]
+        ];
+
+        for ($i = 0; $i < count($testData); $i++) {
+            $parameters = $testData[$i][0];
+            $shouldThrowException = $testData[$i][1];
+            $didThrowException = false;
+
+            try {
+                InputValidator::checkDateComponents($parameters[0], $parameters[1], $parameters[2]);
+            } catch (ValidationException) {
+                $didThrowException = true;
+            }
+
+            if ($didThrowException != $shouldThrowException) {
+                return "Date components validation failed for example at index $i.";
+            }
+
+            $i++;
+        }
+
+        return true;
+    }
+
+    public static function checkValidationForURL(): bool|string {
+        $testData = [
+            ["", true],
+            ["website", true],
+            ["website.com", true],
+            ["http://website.com", false],
+            ["https://website.com", false],
+            ["localhost", false]
+        ];
+
+        for ($i = 0; $i < count($testData); $i++) {
+            $uuid = $testData[$i][0];
+            $shouldThrowException = $testData[$i][1];
+            $didThrowException = false;
+
+            try {
+                InputValidator::checkURL($uuid);
+            } catch (ValidationException) {
+                $didThrowException = true;
+            }
+
+            if ($didThrowException != $shouldThrowException) {
+                return "URL validation failed for example at index $i.";
+            }
+
+            $i++;
+        }
+
+        return true;
+    }
 }
 
 ?>

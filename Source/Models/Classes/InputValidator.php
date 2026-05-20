@@ -1,11 +1,13 @@
 <?php
 
 final class InputValidator {
+    public const MESSAGE_TEMPLATE_DATE = "Wartości z pól \"{}\" powinny utworzyć poprawną datę.";
+    public const MESSAGE_TEMPLATE_GENERIC = "Wartość w polu \"{}\" jest niepoprawna.";
+    public const MESSAGE_TEMPLATE_INTEGER = "Wartość w polu \"{}\" powinna być liczbą całkowitą od {} do {}.";
+    public const MESSAGE_TEMPLATE_LENGTH = "Wartość w polu \"{}\" powinna mieć długość od {} do {} znaków.";
     public const MESSAGE_TEMPLATE_NON_EMPTY = "Pole \"{}\" nie powinno być puste.";
     public const MESSAGE_TEMPLATE_NON_EMPTY_CHECKBOX_ARRAY = "Należy wybrać co najmniej jedną opcję z listy \"{}\".";
-    public const MESSAGE_TEMPLATE_LENGTH = "Wartość w polu \"{}\" powinna mieć długość od {} do {} znaków.";
-    public const MESSAGE_TEMPLATE_INTEGER = "Wartość w polu \"{}\" powinna być liczbą całkowitą od {} do {}.";
-    public const MESSAGE_TEMPLATE_GENERIC = "Wartość w polu \"{}\" jest niepoprawna.";
+    public const MESSAGE_TEMPLATE_URL = "Wartość w polu \"{}\" powinna być pełnym adresem URL rozpoczynającym się od \"http://\" lub \"https://\".";
 
     private const ENCODING = "UTF-8";
     private const MESSAGE_PARAMETER_PLACEHOLDER = "{}";
@@ -51,6 +53,20 @@ final class InputValidator {
     public static function checkUUIDv4(string $value, ?string $fieldName = null): void {
         if (!preg_match("/^[\da-f]{8}-[\da-f]{4}-4[\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$/", $value)) {
             $message = is_null($fieldName) ? "" : self::generateErrorMessage(self::MESSAGE_TEMPLATE_GENERIC, $fieldName);
+            throw new ValidationException($message);
+        }
+    }
+
+    public static function checkDateComponents(int $day, int $month, int $year, ?string $fieldName = null): void {
+        if (!checkdate($month, $day, $year)) {
+            $message = is_null($fieldName) ? "" : self::generateErrorMessage(self::MESSAGE_TEMPLATE_DATE, $fieldName);
+            throw new ValidationException($message);
+        }
+    }
+
+    public static function checkURL(string $value, ?string $fieldName = null): void {
+        if (filter_var($value, FILTER_VALIDATE_URL) === false) {
+            $message = is_null($fieldName) ? "" : self::generateErrorMessage(self::MESSAGE_TEMPLATE_URL, $fieldName);
             throw new ValidationException($message);
         }
     }

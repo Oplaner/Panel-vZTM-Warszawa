@@ -80,7 +80,6 @@ final class Application extends DatabaseEntity {
     }
 
     public static function getAll(string $sortSubstring = "created_at ASC", ?string $limitSubstring = null): array {
-        self::expireStaleCreatedApplications();
         $limitString = self::makeQueryLimitString($limitSubstring);
         $query = trim(
             "SELECT id
@@ -91,8 +90,22 @@ final class Application extends DatabaseEntity {
         return self::getWithQuery($query);
     }
 
+    public static function getAllByLogin(int $login, string $sortSubstring = "created_at ASC", ?string $limitSubstring = null): array {
+        $limitString = self::makeQueryLimitString($limitSubstring);
+        $query = trim(
+            "SELECT id
+            FROM applications
+            WHERE login = ?
+            ORDER BY $sortSubstring
+            $limitString"
+        );
+        $parameters = [
+            $login
+        ];
+        return self::getWithQuery($query, $parameters);
+    }
+
     public static function getSent(string $sortSubstring = "created_at ASC", ?string $limitSubstring = null): array {
-        self::expireStaleCreatedApplications();
         $limitString = self::makeQueryLimitString($limitSubstring);
         $query = trim(
             "SELECT id
@@ -108,7 +121,6 @@ final class Application extends DatabaseEntity {
     }
 
     public static function getCreatedOrSentCountByLogin(string $login): int {
-        self::expireStaleCreatedApplications();
         $query =
             "SELECT COUNT(*)
             FROM applications
@@ -120,6 +132,39 @@ final class Application extends DatabaseEntity {
             ApplicationStatus::sent->value
         ];
         return self::getCountWithQuery($query, $parameters);
+    }
+
+    public static function expireStaleCreatedApplications(): void {
+        $properties = PropertiesReader::getProperties("application");
+        $validityDays = $properties["createdApplicationValidityDays"];
+        $validityHours = $properties["createdApplicationValidityHours"];
+        $validityMinutes = $properties["createdApplicationValidityMinutes"];
+        $validityThreshold = SystemDateTime::now()
+            ->subtracting($validityDays, $validityHours, $validityMinutes)
+            ->toDatabaseString();
+
+        DatabaseConnector::shared()->execute_query(
+            "UPDATE applications
+            SET status = ?, validation_code = ?
+            WHERE status = ?
+            AND created_at <= ?",
+            [
+                ApplicationStatus::expired->value,
+                null,
+                ApplicationStatus::created->value,
+                $validityThreshold
+            ]
+        );
+    }
+
+    protected static function getWithQuery(string $query, ?array $parameters = null): array {
+        self::expireStaleCreatedApplications();
+        return parent::getWithQuery($query, $parameters);
+    }
+
+    protected static function getCountWithQuery(string $query, ?array $parameters = null): int {
+        self::expireStaleCreatedApplications();
+        return parent::getCountWithQuery($query, $parameters);
     }
 
     private static function validateActiveApplicationDoesNotExist(int $login): void {
@@ -152,29 +197,6 @@ final class Application extends DatabaseEntity {
         $subject = "Kod weryfikacyjny";
         $message = "Twój kod weryfikacyjny do potwierdzenia aplikacji na stanowisko Kierowcy vZTM Warszawa to: [b]{$validationCode}[/b]. Kod ważny jest do $validityThreshold.";
         MessageSender::sendMessage($login, $subject, $message);
-    }
-
-    private static function expireStaleCreatedApplications(): void {
-        $properties = PropertiesReader::getProperties("application");
-        $validityDays = $properties["createdApplicationValidityDays"];
-        $validityHours = $properties["createdApplicationValidityHours"];
-        $validityMinutes = $properties["createdApplicationValidityMinutes"];
-        $validityThreshold = SystemDateTime::now()
-            ->subtracting($validityDays, $validityHours, $validityMinutes)
-            ->toDatabaseString();
-
-        DatabaseConnector::shared()->execute_query(
-            "UPDATE applications
-            SET status = ?, validation_code = ?
-            WHERE status = ?
-            AND created_at <= ?",
-            [
-                ApplicationStatus::expired->value,
-                null,
-                ApplicationStatus::created->value,
-                $validityThreshold
-            ]
-        );
     }
 
     public function getLogin(): int {
@@ -261,7 +283,7 @@ final class Application extends DatabaseEntity {
             $db->execute_query(
                 "INSERT INTO applications
                 (id, login, date_of_birth, passed_exam_proof_url, motivation, created_at, status, validation_code, assigned_carrier_id, resolution_note, resolved_at, resolved_by_user_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 [
                     $this->id,
                     $this->login,
